@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'byebug'
+require "bundler/setup"
+require "philosophy"
+
+# You can add fixtures and/or initialization code here to make experimenting
+# with your gem easier. You can also use a different console, if you like.
+
+# (If you use this, don't forget to add pry to your Gemfile!)
+# require "pry"
+# Pry.start
+
+def game
+  @game ||= Philosophy::Game.new.tap do
+    _1.add_player Philosophy::Player.indigo
+    _1.add_player Philosophy::Player.amber
+  end
+end
+
+def board = game.board
+def log(...) = Philosophy.logger.info(...)
+
+def play(...)
+  game.play(...)
+  Philosophy.logger.info game.board.inspect
+end
+
+def c(row, col) = Philosophy::Board::Coordinate.new(row, col)
+def d(v) = Philosophy::Board::Direction.new(v)
+
+def test_lemma_style
+  [ [:place, :Ls, :C5, :north],
+    [:advance_turn],
+    [:place, :pull_left, :C8, :north],
+    [:move, :C5, :sw, 1],
+    [:advance_turn],
+    [:place, :push, :C9, :west],
+    [:move, :C8, :west, 1]
+  ].reduce(game) do |state, parameters|
+    lemma, *args = parameters
+    case lemma
+    when :place then Philosophy::PlacementLemma
+    when :advance_turn then Philosophy::TurnAdvanceLemma
+    when :move then Philosophy::MovementLemma
+    when :rotate then Philosophy::RotationLemma
+    end.new(state, *args).execute!.tap { log _1.board.inspect }
+  end
+  :ok
+end
+
+require "irb"
+IRB.start(__FILE__)
