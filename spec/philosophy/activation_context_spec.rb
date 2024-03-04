@@ -209,5 +209,123 @@ RSpec.describe Philosophy::ActivationContext do
         expect(context[:N5].notation).to eq 'N5:TePuEa'
       end
     end
+
+    context 'LongShot' do
+      it 'does the thing' do
+        context = initial_context
+          .place(player: teal, tile: :push, location: :C2, direction: :east)
+          .reset_context
+          .place(player: indigo, tile: :long_shot, location: :C8, direction: :north)
+          .activate(:C8)
+
+        expect(context[:C8].notation).to eq 'C8:InLsNo'
+        expect(context[:C2]).not_to be_occupied
+        expect(context[:N5].notation).to eq 'N5:TePuEa'
+      end
+    end
+
+    context 'Toss' do
+      it 'does the thing' do
+        context = initial_context
+          .place(player: teal, tile: :push, location: :C2, direction: :east)
+          .reset_context
+          .place(player: indigo, tile: :toss, location: :C5, direction: :north)
+          .activate(:C5)
+
+        expect(context[:C5].notation).to eq 'C5:InToNo'
+        expect(context[:C2]).not_to be_occupied
+        expect(context[:C8].notation).to eq 'C8:TePuEa'
+      end
+    end
+
+    context 'Persuade' do
+      it 'does the thing' do
+        context = initial_context
+          .place(player: teal, tile: :push, location: :C2, direction: :east)
+          .reset_context
+          .place(player: indigo, tile: :persuade, location: :C5, direction: :north)
+          .activate(:C5)
+
+        expect(context[:C2]).not_to be_occupied
+        expect(context[:C5].notation).to eq 'C5:TePuEa'
+        expect(context[:C8].notation).to eq 'C8:InPeNo'
+      end
+    end
+
+    context 'Decision' do
+      it 'builds options' do
+        context = initial_context
+          .place(player: teal, tile: :push, location: :C2, direction: :east)
+          .reset_context
+          .place(player: indigo, tile: :decision, location: :C4, direction: :ne)
+          .activate(:C4)
+
+        expect(context.player_options).not_to be_empty
+        expect(context.player_options.keys.sort).to eq %i[ C6 N4 ]
+      end
+
+      it 'can be completed left' do
+        context_with_choices = initial_context
+          .place(player: teal, tile: :push, location: :C2, direction: :east)
+          .reset_context
+          .place(player: indigo, tile: :decision, location: :C4, direction: :ne)
+          .activate(:C4)
+
+        context = context_with_choices.choose(:N4)
+
+        expect(context[:N4].notation).to eq 'N4:TePuEa'
+        expect(context[:C2]).not_to be_occupied
+        expect(context[:C6]).not_to be_occupied
+      end
+
+      it 'can be completed right' do
+        context_with_choices = initial_context
+          .place(player: teal, tile: :push, location: :C2, direction: :east)
+          .reset_context
+          .place(player: indigo, tile: :decision, location: :C4, direction: :ne)
+          .activate(:C4)
+
+        context = context_with_choices.choose(:C6)
+
+        expect(context[:C6].notation).to eq 'C6:TePuEa'
+        expect(context[:C2]).not_to be_occupied
+        expect(context[:N4]).not_to be_occupied
+      end
+    end
+
+    context 'Rephrase' do
+      it 'builds options for cardinal tiles' do
+        context = initial_context
+          .place(player: teal, tile: :push, location: :C2, direction: :east)
+          .reset_context
+          .place(player: indigo, tile: :rephrase, location: :C4, direction: :ne)
+          .activate(:C4)
+
+        expect(context.player_options).not_to be_empty
+        expect(context.player_options.keys.sort).to eq %i[ Ea No So We ]
+      end
+
+      it 'builds options for diagonal tiles' do
+        context = initial_context
+          .place(player: teal, tile: :corner_push, location: :C2, direction: :east)
+          .reset_context
+          .place(player: indigo, tile: :rephrase, location: :C4, direction: :ne)
+          .activate(:C4)
+
+        expect(context.player_options).not_to be_empty
+        expect(context.player_options.keys.sort).to eq %i[ Ne Nw Se Sw ]
+      end
+
+      it 'can be completed' do
+        context = initial_context
+          .place(player: teal, tile: :push, location: :C2, direction: :east)
+          .reset_context
+          .place(player: indigo, tile: :rephrase, location: :C4, direction: :ne)
+          .activate(:C4)
+          .choose(:No)
+
+        expect(context[:C2].tile.target.value).to eq :north
+      end
+    end
   end
 end

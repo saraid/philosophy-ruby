@@ -6,10 +6,11 @@ module Philosophy
       @removed_tiles = []
       @possible_activations = Set.new
       @possible_activation_targets = Set.new
+      @player_options = {}
     end
     attr_reader :current_player
     attr_reader :spaces
-    attr_reader :removed_tiles
+    attr_reader :removed_tiles, :player_options
     attr_reader :possible_activations, :possible_activation_targets, :already_activated
 
     def [](location) = spaces[location]
@@ -19,7 +20,7 @@ module Philosophy
       removed_tiles.each { new_context.removing_tile _1 }
       possible_activations.each { new_context.can_activate _1 }
       possible_activation_targets.each { new_context.can_be_activated _1 }
-      new_context
+      new_context.with_player_options(@player_options)
     end
     def reset_context = ActivationContext.new(current_player).with_spaces(spaces)
 
@@ -78,6 +79,7 @@ module Philosophy
     end
 
     chain def with_spaces(new_spaces) = spaces.merge!(new_spaces.to_h)
+    chain def with_player_options(options) = @player_options = options
     chain def removing_tile(tile) = @removed_tiles << tile
     chain def can_activate(location) = @possible_activations << spaces[location].name
     chain def can_be_activated(location) = @possible_activation_targets << spaces[location].name
@@ -121,7 +123,36 @@ module Philosophy
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.pull_left)
       when Tile::PullRight
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.pull_right)
+      when Tile::Toss
+        move(from_location: targeted_space.name,
+             impact_direction: activated_tile.target.backward,
+             impact_distance: 2
+            )
+      when Tile::Persuade
+        move(from_location: targeted_space.name, impact_direction: activated_tile.target.backward)
+      when Tile::Decision
+        target_direction = activated_tile.target
+        options = {}
+        options[spaces[targeted_space.coordinate.translate(target_direction.left)].name] =
+          lambda { move(from_location: targeted_space.name, impact_direction: target_direction.left) }
+        options[spaces[targeted_space.coordinate.translate(target_direction.right)].name] =
+          lambda { move(from_location: targeted_space.name, impact_direction: target_direction.right) }
+        with_player_options(options)
+      when Tile::Rephrase
+        ts = targeted_space.name
+        IdeaTile::VALID_TARGETS[targeted_space.tile.class.target]
+          .map { Board::Direction[_1] }
+          .each.with_object({}) do |dir, memo|
+            memo[dir.notation] = lambda { rotate(target_location: ts, target_direction: dir) }
+          end
+          .then { with_player_options _1 }
       end
+    end
+
+    def choose(option)
+      raise ArgumentError unless @player_options.key? option
+
+      @player_options.fetch(option).call
     end
 
     def to_board = Board.new(spaces)
