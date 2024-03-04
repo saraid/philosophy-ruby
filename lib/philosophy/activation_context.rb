@@ -4,15 +4,22 @@ module Philosophy
       @current_player = current_player
       @spaces = {}
       @removed_tiles = []
-      @possible_activations = []
-      @possible_activation_targets = []
+      @possible_activations = Set.new
+      @possible_activation_targets = Set.new
     end
     attr_reader :current_player
     attr_reader :spaces
     attr_reader :removed_tiles
     attr_reader :possible_activations, :possible_activation_targets
 
-    def next_context = ActivationContext.new(current_player).with_spaces(spaces)
+    def next_context
+      new_context = ActivationContext.new(current_player).with_spaces(spaces)
+      removed_tiles.each { new_context.removing_tile _1 }
+      possible_activations.each { new_context.can_activate _1 }
+      possible_activation_targets.each { new_context.can_be_activated _1 }
+      new_context
+    end
+    def reset_context = ActivationContext.new(current_player).with_spaces(spaces)
 
     class PlacementError < ArgumentError; end
     class InvalidTileType < PlacementError; end
@@ -78,8 +85,8 @@ module Philosophy
 
     chain def with_spaces(new_spaces) = spaces.merge!(new_spaces.to_h)
     chain def removing_tile(tile) = @removed_tiles << tile
-    chain def can_activate(location) = @possible_activations << spaces[location]
-    chain def can_be_activated(location) = @possible_activation_targets << spaces[location]
+    chain def can_activate(location) = @possible_activations << spaces[location].name
+    chain def can_be_activated(location) = @possible_activation_targets << spaces[location].name
 
     def to_board = Board.new(spaces)
   end
