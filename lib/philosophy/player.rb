@@ -1,40 +1,45 @@
 
 module Philosophy
   class Player
-    COLORS = {
-      teal: :Te,
-      indigo: :In,
-      amber: :Am,
-      sage: :Sa,
-    }
+    Color = Data.define(:name, :code)
 
-    private_class_method def self.players = @player ||= {}
-    COLORS.keys.each { |color| define_singleton_method(color) { players[color] ||= new(color) } }
-    private_class_method :new
+    private_class_method def self.players = @players ||= {}
+    def self.register(color)
+      new(color).then do
+        players[color.code] ||= _1
+        players[color.name] ||= _1
+      end
+    end
 
-    def initialize(color, tiles: nil, lemmas: [])
-      raise ArgumentError, "Unknown color #{color.inspect}" unless COLORS.key?(color)
+    def self.[](color_name_or_code) = players.fetch(color_name_or_code)
+
+    #private_class_method :new
+
+    def initialize(color)
       @color = color
-      @tiles = tiles || IdeaTile.registry.values.uniq.map { _1.new(self) }
-      @lemmas = lemmas
+      @tiles = IdeaTile.registry.values.uniq.map { _1.new(self) }
     end
     attr_reader :color
-    attr_accessor :lemmas
 
     private def idea(type) = @tiles.find { _1.class == IdeaTile.registry[type] }
     def has_idea?(type) = !!idea(type)
     def placed_tile(type) = @tiles.delete(idea(type))
     def tile_returned(tile) = @tiles << tile
 
-    def without(tile: tile_type) = Player.new(color, tiles: tiles - [idea(tile_type)])
+    #def without(tile: tile_type) = Player.new(color, tiles: tiles - [idea(tile_type)])
     #def with(tile: tile_type) = Player.new(color, tiles: tiles + [ # TODO
 
     def notation = COLORS[color]
     def to_s = color.to_s.capitalize
+  end
 
-    def choose_lemma!(index = 0)
-      @lemmas[index]&.execute!
-      @lemmas.clear
+  Player.register Player::Color.new(:teal, :Te)
+  Player.register Player::Color.new(:indigo, :In)
+  Player.register Player::Color.new(:amber, :Am)
+  Player.register Player::Color.new(:sage, :Sa)
+
+  class Lemma
+    def initialize(player, key, &lemma)
     end
   end
 end
