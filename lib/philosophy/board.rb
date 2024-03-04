@@ -183,7 +183,7 @@ module Philosophy
     end
 
     COORDINATE_NAMES = NAMED_COORDINATES.invert
-    CONCLUSIONS = COORDINATE_NAMES.each.with_object([]) do |(coordinate, name), conclusions|
+    CONCLUSIONS = COORDINATE_NAMES.each.with_object(Set.new) do |(coordinate, name), conclusions|
       coordinate.each_direction do |direction, coord2|
         name2 = COORDINATE_NAMES[coord2]
         next if name2.nil?
@@ -191,7 +191,7 @@ module Philosophy
         next if name3.nil?
         conclusions << Set.new([name, name2, name3])
       end
-    end.uniq
+    end
     def concluded?
       CONCLUSIONS.any? do |conclusion|
         owners = conclusion.map { spaces[_1].tile&.owner }
