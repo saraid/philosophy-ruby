@@ -1,4 +1,3 @@
-
 RSpec.describe Philosophy::Board do
   let(:empty_board) { Philosophy::Board.new }
   let(:indigo) { Philosophy::Player.new(Philosophy::Player::Color.new(:indigo, :In)) }
@@ -51,8 +50,8 @@ RSpec.describe Philosophy::Board do
       context = board.move(from_location: :NW, impact_direction: :nw)
 
       expect(context.to_board[:NW]).not_to be_occupied
-      expect(context.removed_tile).not_to be_nil
-      expect(context.removed_tile.notation).to eq 'InPuNo'
+      expect(context.removed_tiles.size).to eq 1
+      expect(context.removed_tiles[0].notation).to eq 'InPuNo'
     end
   end
 

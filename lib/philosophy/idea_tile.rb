@@ -59,6 +59,7 @@ module Philosophy
     attr_accessor :target
 
     def notation = [ owner, self.class, target ].map(&:notation).join
+    def with(target:) = dup.tap { _1.target = target }
 
     protected def lemma(context, &)
       Game::Lemma.new(context, &)

@@ -182,7 +182,6 @@ module Philosophy
         .join(delimiter)
     end
 
-
     class PlacementError < ArgumentError; end
     class InvalidTileType < PlacementError; end
     class UnavailableTile < PlacementError; end
@@ -195,42 +194,44 @@ module Philosophy
 
       tile_instance = player.placed_tile(tile)
       tile_instance.target = Direction[direction]
-      ActivationContext.new(spaces.merge(spaces[location].with(tile: tile_instance)))
+      ActivationContext.new(nil)
+        .with_spaces(spaces)
+        .with_spaces(spaces[location].with(tile: tile_instance))
+        .can_activate(location)
     end
 
     def move(from_location:, impact_direction:, impact_distance: 1)
       moved_tile = spaces[from_location].tile
       target_space = spaces[spaces[from_location].coordinate.translate(impact_direction, impact_distance)]
       if target_space.nil?
-        return spaces
-          .merge(spaces[from_location].with(tile: nil))
-          .then { ActivationContext.new(_1, removed_tile: moved_tile) }
+        return ActivationContext.new(nil)
+          .with_spaces(spaces)
+          .with_spaces(spaces[from_location].with(tile: nil))
+          .removing_tile(moved_tile)
       end
 
       context_with_collisions_resolved =
         if target_space.occupied?
           move(from_location: target_space.coordinate, impact_direction: impact_direction)
         end
-      new_spaces = (context_with_collisions_resolved&.spaces || spaces)
-        .merge(spaces[from_location].with(tile: nil))
-        .merge(target_space.with(tile: spaces[from_location].tile))
-      ActivationContext.new(new_spaces)
+      ActivationContext.new(nil)
+        .with_spaces(spaces)
+        .with_spaces(context_with_collisions_resolved&.spaces)
+        .with_spaces(spaces[from_location].with(tile: nil))
+        .with_spaces(target_space.with(tile: moved_tile))
     end
 
     def rotate(target_location:, target_direction:)
-      spaces[target_location].tile.target = Direction[target_direction]
-      ActivationContext.new(spaces)
-    end
-  end
+      direction = Direction[target_direction]
+      new_tile = spaces[target_location].tile.with(target: direction)
+      context = ActivationContext.new(nil)
+        .with_spaces(spaces)
+        .with_spaces(spaces[target_location].with(tile: new_tile))
+      return context
 
-  class ActivationContext
-    def initialize(spaces, removed_tile: nil)
-      @spaces = spaces
-      @removed_tile = removed_tile
+      possible_activation = spaces[target_location].translate(direction)
+      context.can_activate(possible_activation) if possible_activation.occupied?
+      context
     end
-    attr_reader :spaces
-    attr_reader :removed_tile
-
-    def to_board = Board.new(spaces)
   end
 end
