@@ -195,7 +195,7 @@ module Philosophy
     def concluded?
       CONCLUSIONS.any? do |conclusion|
         owners = conclusion.map { spaces[_1].tile&.owner }
-        owners.compact.size == 3 && owners.uniq.size == 1 
+        owners.compact.size == 3 && owners.uniq.size == 1
       end
     end
     def nearing_conclusion?
