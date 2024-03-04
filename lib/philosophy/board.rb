@@ -181,5 +181,29 @@ module Philosophy
         .compact
         .join(delimiter)
     end
+
+    COORDINATE_NAMES = NAMED_COORDINATES.invert
+    CONCLUSIONS = COORDINATE_NAMES.each.with_object([]) do |(coordinate, name), conclusions|
+      coordinate.each_direction do |direction, coord2|
+        name2 = COORDINATE_NAMES[coord2]
+        next if name2.nil?
+        name3 = COORDINATE_NAMES[coord2.translate(direction)]
+        next if name3.nil?
+        conclusions << Set.new([name, name2, name3])
+      end
+    end.uniq
+    def concluded?
+      CONCLUSIONS.any? do |conclusion|
+        owners = conclusion.map { spaces[_1].tile&.owner }
+        owners.compact.size == 3 && owners.uniq.size == 1 
+      end
+    end
+    def nearing_conclusion?
+      CONCLUSIONS.any? do |conclusion|
+        owners = conclusion.map { spaces[_1].tile&.owner }
+        empty_space = spaces[conclusion.find { spaces[_1].tile.nil? }]
+        empty_space&.playable? && owners.compact.size == 2 && owners.compact.uniq.size == 1
+      end
+    end
   end
 end
