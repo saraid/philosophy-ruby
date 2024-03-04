@@ -6,6 +6,7 @@ module Philosophy
       @removed_tiles = []
       @possible_activations = Set.new
       @possible_activation_targets = Set.new
+      @already_activated = Set.new
       @player_options = {}
     end
     attr_reader :current_player
@@ -20,6 +21,7 @@ module Philosophy
       removed_tiles.each { new_context.removing_tile _1 }
       possible_activations.each { new_context.can_activate _1 }
       possible_activation_targets.each { new_context.can_be_activated _1 }
+      already_activated.each { new_context.was_already_activated _1 }
       new_context.with_player_options(@player_options)
     end
     def reset_context = ActivationContext.new(current_player).with_spaces(spaces)
@@ -83,6 +85,7 @@ module Philosophy
     chain def removing_tile(tile) = @removed_tiles << tile
     chain def can_activate(location) = @possible_activations << spaces[location].name
     chain def can_be_activated(location) = @possible_activation_targets << spaces[location].name
+    chain def was_already_activated(location) = @already_activated << spaces[location].name
     chain def consider_activating(location)
       space = spaces[location]
       return unless space&.occupied?
@@ -107,10 +110,11 @@ module Philosophy
         target_space.occupied? && target_space.tile.owner != current_player
       end
 
-      Set.new(real_activatables + targeting_enemy_activatables)
+      Set.new(real_activatables + targeting_enemy_activatables) - already_activated
     end
 
     def activate(location)
+      @already_activated << spaces[location].name
       activated_tile = spaces[location].tile
       targeted_space = activated_tile.activation_target(spaces, spaces[location].name)
 

@@ -192,6 +192,30 @@ RSpec.describe Philosophy::ActivationContext do
           expect(candidates.as_notation(context)).to eq %w[C1:InPrEa]
         end
       end
+
+      it 'does not activate a tile twice' do
+        context = initial_context
+          .place(player: indigo, tile: :long_shot, location: :E4, direction: :west)
+          .place(player: teal, tile: :push, location: :C5, direction: :north)
+          .reset_context
+          .place(player: indigo, tile: :push, location: :C4, direction: :east)
+          .activate(:C4)
+          .tap { expect(_1.activation_candidates.to_a).to eq %i[ E4 ] }
+          .activate(:E4)
+
+        expect(context.activation_candidates).to be_empty
+      end
+
+      it 'may generate multiple candidates' do
+        context = initial_context
+          .place(player: indigo, tile: :push, location: :C6, direction: :north)
+          .place(player: indigo, tile: :corner_push, location: :C5, direction: :ne)
+          .place(player: teal, tile: :push, location: :C2, direction: :north)
+          .reset_context
+          .move(from_location: :C2, impact_direction: :east)
+
+        expect(context.activation_candidates.to_a.sort).to eq %i[ C5 C6 ]
+      end
     end
   end
 
