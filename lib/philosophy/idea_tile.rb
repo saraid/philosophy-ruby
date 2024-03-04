@@ -60,6 +60,9 @@ module Philosophy
 
     def notation = [ owner, self.class, target ].map(&:notation).join
     def with(target:) = dup.tap { _1.target = target }
+    def activation_target(spaces, from_location)
+      spaces[spaces[from_location].coordinate.translate(target, self.class.target_distance)]
+    end
 
     protected def lemma(context, &)
       Game::Lemma.new(context, &)
