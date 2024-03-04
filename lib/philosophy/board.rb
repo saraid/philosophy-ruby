@@ -181,57 +181,5 @@ module Philosophy
         .compact
         .join(delimiter)
     end
-
-    class PlacementError < ArgumentError; end
-    class InvalidTileType < PlacementError; end
-    class UnavailableTile < PlacementError; end
-    class InvalidCoordinate < PlacementError; end
-    class CoordinateOutsidePlacementSpace < InvalidCoordinate; end
-    class CannotPlaceAtopExistingTile < PlacementError; end
-    class CannotOrientInTargetDirection < PlacementError; end
-    def place(player:, tile:, location:, direction:)
-      raise CannotPlaceAtopExistingTile if spaces[location].occupied?
-
-      tile_instance = player.placed_tile(tile)
-      tile_instance.target = Direction[direction]
-      ActivationContext.new(nil)
-        .with_spaces(spaces)
-        .with_spaces(spaces[location].with(tile: tile_instance))
-        .can_activate(location)
-    end
-
-    def move(from_location:, impact_direction:, impact_distance: 1)
-      moved_tile = spaces[from_location].tile
-      target_space = spaces[spaces[from_location].coordinate.translate(impact_direction, impact_distance)]
-      if target_space.nil?
-        return ActivationContext.new(nil)
-          .with_spaces(spaces)
-          .with_spaces(spaces[from_location].with(tile: nil))
-          .removing_tile(moved_tile)
-      end
-
-      context_with_collisions_resolved =
-        if target_space.occupied?
-          move(from_location: target_space.coordinate, impact_direction: impact_direction)
-        end
-      ActivationContext.new(nil)
-        .with_spaces(spaces)
-        .with_spaces(context_with_collisions_resolved&.spaces)
-        .with_spaces(spaces[from_location].with(tile: nil))
-        .with_spaces(target_space.with(tile: moved_tile))
-    end
-
-    def rotate(target_location:, target_direction:)
-      direction = Direction[target_direction]
-      new_tile = spaces[target_location].tile.with(target: direction)
-      context = ActivationContext.new(nil)
-        .with_spaces(spaces)
-        .with_spaces(spaces[target_location].with(tile: new_tile))
-      return context
-
-      possible_activation = spaces[target_location].translate(direction)
-      context.can_activate(possible_activation) if possible_activation.occupied?
-      context
-    end
   end
 end

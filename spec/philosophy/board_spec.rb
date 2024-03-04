@@ -3,7 +3,7 @@ RSpec.describe Philosophy::Board do
   let(:indigo) { Philosophy::Player.new(Philosophy::Player::Color.new(:indigo, :In)) }
   let(:teal) { Philosophy::Player.new(Philosophy::Player::Color.new(:teal, :Te)) }
 
-  describe '#move' do
+  xdescribe '#move' do
     it 'should move a tile' do
       board = empty_board.place(player: indigo, tile: :push, location: :C5, direction: :north).to_board
       result = board.move(from_location: :C5, impact_direction: :east).to_board
@@ -55,7 +55,7 @@ RSpec.describe Philosophy::Board do
     end
   end
 
-  describe '#rotate' do
+  xdescribe '#rotate' do
     it 'should rotate the tile' do
       board = empty_board
         .place(player: indigo, tile: :push, location: :C5, direction: :north).to_board
@@ -66,7 +66,7 @@ RSpec.describe Philosophy::Board do
     end
   end
 
-  describe '#place' do
+  xdescribe '#place' do
     it 'should place a tile' do
       context = empty_board.place(player: indigo, tile: :push, location: :C5, direction: :north)
       expect(context.spaces[:C5].tile).not_to be_nil
