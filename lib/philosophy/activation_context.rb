@@ -133,6 +133,7 @@ module Philosophy
              impact_distance: 2
             )
       when Tile::Persuade
+        # using collision to move yourself
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.backward)
       when Tile::Decision
         target_direction = activated_tile.target
