@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'byebug'
 require "philosophy"
 
 RSpec.configure do |config|

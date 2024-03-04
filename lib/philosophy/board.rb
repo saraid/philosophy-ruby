@@ -50,6 +50,14 @@ module Philosophy
     ONE_CHAR_DIRECTIONS = DIRECTIONAL_KEYS.zip(%i[ 4 2 6 8 1 3 7 5 ]).to_h
 
     Direction = Data.define(:value) do
+      def self.[](value)
+        case value
+        when Symbol then Direction.new(value)
+        when Direction then value
+        else raise ArgumentError, value.inspect
+        end
+      end
+
       def initialize(value:)
         raise ArgumentError, "Not allowed: #{value.inspect}" unless CLOCK.include?(value)
         super(value: value)
@@ -151,6 +159,7 @@ module Philosophy
     attr_reader :spaces
 
     def inspect = "Board(#{notation('/')})"
+    def [](location) = spaces[location]
     def with(tile:, on_location:) = Board.new(spaces.merge(spaces[on_location].with(tile: tile)))
 
     # Providing a reliable ordering.
@@ -185,29 +194,33 @@ module Philosophy
       raise CannotPlaceAtopExistingTile if spaces[location].occupied?
 
       tile_instance = player.placed_tile(tile)
-      tile_instance.target = direction
+      tile_instance.target = Direction[direction]
       ActivationContext.new(spaces.merge(spaces[location].with(tile: tile_instance)))
     end
 
-    def move(from_location:, target_location:, impact_direction:)
-      new_spaces = spaces.merge(spaces[from_location].with(tile: nil))
-      if spaces[target_location].nil?
-        return ActivationContext.new(new_spaces, removed_tile: spaces[from_location].tile)
+    def move(from_location:, impact_direction:, impact_distance: 1)
+      moved_tile = spaces[from_location].tile
+      target_space = spaces[spaces[from_location].coordinate.translate(impact_direction, impact_distance)]
+      if target_space.nil?
+        return spaces
+          .merge(spaces[from_location].with(tile: nil))
+          .then { ActivationContext.new(_1, removed_tile: moved_tile) }
       end
 
       context_with_collisions_resolved =
-        if spaces[target_location].occupied?
-          move(
-            from_location: target_location,
-            target_location: target_location.translate(impact_direction),
-            impact_direction: impact_direction
-          )
+        if target_space.occupied?
+          move(from_location: target_space.coordinate, impact_direction: impact_direction)
         end
-      new_spaces = new_spaces.merge(spaces[target_location].with(tile: spaces[from_location].tile))
-      ActivationContext.new(new_spaces, removed_tile: removed_tile)
+      new_spaces = (context_with_collisions_resolved&.spaces || spaces)
+        .merge(spaces[from_location].with(tile: nil))
+        .merge(target_space.with(tile: spaces[from_location].tile))
+      ActivationContext.new(new_spaces)
     end
 
-    def rotate(target_location:, target_direction:) = nil
+    def rotate(target_location:, target_direction:)
+      spaces[target_location].tile.target = Direction[target_direction]
+      ActivationContext.new(spaces)
+    end
   end
 
   class ActivationContext

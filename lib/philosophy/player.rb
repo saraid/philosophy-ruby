@@ -29,7 +29,7 @@ module Philosophy
     #def without(tile: tile_type) = Player.new(color, tiles: tiles - [idea(tile_type)])
     #def with(tile: tile_type) = Player.new(color, tiles: tiles + [ # TODO
 
-    def notation = COLORS[color]
+    def notation = @color.code
     def to_s = color.to_s.capitalize
   end
 
