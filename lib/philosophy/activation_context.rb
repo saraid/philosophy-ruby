@@ -5,11 +5,12 @@ module Philosophy
       @spaces = {}
       @removed_tiles = []
       @possible_activations = []
+      @possible_activation_targets = []
     end
     attr_reader :current_player
     attr_reader :spaces
     attr_reader :removed_tiles
-    attr_reader :possible_activations
+    attr_reader :possible_activations, :possible_activation_targets
 
     def next_context = ActivationContext.new(current_player).with_spaces(spaces)
 
@@ -56,8 +57,14 @@ module Philosophy
       context = next_context
         .with_spaces(spaces[target_location].with(tile: new_tile))
 
-      possible_activation = spaces[target_location].translate(direction)
-      context.can_activate(possible_activation) if possible_activation.occupied?
+      possible_activation = spaces[spaces[target_location].coordinate.translate(direction)]
+      if possible_activation.occupied?
+        if possible_activation.tile.owner == current_player
+          context.can_activate(possible_activation.coordinate)
+        else
+          context.can_be_activated(possible_activation.coordinate)
+        end
+      end
       context
     end
 
@@ -72,6 +79,7 @@ module Philosophy
     chain def with_spaces(new_spaces) = spaces.merge!(new_spaces.to_h)
     chain def removing_tile(tile) = @removed_tiles << tile
     chain def can_activate(location) = @possible_activations << spaces[location]
+    chain def can_be_activated(location) = @possible_activation_targets << spaces[location]
 
     def to_board = Board.new(spaces)
   end
