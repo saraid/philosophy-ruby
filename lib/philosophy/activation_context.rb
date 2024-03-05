@@ -24,7 +24,9 @@ module Philosophy
       already_activated.each { new_context.was_already_activated _1 }
       new_context.with_player_options(@player_options)
     end
-    def reset_context = ActivationContext.new(current_player).with_spaces(spaces)
+    def reset_context
+      ActivationContext.new(current_player).with_spaces(spaces)
+    end
 
     class PlacementError < ArgumentError; end
     class InvalidTileType < PlacementError; end
@@ -94,6 +96,14 @@ module Philosophy
       else
         can_be_activated location
       end
+        .with_chain_reactions
+    end
+    chain def with_chain_reactions
+      #raise 'did you mean to do this' unless @player_options.empty?
+      return unless @player_options.empty?
+      @player_options = activation_candidates.each.with_object({}) do |candidate, memo|
+        memo[candidate] = lambda { activate(candidate) }
+      end
     end
 
     def activation_candidates
@@ -128,10 +138,11 @@ module Philosophy
       when Tile::PullRight
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.pull_right)
       when Tile::Toss
-        move(from_location: targeted_space.name,
-             impact_direction: activated_tile.target.backward,
-             impact_distance: 2
-            )
+        move(
+          from_location: targeted_space.name,
+          impact_direction: activated_tile.target.backward,
+          impact_distance: 2
+        )
       when Tile::Persuade
         # using collision to move yourself
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.backward)
@@ -157,7 +168,9 @@ module Philosophy
     def choose(option)
       raise ArgumentError unless @player_options.key? option
 
-      @player_options.fetch(option).call
+      @player_options.fetch(option).call.tap do
+        @player_options.clear
+      end
     end
 
     def to_board = Board.new(spaces)

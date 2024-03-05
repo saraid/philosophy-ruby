@@ -49,10 +49,12 @@ module Philosophy
     TWO_CHAR_DIRECTIONS = DIRECTIONAL_KEYS.zip(%i[ We No Ea So Nw Ne Se Sw ]).to_h
     ONE_CHAR_DIRECTIONS = DIRECTIONAL_KEYS.zip(%i[ 4 2 6 8 1 3 7 5 ]).to_h
 
+    NOTATION_TO_DIRECTION = TWO_CHAR_DIRECTIONS.invert
+
     Direction = Data.define(:value) do
       def self.[](value)
         case value
-        when Symbol then Direction.new(value)
+        when Symbol then Direction.new(NOTATION_TO_DIRECTION[value] || value)
         when Direction then value
         else raise ArgumentError, value.inspect
         end
