@@ -36,7 +36,7 @@ RSpec.describe Philosophy::ActivationContext do
 
     it 'copies possible activation targets' do
       context = initial_context
-        .can_be_activated(:C5)
+        .can_be_targeted(:C5)
         .next_context
 
       expect(context.possible_activation_targets.first).to eq :C5

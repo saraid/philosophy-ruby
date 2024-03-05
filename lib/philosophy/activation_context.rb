@@ -20,7 +20,7 @@ module Philosophy
       new_context = ActivationContext.new(current_player).with_spaces(spaces)
       removed_tiles.each { new_context.removing_tile _1 }
       possible_activations.each { new_context.can_activate _1 }
-      possible_activation_targets.each { new_context.can_be_activated _1 }
+      possible_activation_targets.each { new_context.can_be_targeted _1 }
       already_activated.each { new_context.was_already_activated _1 }
       new_context.with_player_options(@player_options)
     end
@@ -39,6 +39,7 @@ module Philosophy
       raise CannotPlaceAtopExistingTile if spaces[location].occupied?
 
       tile_instance = player.placed_tile(tile)
+      raise UnavailableTile if tile_instance.nil?
       tile_instance.target = Board::Direction[direction]
 
       next_context
@@ -86,24 +87,24 @@ module Philosophy
     chain def with_player_options(options) = @player_options = options
     chain def removing_tile(tile) = @removed_tiles << tile
     chain def can_activate(location) = @possible_activations << spaces[location].name
-    chain def can_be_activated(location) = @possible_activation_targets << spaces[location].name
+    chain def can_be_targeted(location) = @possible_activation_targets << spaces[location].name
     chain def was_already_activated(location) = @already_activated << spaces[location].name
     chain def consider_activating(location)
       space = spaces[location]
       return unless space&.occupied?
-      if space.tile.owner == current_player
+      if space.tile.owner.color == current_player.color
         can_activate location
       else
-        can_be_activated location
+        can_be_targeted location
       end
         .with_chain_reactions
     end
     chain def with_chain_reactions
       #raise 'did you mean to do this' unless @player_options.empty?
       return unless @player_options.empty?
-      @player_options = activation_candidates.each.with_object({}) do |candidate, memo|
+      activation_candidates.each.with_object({}) do |candidate, memo|
         memo[candidate] = lambda { activate(candidate) }
-      end
+      end.then { with_player_options _1 }
     end
 
     def activation_candidates
@@ -168,9 +169,7 @@ module Philosophy
     def choose(option)
       raise ArgumentError unless @player_options.key? option
 
-      @player_options.fetch(option).call.tap do
-        @player_options.clear
-      end
+      @player_options.fetch(option).call
     end
 
     def to_board = Board.new(spaces)

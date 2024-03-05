@@ -10,11 +10,12 @@ module Philosophy
       @current_context = nil
     end
     attr_reader :current_player, :current_context
+    attr_reader :players
 
     def board_state = @current_context.to_board.notation('/')
 
     def add_player(color)
-      @players << Player[color]
+      @players << Player.new(color)
       @current_player = @players.first
       @current_context ||= ActivationContext.new(@current_player).with_spaces(@board.spaces)
     end
@@ -61,7 +62,7 @@ module Philosophy
     end
 
     class PlayerChange < Event
-      NOTATION_REGEX = /(?<player>[A-Z][a-z])(?<type>[+-])/
+      NOTATION_REGEX = /(?<code>[A-Z][a-z])(?<type>[+-])(:(?<name>\w+))?/
       TYPES = {
         :+ => :joined,
         :- => :left,
@@ -70,20 +71,21 @@ module Philosophy
       def self.from_notation(notation)
         md = notation.match(NOTATION_REGEX)
         new(
-          player: md[:player].to_sym,
-          type: TYPES.fetch(md[:type].to_sym)
+          code: md[:code].to_sym,
+          type: TYPES.fetch(md[:type].to_sym),
+          name: md[:name]&.to_sym
         )
       end
 
-      def initialize(player:, type:)
-        @player, @type = player, type
+      def initialize(code:, type:, name: nil)
+        @code, @type, @name = code, type, name
       end
-      attr_reader :player, :type
+      attr_reader :code, :type, :name
 
       def execute(game)
         case type
-        when :joined then game.add_player(player)
-        when :left then game.remove_player(player)
+        when :joined then game.add_player(Player::Color.new(name, code))
+        when :left then game.remove_player(code)
         end
       end
     end
@@ -124,7 +126,7 @@ module Philosophy
       def conclusion? = @conclusion
       def execute(game)
         new_context = game.current_context
-          .place(player: Player[player], location: location, tile: tile, direction: direction)
+          .place(player: game.current_player, location: location, tile: tile, direction: direction)
           .then { parameters.reduce(_1, :choose) }
 
         while new_context.player_options.size <= 1
