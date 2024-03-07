@@ -28,19 +28,17 @@ module Philosophy
       ActivationContext.new(current_player).with_spaces(spaces)
     end
 
-    class PlacementError < ArgumentError; end
-    class InvalidTileType < PlacementError; end
-    class UnavailableTile < PlacementError; end
-    class InvalidCoordinate < PlacementError; end
-    class CoordinateOutsidePlacementSpace < InvalidCoordinate; end
-    class CannotPlaceAtopExistingTile < PlacementError; end
-    class CannotOrientInTargetDirection < PlacementError; end
-    def place(player:, tile:, location:, direction:)
+    PErr = Philosophy::Game::Placement
+    def place(player:, tile:, location:, direction:, testing: false)
       Philosophy.logger.debug("#place #{player.color.name} #{tile} #{location} #{direction}")
-      raise CannotPlaceAtopExistingTile if spaces[location].occupied?
+      raise PErr::InvalidTileType, tile unless IdeaTile.registry.key?(tile)
+      raise PErr::InvalidLocation, location unless spaces.key?(location)
+      raise PErr::LocationOutsidePlacementSpace, location unless spaces[location].playable? || testing
+      raise PErr::CannotPlaceAtopExistingTile, location if spaces[location].occupied?
 
       tile_instance = player.placed_tile(tile)
-      raise UnavailableTile if tile_instance.nil?
+      raise PErr::UnavailableTile, tile if tile_instance.nil?
+      raise PErr::CannotOrientInTargetDirection, direction unless IdeaTile.registry[tile].valid_target?(direction)
       tile_instance.target = Board::Direction[direction]
 
       next_context
@@ -198,8 +196,9 @@ module Philosophy
       end
     end
 
+    
     def choose(option)
-      raise ArgumentError unless @player_options.key? option
+      raise Philosophy::Game::Choice::Error, option unless @player_options.key? option
 
       @player_options.fetch(option).call
     end

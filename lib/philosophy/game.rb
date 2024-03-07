@@ -81,6 +81,8 @@ module Philosophy
           .find { _1::NOTATION_REGEX.match? notation }
           &.from_notation(notation)
       end
+
+      def execute(game) = raise NoMethodError
     end
 
     class PlayerChange < Event
@@ -114,6 +116,14 @@ module Philosophy
     end
 
     class Placement < Event
+      class Error < ArgumentError; end
+      class InvalidTileType < Error; end
+      class UnavailableTile < Error; end
+      class InvalidLocation < Error; end
+      class LocationOutsidePlacementSpace < InvalidLocation; end
+      class CannotPlaceAtopExistingTile < Error; end
+      class CannotOrientInTargetDirection < Error; end
+
       REGEXES = {
         player: "(?<player>[A-Z][a-z]):?",
         location: "(?<location>[CNESW][we1-9])",
@@ -164,7 +174,9 @@ module Philosophy
     end
 
     class Choice < Event
-      NOTATION_REGEX = /^(?<choice>[CNESW][we1-9]|OO)$/
+      class Error < ArgumentError; end
+
+      NOTATION_REGEX = /^(?<choice>[CNESW][owe1-9]|OO)$/
 
       def self.from_notation(notation)
         notation

@@ -29,7 +29,7 @@ module Philosophy
     end
 
     def self.valid_target?(candidate)
-      VALID_TARGETS[target].include? candidate
+      VALID_TARGETS[target].include? Board::Direction[candidate].value
     end
 
     def self.target_distance(value = nil)

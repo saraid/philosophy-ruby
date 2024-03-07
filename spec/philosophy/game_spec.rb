@@ -218,5 +218,60 @@ RSpec.describe Philosophy::Game do
         expect(game.holding_respect_token).to eq :Te
       end
     end
+
+    context 'raises errors' do
+      let(:game) do
+        Philosophy::Game.new.tap do
+          _1 << Philosophy::Game::Event.from_notation('In+:indigo')
+          _1 << Philosophy::Game::Event.from_notation('Te+:teal')
+        end
+      end
+
+      it 'should not allow invalid tile types' do
+        expect { game << Philosophy::Game::Event.from_notation('In:C5XxNo') }
+          .to raise_error(Philosophy::Game::Placement::InvalidTileType)
+      end
+
+      it 'should not allow invalid tile locations' do
+        expect { game << Philosophy::Game::Event.from_notation('In:N9PuNo') }
+          .to raise_error(Philosophy::Game::Placement::InvalidLocation)
+      end
+
+      it 'should not allow playing outside of the center' do
+        expect { game << Philosophy::Game::Event.from_notation('In:N1PuNo') }
+          .to raise_error(Philosophy::Game::Placement::LocationOutsidePlacementSpace)
+      end
+
+      it 'should not allow orienting somewhere invalid' do
+        expect { game << Philosophy::Game::Event.from_notation('In:C5PuNw') }
+          .to raise_error(Philosophy::Game::Placement::CannotOrientInTargetDirection)
+      end
+
+      it 'should not allow an unavailable choice with parameter notation' do
+        game << Philosophy::Game::Event.from_notation('In:C5SrSo')
+        expect { game << Philosophy::Game::Event.from_notation('Te:C7DeNe[C8]') }
+          .to raise_error(Philosophy::Game::Choice::Error)
+      end
+
+      it 'should not allow an unavailable choice with manual choice' do
+        game << Philosophy::Game::Event.from_notation('In:C5SrSo')
+        game << Philosophy::Game::Event.from_notation('Te:C7DeNe')
+        expect { game << Philosophy::Game::Event.from_notation('No') }
+          .to raise_error(Philosophy::Game::Choice::Error)
+      end
+
+      it 'should not allow unavailable tiles' do
+        game << Philosophy::Game::Event.from_notation('In:C5SrNo')
+        game << Philosophy::Game::Event.from_notation('Te:C2SlNo')
+        expect { game << Philosophy::Game::Event.from_notation('In:C8SrNo') }
+          .to raise_error(Philosophy::Game::Placement::UnavailableTile)
+      end
+
+      it 'should not allow stacking tiles' do
+        game << Philosophy::Game::Event.from_notation('In:C5SrNo')
+        expect { game << Philosophy::Game::Event.from_notation('Te:C5SrNo') }
+          .to raise_error(Philosophy::Game::Placement::CannotPlaceAtopExistingTile)
+      end
+    end
   end
 end

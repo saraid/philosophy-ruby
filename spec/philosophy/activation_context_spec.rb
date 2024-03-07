@@ -195,7 +195,7 @@ RSpec.describe Philosophy::ActivationContext do
 
       it 'does not activate a tile twice' do
         context = initial_context
-          .place(player: indigo, tile: :long_shot, location: :E4, direction: :west)
+          .place(player: indigo, tile: :long_shot, location: :E4, direction: :west, testing: true)
           .place(player: teal, tile: :push, location: :C5, direction: :north)
           .reset_context
           .place(player: indigo, tile: :push, location: :C4, direction: :east)
@@ -331,7 +331,7 @@ RSpec.describe Philosophy::ActivationContext do
 
       it 'builds options for diagonal tiles' do
         context = initial_context
-          .place(player: teal, tile: :corner_push, location: :C2, direction: :east)
+          .place(player: teal, tile: :corner_push, location: :C2, direction: :nw)
           .reset_context
           .place(player: indigo, tile: :rephrase, location: :C4, direction: :ne)
           .activate(:C4)
