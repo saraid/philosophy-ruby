@@ -167,11 +167,11 @@ module Philosophy
       when Tile::Decision
         target_direction = activated_tile.target
         options = {}
-        options[spaces[targeted_space.coordinate.translate(target_direction.left)].name] = lambda do
+        options[spaces[targeted_space.coordinate.translate(target_direction.left)]&.name || :OO] = lambda do
           move(from_location: targeted_space.name, impact_direction: target_direction.left)
             .without_player_options
         end
-        options[spaces[targeted_space.coordinate.translate(target_direction.right)].name] = lambda do
+        options[spaces[targeted_space.coordinate.translate(target_direction.right)]&.name || :OO] = lambda do
           move(from_location: targeted_space.name, impact_direction: target_direction.right)
             .without_player_options
         end

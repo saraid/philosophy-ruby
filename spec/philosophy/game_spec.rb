@@ -111,18 +111,20 @@ RSpec.describe Philosophy::Game do
         expect(game.current_player.color.name).to eq :indigo
       end
 
-      xit 'handles a decision that pushes the piece off the board' do
+      it 'handles a decision that pushes the piece off the board' do
         game = Philosophy::Game.new
         game << Philosophy::Game::Event.from_notation('In+:indigo')
         game << Philosophy::Game::Event.from_notation('Sa+:sage')
         game << Philosophy::Game::Event.from_notation('In:C3DeNw')
         game << Philosophy::Game::Event.from_notation('Sa:C2SlNo')
+        expect(game.players[:sage].has_idea?(:Sl)).to eq false
         game << Philosophy::Game::Event.from_notation('In:C5SrNo')
         expect(game.board_state).to eq 'C3:SaSlNo/C5:InSrNo/E1:InDeNw'
         game << Philosophy::Game::Event.from_notation('Sa:C8PuNo')
         game << Philosophy::Game::Event.from_notation('In:C6PuNo')
-        expect(game.player_options).not_to be_empty
-        # TODO: There should be two choices, but what is the choice off the board?
+        expect(game.player_options).to eq %i[ C2 OO ]
+        game << Philosophy::Game::Event.from_notation('OO')
+        expect(game.players[:sage].has_idea?(:Sl)).to eq true
       end
     end
 

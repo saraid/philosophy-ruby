@@ -11,13 +11,16 @@ module Philosophy
       @current_context = nil
     end
     attr_reader :current_player, :current_context
-    attr_reader :players
 
     def board_state = @current_context.to_board.notation('/')
     def player_options = @current_context.player_options.keys.sort
     def nearing_conclusion? = @current_context.to_board.nearing_conclusion?
     def concluded? = @current_context.to_board.concluded?
     def conclusions = @current_context.to_board.conclusions
+
+    def players
+      @players.each.with_object({}) { _2.merge!(Hash[ _1.color.name => _1, _1.color.code => _1]) }
+    end
 
     def add_player(color)
       @players << Player.new(color)
@@ -35,6 +38,12 @@ module Philosophy
       @current_context = ActivationContext.new(@current_player).with_spaces(@board.spaces)
     end
 
+    def return_tiles(tiles)
+      tiles.each do |tile|
+        tile.owner.tile_returned(tile)
+      end
+    end
+
     def holding_respect_token = @respect
     def respect=(player)
       @respect = player
@@ -43,6 +52,14 @@ module Philosophy
     def <<(event)
       @history << (@current_event = event)
       @current_context = @current_event.execute(self)
+      #update_context!
+    end
+
+    private def update_context!
+      @current_context = @current_event.execute(self)
+      if @current_context.player_options.empty?
+        @current_context = advance_player(@current_context)
+      end
     end
 
     class Rules
@@ -84,6 +101,7 @@ module Philosophy
 
       def initialize(code:, type:, name: nil)
         @code, @type, @name = code, type, name
+        @name ||= @code
       end
       attr_reader :code, :type, :name
 
@@ -101,7 +119,7 @@ module Philosophy
         location: "(?<location>[CNESW][we1-9])",
         tile: "(?<tile>[A-Z][a-z])",
         direction: "(?<direction>No|We|Ea|So|[NS][we])",
-        parameters: "\\[?(?<parameters>(?:[A-Z][a-z1-9])*)\\]?",
+        parameters: "\\[?(?<parameters>(?:[A-Z][a-z1-9]|OO)*)\\]?",
         conclusion: "(?<conclusion>\\.?)",
       }
       NOTATION_REGEX = REGEXES
@@ -135,16 +153,18 @@ module Philosophy
           .make_automatic_choices!
           .then { parameters.reduce(_1, :choose) }
 
+        game.return_tiles(new_context.removed_tiles) if new_context.removed_tiles.any?
+
         if new_context.player_options.empty?
           game.advance_player(new_context)
         else
-          new_context
+         new_context
         end
       end
     end
 
     class Choice < Event
-      NOTATION_REGEX = /^(?<choice>[CNESW][we1-9])$/
+      NOTATION_REGEX = /^(?<choice>[CNESW][we1-9]|OO)$/
 
       def self.from_notation(notation)
         notation
@@ -160,6 +180,8 @@ module Philosophy
 
       def execute(game)
         new_context = game.current_context.choose(choice)
+
+        game.return_tiles(new_context.removed_tiles) if new_context.removed_tiles.any?
 
         if new_context.player_options.empty?
           game.advance_player(new_context)
