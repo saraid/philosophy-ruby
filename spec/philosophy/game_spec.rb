@@ -121,6 +121,17 @@ RSpec.describe Philosophy::Game do
         game << Philosophy::Game::Event.from_notation('We')
         expect(game.board_state).to eq 'C5:InPuWe/C7:TeReNe'
       end
+
+      it 'handles notational parameters' do
+        game = Philosophy::Game.new
+        game << Philosophy::Game::Event.from_notation('In+:indigo')
+        game << Philosophy::Game::Event.from_notation('Te+:teal')
+        game << Philosophy::Game::Event.from_notation('In:C5PuNo')
+        expect(game.board_state).to eq 'C5:InPuNo'
+        expect(game.current_player.color.name).to eq :teal
+        game << Philosophy::Game::Event.from_notation('Te:C7ReNe[We]')
+        expect(game.board_state).to eq 'C5:InPuWe/C7:TeReNe'
+      end
     end
   end
 end
