@@ -227,6 +227,24 @@ RSpec.describe Philosophy::Game do
         end
       end
 
+      it 'should not allow placement with less than 2 players' do
+        game2 = Philosophy::Game.new
+        expect { game2 << Philosophy::Game::Event.from_notation('In:C5XxNo') }
+          .to raise_error(Philosophy::Game::InsufficientPlayers)
+      end
+
+      it 'should not allow player joining with the same color code' do
+        game2 = Philosophy::Game.new
+        game2 << Philosophy::Game::Event.from_notation('In+')
+        expect { game2 << Philosophy::Game::Event.from_notation('In+') }
+          .to raise_error(Philosophy::Game::PlayerChange::PlayerCodeAlreadyUsed)
+      end
+
+      it 'should not allow placement by a different player' do
+        expect { game << Philosophy::Game::Event.from_notation('Sa:C5PuNo') }
+          .to raise_error(Philosophy::Game::Placement::IncorrectPlayer)
+      end
+
       it 'should not allow invalid tile types' do
         expect { game << Philosophy::Game::Event.from_notation('In:C5XxNo') }
           .to raise_error(Philosophy::Game::Placement::InvalidTileType)

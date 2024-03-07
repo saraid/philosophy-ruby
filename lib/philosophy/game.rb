@@ -1,7 +1,10 @@
 module Philosophy
   class Game
-    def initialize(rules: Rules.default, colors: {})
-      @rules, @colors = rules, colors
+    class Error < ArgumentError; end
+    class InsufficientPlayers < Error; end
+
+    def initialize(rules: Rules.default)
+      @rules = rules
       @board = Board.new
       @history = History.new
 
@@ -80,12 +83,15 @@ module Philosophy
         [PlayerChange, Placement, Choice, Respect]
           .find { _1::NOTATION_REGEX.match? notation }
           &.from_notation(notation)
+          &.tap { raise ArgumentError, notation unless _1 }
       end
 
       def execute(game) = raise NoMethodError
     end
 
     class PlayerChange < Event
+      class PlayerCodeAlreadyUsed < Game::Error; end
+
       NOTATION_REGEX = /(?<code>[A-Z][a-z])(?<type>[+-])(:(?<name>\w+))?/
       TYPES = {
         :+ => :joined,
@@ -108,6 +114,7 @@ module Philosophy
       attr_reader :code, :type, :name
 
       def execute(game)
+        raise PlayerCodeAlreadyUsed, code if type == :joined && game.players.key?(code)
         case type
         when :joined then game.add_player(Player::Color.new(name, code))
         when :left then game.remove_player(code)
@@ -123,6 +130,7 @@ module Philosophy
       class LocationOutsidePlacementSpace < InvalidLocation; end
       class CannotPlaceAtopExistingTile < Error; end
       class CannotOrientInTargetDirection < Error; end
+      class IncorrectPlayer < Error; end
 
       REGEXES = {
         player: "(?<player>[A-Z][a-z]):?",
@@ -158,6 +166,8 @@ module Philosophy
 
       def conclusion? = @conclusion
       def execute(game)
+        raise Game::InsufficientPlayers if game.players.size < 2
+        raise IncorrectPlayer if game.current_player.color.code != player
         new_context = game.current_context
           .place(player: game.current_player, location: location, tile: tile, direction: direction)
           .make_automatic_choices!
