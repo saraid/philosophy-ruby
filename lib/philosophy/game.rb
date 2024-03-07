@@ -155,7 +155,13 @@ module Philosophy
       attr_reader :choice
 
       def execute(game)
-        game.current_context.choose(choice)
+        new_context = game.current_context.choose(choice)
+
+        if new_context.player_options.empty?
+          game.advance_player(new_context)
+        else
+          new_context
+        end
       end
     end
   end

@@ -170,7 +170,9 @@ module Philosophy
         IdeaTile::VALID_TARGETS[targeted_space.tile.class.target]
           .map { Board::Direction[_1] }
           .each.with_object({}) do |dir, memo|
-            memo[dir.notation] = lambda { rotate(target_location: ts, target_direction: dir) }
+            memo[dir.notation] = lambda do
+              rotate(target_location: ts, target_direction: dir).without_player_options
+            end
           end
           .then { with_player_options _1 }
       end

@@ -94,6 +94,7 @@ RSpec.describe Philosophy::Game do
         expect(game.current_player.color.name).to eq :teal
         game << Philosophy::Game::Event.from_notation('C1')
         expect(game.board_state).to eq 'C1:InPuNo/C7:TeDeNe'
+        expect(game.player_options).to be_empty
         expect(game.current_player.color.name).to eq :indigo
       end
 
