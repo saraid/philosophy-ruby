@@ -64,14 +64,18 @@ module Philosophy
         .then { @current_event = _1 }
         .then { @history << _1 }
 
-      new_context = @current_event.execute(self)
-      return if new_context == @current_context
-      return_tiles(new_context.removed_tiles)
-      @current_context =
-        if new_context.player_options.empty?
-          advance_player(new_context)
-        else new_context
-        end
+      @current_event.execute(self).then do |new_context|
+        next if new_context == @current_context
+
+        return_tiles(new_context.removed_tiles)
+        @current_context =
+          if new_context.player_options.empty?
+            advance_player(new_context)
+          else new_context
+          end
+      end
+
+      @current_event
     end
 
     class Rules
