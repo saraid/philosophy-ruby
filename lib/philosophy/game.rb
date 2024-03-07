@@ -5,6 +5,7 @@ module Philosophy
       @board = Board.new
       @history = History.new
 
+      @respect = nil
       @players = []
       @current_player = @players.first
       @current_context = nil
@@ -34,9 +35,9 @@ module Philosophy
       @current_context = ActivationContext.new(@current_player).with_spaces(@board.spaces)
     end
 
-    def update_context(&)
-      raise ArgumentError, 'block required' unless block_given?
-      @current_context = @current_context.instance_eval(&)
+    def holding_respect_token = @respect
+    def respect=(player)
+      @respect = player
     end
 
     def <<(event)
@@ -59,7 +60,7 @@ module Philosophy
     class Event
       def notation = raise NoMethodError
       def self.from_notation(notation)
-        [PlayerChange, Placement, Choice]
+        [PlayerChange, Placement, Choice, Respect]
           .find { _1::NOTATION_REGEX.match? notation }
           &.from_notation(notation)
       end
@@ -165,6 +166,27 @@ module Philosophy
         else
           new_context
         end
+      end
+    end
+
+    class Respect < Event
+      NOTATION_REGEX = /^R:(?<player>[A-Z][a-z])$/
+
+      def self.from_notation(notation)
+        notation
+          .match(NOTATION_REGEX)
+          .then { _1[:player].to_sym }
+          .then { new(player: _1) }
+      end
+
+      def initialize(player:)
+        @player = player
+      end
+      attr_reader :player
+
+      def execute(game)
+        game.respect = player
+        game.current_context
       end
     end
   end

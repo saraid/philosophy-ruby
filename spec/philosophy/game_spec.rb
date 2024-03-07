@@ -174,5 +174,33 @@ RSpec.describe Philosophy::Game do
         expect(game).to be_nearing_conclusion
       end
     end
+
+    context 'handles the respect token' do
+      it 'should start unpossessed' do
+        game = Philosophy::Game.new
+        expect(game.holding_respect_token).to be_nil
+      end
+
+      it 'should be passable to another player from unpossessed' do
+        game = Philosophy::Game.new
+        game << Philosophy::Game::Event.from_notation('In+:indigo')
+        game << Philosophy::Game::Event.from_notation('Te+:teal')
+        game << Philosophy::Game::Event.from_notation('In:C5PuNo')
+        game << Philosophy::Game::Event.from_notation('R:In')
+        expect(game.holding_respect_token).to eq :In
+      end
+
+      it 'should be passable to player from another player' do
+        game = Philosophy::Game.new
+        game << Philosophy::Game::Event.from_notation('In+:indigo')
+        game << Philosophy::Game::Event.from_notation('Te+:teal')
+        game << Philosophy::Game::Event.from_notation('In:C5PuNo')
+        game << Philosophy::Game::Event.from_notation('R:In')
+        expect(game.holding_respect_token).to eq :In
+        game << Philosophy::Game::Event.from_notation('Te:C8PuNo')
+        game << Philosophy::Game::Event.from_notation('R:Te')
+        expect(game.holding_respect_token).to eq :Te
+      end
+    end
   end
 end
