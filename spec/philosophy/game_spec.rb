@@ -140,5 +140,39 @@ RSpec.describe Philosophy::Game do
         expect(game.current_player.color.name).to eq :indigo
       end
     end
+
+    context 'detects conclusions' do
+      it 'no reaction just conclusion' do
+        game = Philosophy::Game.new
+        %w[
+          In+:indigo
+          Te+:teal
+          In:C1PuNo
+          Te:C7PuSo
+          In:C2SlNo
+          Te:C8SlSo
+          In:C3SrNo
+        ].each { game << Philosophy::Game::Event.from_notation(_1) }
+
+        expect(game.board_state).to eq 'C1:InPuNo/C2:InSlNo/C3:InSrNo/C7:TePuSo/C8:TeSlSo'
+        expect(game).to be_concluded
+        expect(game.conclusions).to eq [Set.new([:C1, :C2, :C3])]
+      end
+
+      it 'sees near conclusions' do
+        game = Philosophy::Game.new
+        %w[
+          In+:indigo
+          Te+:teal
+          In:C1PuNo
+          Te:C7PuSo
+          In:C2SlNo
+          Te:C8SlSo
+        ].each { game << Philosophy::Game::Event.from_notation(_1) }
+
+        expect(game.board_state).to eq 'C1:InPuNo/C2:InSlNo/C7:TePuSo/C8:TeSlSo'
+        expect(game).to be_nearing_conclusion
+      end
+    end
   end
 end

@@ -194,17 +194,19 @@ module Philosophy
         conclusions << Set.new([name, name2, name3])
       end
     end
-    def concluded?
-      CONCLUSIONS.any? do |conclusion|
+    # There are only 84 possible conclusions, so let's just brute-force this.
+    def conclusions
+      CONCLUSIONS.select do |conclusion|
         owners = conclusion.map { spaces[_1].tile&.owner }
         owners.compact.size == 3 && owners.uniq.size == 1
       end
     end
+    def concluded? = conclusions.any?
     def nearing_conclusion?
       CONCLUSIONS.any? do |conclusion|
         owners = conclusion.map { spaces[_1].tile&.owner }
         empty_space = spaces[conclusion.find { spaces[_1].tile.nil? }]
-        empty_space&.playable? && owners.compact.size == 2 && owners.compact.uniq.size == 1
+        owners.compact.size == 2 && owners.compact.uniq.size == 1
       end
     end
   end
