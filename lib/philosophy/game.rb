@@ -26,8 +26,10 @@ module Philosophy
     end
 
     def add_player(color)
+      Philosophy.logger.debug("Adding player #{color}")
       @players << Player.new(color)
       @current_player = @players.first
+      puts "Current: #{@current_player.color}"
       @current_context ||= ActivationContext.new(@current_player).with_spaces(@board.spaces)
     end
 
@@ -35,6 +37,7 @@ module Philosophy
     end
 
     def advance_player(context)
+      Philosophy.logger.debug("Advancing turn")
       @board = context.to_board
       @players << @players.shift
       @current_player = @players.first
@@ -53,16 +56,22 @@ module Philosophy
     end
 
     def <<(event)
-      @history << (@current_event = event)
-      @current_context = @current_event.execute(self)
-      #update_context!
-    end
-
-    private def update_context!
-      @current_context = @current_event.execute(self)
-      if @current_context.player_options.empty?
-        @current_context = advance_player(@current_context)
+      case event
+      when String then Event.from_notation(event)
+      when Event then event
+      else raise ArgumentError, event.inspect
       end
+        .then { @current_event = _1 }
+        .then { @history << _1 }
+
+      new_context = @current_event.execute(self)
+      return if new_context == @current_context
+      return_tiles(new_context.removed_tiles)
+      @current_context =
+        if new_context.player_options.empty?
+          advance_player(new_context)
+        else new_context
+        end
     end
 
     class Rules
@@ -168,18 +177,10 @@ module Philosophy
       def execute(game)
         raise Game::InsufficientPlayers if game.players.size < 2
         raise IncorrectPlayer if game.current_player.color.code != player
-        new_context = game.current_context
+        game.current_context
           .place(player: game.current_player, location: location, tile: tile, direction: direction)
           .make_automatic_choices!
           .then { parameters.reduce(_1, :choose) }
-
-        game.return_tiles(new_context.removed_tiles) if new_context.removed_tiles.any?
-
-        if new_context.player_options.empty?
-          game.advance_player(new_context)
-        else
-         new_context
-        end
       end
     end
 
@@ -200,17 +201,7 @@ module Philosophy
       end
       attr_reader :choice
 
-      def execute(game)
-        new_context = game.current_context.choose(choice)
-
-        game.return_tiles(new_context.removed_tiles) if new_context.removed_tiles.any?
-
-        if new_context.player_options.empty?
-          game.advance_player(new_context)
-        else
-          new_context
-        end
-      end
+      def execute(game) = game.current_context.choose(choice)
     end
 
     class Respect < Event
