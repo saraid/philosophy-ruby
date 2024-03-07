@@ -7,3 +7,6 @@ require_relative 'philosophy/game'
 require_relative 'philosophy/activation_context'
 #require_relative 'philosophy/lemma'
 
+module Philosophy
+  def self.logger = @logger ||= Logger.new($stderr)
+end

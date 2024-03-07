@@ -36,6 +36,7 @@ module Philosophy
     class CannotPlaceAtopExistingTile < PlacementError; end
     class CannotOrientInTargetDirection < PlacementError; end
     def place(player:, tile:, location:, direction:)
+      Philosophy.logger.debug("#place #{player.color.name} #{tile} #{location} #{direction}")
       raise CannotPlaceAtopExistingTile if spaces[location].occupied?
 
       tile_instance = player.placed_tile(tile)
@@ -48,6 +49,7 @@ module Philosophy
     end
 
     def move(from_location:, impact_direction:, impact_distance: 1)
+      Philosophy.logger.debug("#move #{from_location} #{impact_direction} #{impact_distance}")
       moved_tile = spaces[from_location].tile
       target_space = spaces[spaces[from_location].coordinate.translate(impact_direction, impact_distance)]
       if target_space.nil?
@@ -102,7 +104,7 @@ module Philosophy
     end
     chain def with_chain_reactions
       #raise 'did you mean to do this' unless @player_options.empty?
-      return unless @player_options.empty?
+      #return unless @player_options.empty?
       activation_candidates.each.with_object({}) do |candidate, memo|
         memo[candidate] = lambda { activate(candidate) }
       end.then { with_player_options _1 }
@@ -112,29 +114,38 @@ module Philosophy
       current_player_spaces = spaces.values.select { _1.occupied? && _1.tile.owner == current_player }
       targeting_enemy_activatables = possible_activation_targets.map do |target|
         current_player_spaces.select do |space|
+          next if already_activated.include?(space.name)
           space.tile.activation_target(spaces, space.name).name == target
         end.map(&:name)
       end.flatten.compact
 
       real_activatables = possible_activations.select do |location|
         space = spaces[location]
+        next if already_activated.include?(space.name)
         target_space = space.tile.activation_target(spaces, space.name)
         target_space.occupied? && target_space.tile.owner != current_player
       end
 
-      Set.new(real_activatables + targeting_enemy_activatables) - already_activated
+      Set.new(real_activatables + targeting_enemy_activatables)
     end
 
     def activate(location)
+      Philosophy.logger.debug("#activate #{location}")
       @already_activated << spaces[location].name
       activated_tile = spaces[location].tile
       targeted_space = activated_tile.activation_target(spaces, spaces[location].name)
 
       case activated_tile
       when Tile::Push, Tile::CornerPush,
-        Tile::SlideLeft, Tile::SlideRight,
         Tile::LongShot, Tile::CornerLongShot
         move(from_location: targeted_space.name, impact_direction: activated_tile.target)
+          .without_player_options
+          .with_chain_reactions
+      when Tile::SlideLeft
+        move(from_location: targeted_space.name, impact_direction: activated_tile.target.left)
+          .without_player_options
+      when Tile::SlideRight
+        move(from_location: targeted_space.name, impact_direction: activated_tile.target.right)
           .without_player_options
       when Tile::PullLeft
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.pull_left)
