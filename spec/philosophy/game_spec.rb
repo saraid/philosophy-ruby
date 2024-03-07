@@ -67,8 +67,8 @@ RSpec.describe Philosophy::Game do
   end
 
   describe Philosophy::Game do
-    context 'simple game' do
-      it 'plays' do
+    context 'simple play' do
+      it 'triggers activations properly' do
         game = Philosophy::Game.new
         game << Philosophy::Game::Event.from_notation('In+:indigo')
         game << Philosophy::Game::Event.from_notation('Te+:teal')
@@ -82,7 +82,7 @@ RSpec.describe Philosophy::Game do
     end
 
     context 'handles a decision' do
-      it 'plays' do
+      it 'handles player choice' do
         game = Philosophy::Game.new
         game << Philosophy::Game::Event.from_notation('In+:indigo')
         game << Philosophy::Game::Event.from_notation('Te+:teal')
@@ -90,7 +90,36 @@ RSpec.describe Philosophy::Game do
         expect(game.board_state).to eq 'C5:InPuNo'
         expect(game.current_player.color.name).to eq :teal
         game << Philosophy::Game::Event.from_notation('Te:C7DeNe')
-        expect(game.current_context.player_options).not_to be_empty
+        expect(game.player_options).to eq %i[ C1 C9 ]
+        game << Philosophy::Game::Event.from_notation('C1')
+        expect(game.board_state).to eq 'C1:InPuNo/C7:TeDeNe'
+      end
+
+      it 'handles notational parameters' do
+        game = Philosophy::Game.new
+        game << Philosophy::Game::Event.from_notation('In+:indigo')
+        game << Philosophy::Game::Event.from_notation('Te+:teal')
+        game << Philosophy::Game::Event.from_notation('In:C5PuNo')
+        expect(game.board_state).to eq 'C5:InPuNo'
+        expect(game.current_player.color.name).to eq :teal
+        game << Philosophy::Game::Event.from_notation('Te:C7DeNe[C1]')
+        expect(game.player_options).to be_empty
+        expect(game.board_state).to eq 'C1:InPuNo/C7:TeDeNe'
+      end
+    end
+
+    context 'handles a rephrase' do
+      it 'handles player choice' do
+        game = Philosophy::Game.new
+        game << Philosophy::Game::Event.from_notation('In+:indigo')
+        game << Philosophy::Game::Event.from_notation('Te+:teal')
+        game << Philosophy::Game::Event.from_notation('In:C5PuNo')
+        expect(game.board_state).to eq 'C5:InPuNo'
+        expect(game.current_player.color.name).to eq :teal
+        game << Philosophy::Game::Event.from_notation('Te:C7ReNe')
+        expect(game.player_options).to eq %i[ Ea No So We ]
+        game << Philosophy::Game::Event.from_notation('We')
+        expect(game.board_state).to eq 'C5:InPuWe/C7:TeReNe'
       end
     end
   end

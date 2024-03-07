@@ -85,6 +85,7 @@ module Philosophy
 
     chain def with_spaces(new_spaces) = spaces.merge!(new_spaces.to_h)
     chain def with_player_options(options) = @player_options = options
+    chain def without_player_options = @player_options = {}
     chain def removing_tile(tile) = @removed_tiles << tile
     chain def can_activate(location) = @possible_activations << spaces[location].name
     chain def can_be_targeted(location) = @possible_activation_targets << spaces[location].name
@@ -134,26 +135,35 @@ module Philosophy
         Tile::SlideLeft, Tile::SlideRight,
         Tile::LongShot, Tile::CornerLongShot
         move(from_location: targeted_space.name, impact_direction: activated_tile.target)
+          .without_player_options
       when Tile::PullLeft
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.pull_left)
+          .without_player_options
       when Tile::PullRight
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.pull_right)
+          .without_player_options
       when Tile::Toss
         move(
           from_location: targeted_space.name,
           impact_direction: activated_tile.target.backward,
           impact_distance: 2
         )
+          .without_player_options
       when Tile::Persuade
         # using collision to move yourself
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.backward)
+          .without_player_options
       when Tile::Decision
         target_direction = activated_tile.target
         options = {}
-        options[spaces[targeted_space.coordinate.translate(target_direction.left)].name] =
-          lambda { move(from_location: targeted_space.name, impact_direction: target_direction.left) }
-        options[spaces[targeted_space.coordinate.translate(target_direction.right)].name] =
-          lambda { move(from_location: targeted_space.name, impact_direction: target_direction.right) }
+        options[spaces[targeted_space.coordinate.translate(target_direction.left)].name] = lambda do
+          move(from_location: targeted_space.name, impact_direction: target_direction.left)
+            .without_player_options
+        end
+        options[spaces[targeted_space.coordinate.translate(target_direction.right)].name] = lambda do
+          move(from_location: targeted_space.name, impact_direction: target_direction.right)
+            .without_player_options
+        end
         with_player_options(options)
       when Tile::Rephrase
         ts = targeted_space.name
@@ -163,6 +173,15 @@ module Philosophy
             memo[dir.notation] = lambda { rotate(target_location: ts, target_direction: dir) }
           end
           .then { with_player_options _1 }
+      end
+    end
+
+    def make_automatic_choices!
+      if @player_options.size == 1
+        choose(@player_options.keys.first)
+          .make_automatic_choices!
+      else
+        self
       end
     end
 

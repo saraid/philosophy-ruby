@@ -13,6 +13,7 @@ module Philosophy
     attr_reader :players
 
     def board_state = @current_context.to_board.notation('/')
+    def player_options = @current_context.player_options.keys.sort
 
     def add_player(color)
       @players << Player.new(color)
@@ -55,7 +56,7 @@ module Philosophy
     class Event
       def notation = raise NoMethodError
       def self.from_notation(notation)
-        [PlayerChange, Placement]
+        [PlayerChange, Placement, Choice]
           .find { _1::NOTATION_REGEX.match? notation }
           &.from_notation(notation)
       end
@@ -127,21 +128,34 @@ module Philosophy
       def execute(game)
         new_context = game.current_context
           .place(player: game.current_player, location: location, tile: tile, direction: direction)
+          .make_automatic_choices!
           .then { parameters.reduce(_1, :choose) }
-
-        while new_context.player_options.size <= 1
-          break if new_context.player_options.empty?
-          new_context.player_options.keys.first.then do
-            parameters << _1
-            new_context = new_context.choose _1
-          end
-        end
 
         if new_context.player_options.empty?
           game.advance_player(new_context)
         else
           new_context
         end
+      end
+    end
+
+    class Choice < Event
+      NOTATION_REGEX = /^(?<choice>[CNESW][we1-9])$/
+
+      def self.from_notation(notation)
+        notation
+          .match(NOTATION_REGEX)
+          .then { _1[:choice].to_sym }
+          .then { new(choice: _1) }
+      end
+
+      def initialize(choice:)
+        @choice = choice
+      end
+      attr_reader :choice
+
+      def execute(game)
+        game.current_context.choose(choice)
       end
     end
   end
