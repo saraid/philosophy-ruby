@@ -160,7 +160,7 @@ module Philosophy
     end
     attr_reader :spaces
 
-    def inspect = "Board(#{notation('/')})"
+    def inspect = "Board(#{notation(delimiter: '/')})"
     def [](location) = spaces[location]
     def with(tile:, on_location:) = Board.new(spaces.merge(spaces[on_location].with(tile: tile)))
 
@@ -176,7 +176,7 @@ module Philosophy
       [:SW],
       (1..6).map { :"W#{_1}" },
     ].reduce(:+)
-    def notation(delimiter = $/)
+    def notation(delimiter: $/)
       SPACE_NAMES
         .map { @spaces[_1] }
         .map { _1.notation if _1.occupied? }

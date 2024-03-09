@@ -29,7 +29,7 @@ module Philosophy
     attr_reader :board
 
     def player_order = @players.map(&:color).map(&:code)
-    def board_state = @current_context.to_board.notation('/')
+    def board_state = @current_context.to_board.notation(delimiter: '/')
     def player_options = @current_context.player_options.keys.sort
     def nearing_conclusion? = @current_context.to_board.nearing_conclusion?
     def concluded? = @current_context.to_board.concluded?
