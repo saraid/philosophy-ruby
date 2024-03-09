@@ -268,6 +268,7 @@ RSpec.describe Philosophy::ActivationContext do
           .place(player: teal, tile: :push, location: :C2, direction: :east)
           .reset_context
           .place(player: indigo, tile: :persuade, location: :C5, direction: :north)
+          .tap { $debug = true }
           .activate(:C5)
 
         expect(context[:C2]).not_to be_occupied

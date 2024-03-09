@@ -53,7 +53,7 @@ module Philosophy
     def initialize(owner)
       @owner = owner
       @target = nil
-      @moved_this_turn = false
+      @already_activated = false
     end
     attr_reader :owner
     attr_accessor :target
@@ -63,6 +63,10 @@ module Philosophy
     def activation_target(spaces, from_location)
       spaces[spaces[from_location].coordinate.translate(target, self.class.target_distance)]
     end
+
+    def already_activated? = @already_activated
+    def already_activated! = @already_activated = true
+    def reset_state = @already_activated = false
   end
 
   module Tile

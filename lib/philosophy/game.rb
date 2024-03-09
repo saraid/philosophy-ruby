@@ -32,8 +32,8 @@ module Philosophy
     def board_state = @current_context.to_board.notation(delimiter: '/')
     def player_options = @current_context.player_options.keys.sort
     def nearing_conclusion? = @current_context.to_board.nearing_conclusion?
-    def concluded? = @current_context.to_board.concluded?
     def conclusions = @current_context.to_board.conclusions
+    def concluded? = conclusions.size == 1
 
     def started? = @started ||= !!@history.find { Placement === _1 }
 

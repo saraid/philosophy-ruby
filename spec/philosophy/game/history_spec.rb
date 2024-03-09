@@ -83,8 +83,7 @@ RSpec.describe Philosophy::Game::History do
       game << 'Te:C2SlNo'
       game << 'In:C9SrNo'
       game << 'Te:C6PeSo'
-      #expect(game).to be_concluded
-      byebug
+      expect(game).not_to be_concluded # because there are multiple conclusions
       expect(history).to eq 'In+;Te+;In:C4PuSo;Te:C1PuNo;In:C5SlSo;Te:C2SlNo;In:C9SrNo;Te:C6PeSo..'
     end
   end

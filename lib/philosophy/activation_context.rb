@@ -6,13 +6,12 @@ module Philosophy
       @removed_tiles = []
       @possible_activations = Set.new
       @possible_activation_targets = Set.new
-      @already_activated = Set.new
       @player_options = {}
     end
     attr_reader :current_player
     attr_reader :spaces
     attr_reader :removed_tiles, :player_options
-    attr_reader :possible_activations, :possible_activation_targets, :already_activated
+    attr_reader :possible_activations, :possible_activation_targets
 
     def [](location) = spaces[location]
 
@@ -21,7 +20,6 @@ module Philosophy
       removed_tiles.each { new_context.removing_tile _1 }
       possible_activations.each { new_context.can_activate _1 }
       possible_activation_targets.each { new_context.can_be_targeted _1 }
-      already_activated.each { new_context.was_already_activated _1 }
       new_context.with_player_options(@player_options)
     end
     def reset_context
@@ -89,7 +87,6 @@ module Philosophy
     chain def removing_tile(tile) = @removed_tiles << tile
     chain def can_activate(location) = @possible_activations << spaces[location].name
     chain def can_be_targeted(location) = @possible_activation_targets << spaces[location].name
-    chain def was_already_activated(location) = @already_activated << spaces[location].name
     chain def consider_activating(location)
       space = spaces[location]
       return without_player_options unless space&.occupied?
@@ -113,14 +110,15 @@ module Philosophy
       current_player_spaces = spaces.values.select { _1.occupied? && _1.tile.owner == current_player }
       targeting_enemy_activatables = possible_activation_targets.map do |target|
         current_player_spaces.select do |space|
-          next if already_activated.include?(space.name)
+          next if space.tile&.already_activated?
           space.tile.activation_target(spaces, space.name).name == target
         end.map(&:name)
       end.flatten.compact
 
       real_activatables = possible_activations.select do |location|
         space = spaces[location]
-        next if already_activated.include?(space.name)
+        next unless space.occupied?
+        next if space.tile.already_activated?
         target_space = space.tile.activation_target(spaces, space.name)
         target_space.occupied? && target_space.tile.owner != current_player
       end
@@ -130,7 +128,7 @@ module Philosophy
 
     def activate(location)
       Philosophy.logger.debug("#activate #{location}")
-      @already_activated << spaces[location].name
+      spaces[location].tile.already_activated!
       activated_tile = spaces[location].tile
       targeted_space = activated_tile.activation_target(spaces, spaces[location].name)
 
