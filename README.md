@@ -129,5 +129,5 @@ Notated simply with `R:In` to pass it to the Indigo player.
   - [ ] It'd be neat to match colors with actual colorspace definitions.
   - [ ] It'd be nice to actually assign names to players, too.
 - [ ] Oh yeah, actually get my PGN parser in here.
-- [ ] Figure out how to convert Game::Placement into notation safely.
-  - [ ] Figure out how to roll Game::Choice events back into Placements.
+- [x] Figure out how to convert Game::Placement into notation safely.
+  - [x] Figure out how to roll Game::Choice events back into Placements.

@@ -19,13 +19,17 @@ module Philosophy
           break if event.nil?
           case event
           when Placement
+            last_choice = nil
             choices = []
             begin
-              choices << iter.next.choice while Choice === iter.peek
+              choices << (last_choice = iter.next).choice while Choice === iter.peek
             rescue StopIteration
               # ignore when peek raises StopIteration
             end
-            result << event.notation(parameters: event.parameters + choices)
+            result << event.notation(
+              parameters: event.parameters + choices,
+              options: (last_choice&.options || event.options).to_h
+            )
           else result << event.notation
           end
         end

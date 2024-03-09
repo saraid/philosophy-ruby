@@ -14,10 +14,15 @@ module Philosophy
 
       def initialize(choice:)
         @choice = choice
+        @options = {}
       end
-      attr_reader :choice
+      attr_reader :choice, :options
 
-      def execute(game) = game.current_context.choose(choice)
+      def execute(game)
+        game.current_context
+          .choose(choice)
+          .tap { @options = _1.player_options }
+      end
     end
   end
 end

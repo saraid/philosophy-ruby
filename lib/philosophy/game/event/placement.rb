@@ -43,7 +43,7 @@ module Philosophy
       attr_reader :player, :location, :tile, :direction, :parameters, :options
 
       def conclusion? = @conclusion
-      def notation(parameters: [])
+      def notation(parameters: [], options: {})
         option_notation = options.keys.sort.join.then { "(#{_1})" unless _1.empty? } || ''
         parameter_notation = parameters
           .join
