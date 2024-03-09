@@ -102,6 +102,8 @@ RSpec.describe Philosophy::Game::Rules do
         game << 'Te+'
         expect(game).not_to be_started
         expect { game << 'In-' }.not_to raise_error
+        expect(game.player_order).to eq %i[ Sa Am Te ]
+        expect(game.current_player.color.code).to eq :Sa
       end
 
       it 'should disallow leaving after game started' do

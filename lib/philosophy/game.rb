@@ -43,7 +43,7 @@ module Philosophy
 
     private def normalize_player_state
       @current_player = @players.first
-      @current_context ||= ActivationContext.new(@current_player).with_spaces(@board.spaces)
+      @current_context = ActivationContext.new(@current_player).with_spaces(@board.spaces)
     end
 
     def add_player(color)
@@ -59,10 +59,11 @@ module Philosophy
       normalize_player_state
     end
 
-    def remove_player(color)
-      Philosophy.logger.debug("Removing player #{color}")
+    def remove_player(color_code)
+      Philosophy.logger.debug("Removing player #{color_code}")
       raise DisallowedByRule if @rules.can_leave.never?
       raise DisallowedByRule if @rules.can_leave.before_any_placement? && started?
+      @players.reject! { _1.color.code == color_code }
       normalize_player_state
     end
 
@@ -80,9 +81,7 @@ module Philosophy
     end
 
     def holding_respect_token = @respect
-    def respect=(player)
-      @respect = player
-    end
+    attr_writer :respect
 
     def <<(event)
       case event
