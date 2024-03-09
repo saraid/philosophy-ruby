@@ -90,7 +90,7 @@ What it means:
 If the parameter is a decision moving a tile off the board, then the parameter is `OO`. This should be the only circumstance where that is possible.
 
 If a move is incomplete, we leave the right-bracket off, and instead list the options in parentheses:
-- E.g., `Am:C2ReNw[(EaNoSoWe)` when a Rephrase tile is pointing at a Push tile, but has not decided where the tile should be oriented.
+- E.g., `Am:C2ReNw(EaNoSoWe)` when a Rephrase tile is pointing at a Push tile, but has not decided where the tile should be oriented.
 - E.g., `Sa:C9PuNo[E1(C5NE)`
 
 If a move creates a conclusion, then we notate that with a trailing `.`. If it creates multiple conclusions, we notate each with an additional `.`.
@@ -100,7 +100,7 @@ When a player joins or leaves, we can notate that with `In+` or `In-`. This code
 
 We can optionally specify the full name of the color with `In+:indigo`. This is intended as long-form color name, but can be anything.
 
-You may theoretically do 'In+:Charlie;In-;In+:Chris'.
+You may theoretically do `In+:Charlie;In-;In+:Chris`.
 
 A player concession should be notated as a leave event.
 
