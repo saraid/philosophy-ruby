@@ -114,21 +114,30 @@ Notated simply with `R:In` to pass it to the Indigo player.
 
 ## Rule Variations
 
+You should be able to create a game with rule variations thus:
+```ruby
+Philosophy::Game.with_rules(
+  join: { when_option: :after_placement, where: :after_a_full_turn },
+  leave: { when_option: :never, where: :remove_their_tiles }
+)
+```
+
 ### Joining
 - When can a new player join a game?
-  - `:only_before_any_placement` - Before any tiles have been played.
+  - `:only_before_any_placement` (default) - Before any tiles have been played.
   - `:after_placement` - Anytime
 - Where in the turn order is a new player inserted?
-  - `:immediately_next` - The new player will place the next tile.
+  - Note that this rule is ignored for joins before game start.
+  - `:immediately_next` (default) - The new player will place the next tile.
   - `:after_a_full_turn` - Every previous player will have the chance to play a tile first.
 
 ### Leaving
 - When can a player leave the game?
-  - `:only_before_any_placement` - Players can only leave if the game hasn't started.
+  - `:only_before_any_placement` (default) - Players can only leave if the game hasn't started.
   - `:never` - Joined players may not ever leave.
   - `:anytime` - Joined players may leave at any point.
 - What happens to the board when a player leaves the game?
-  - `:ends_game` - The game if forced to end if a player leaves. No further tiles may be played.
+  - `:ends_game` (default) - The game if forced to end if a player leaves. No further tiles may be played.
   - `:rollback_placement` - If the player was in the middle of placing a tile or activating chain reactions, those decisions are rolled back such that the player never placed a tile.
   - `:remove_their_tiles` - All the tiles the player has played are removed from the board, clearing space.
 
