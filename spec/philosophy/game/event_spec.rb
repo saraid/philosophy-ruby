@@ -14,6 +14,20 @@ RSpec.describe Philosophy::Game::Event do
         expect(event.name).to eq :indigo
       end
 
+      it 'handles having a color name that has whitespace' do
+        event = Philosophy::Game::PlayerChange.from_notation('In+:Charlie Brown')
+        expect(event.code).to eq :In
+        expect(event.type).to eq :joined
+        expect(event.name).to eq :"Charlie Brown"
+      end
+
+      it 'handles having a color name that has unicode' do
+        event = Philosophy::Game::PlayerChange.from_notation('In+:老子')
+        expect(event.code).to eq :In
+        expect(event.type).to eq :joined
+        expect(event.name).to eq :"老子"
+      end
+
       it 'handles leaving' do
         event = Philosophy::Game::PlayerChange.from_notation('In-')
         expect(event.code).to eq :In

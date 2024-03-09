@@ -3,7 +3,7 @@ module Philosophy
     class PlayerChange < Event
       class PlayerCodeAlreadyUsed < Game::Error; end
 
-      NOTATION_REGEX = /(?<code>[A-Z][a-z])(?<type>[+-])(:(?<name>\w+))?/
+      NOTATION_REGEX = /(?<code>[A-Z][a-z])(?<type>[+-])(:(?<name>.+))?/
       TYPES = {
         :+ => :joined,
         :- => :left,

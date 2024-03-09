@@ -96,9 +96,11 @@ If a move is incomplete, we leave the right-bracket off, and instead list the op
 If a move creates a conclusion, then we notate that with a trailing `.`. If it creates multiple conclusions, we notate each with an additional `.`.
 
 ### Player Change
-When a player joins or leaves, we can notate that with `In+` or `In-`.
+When a player joins or leaves, we can notate that with `In+` or `In-`. This code must be unique at the time of the player joining.
 
-We can optionally specify the full name of the color with `In+:indigo`.
+We can optionally specify the full name of the color with `In+:indigo`. This is intended as long-form color name, but can be anything.
+
+You may theoretically do 'In+:Charlie;In-;In+:Chris'.
 
 ### The Board
 The board is notated as a description of every occupied space, ordered from C, NW, N, NE, E, SE, S, SW, W, delimited by `/`.
