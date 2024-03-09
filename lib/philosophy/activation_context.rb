@@ -87,6 +87,13 @@ module Philosophy
     chain def removing_tile(tile) = @removed_tiles << tile
     chain def can_activate(location) = @possible_activations << spaces[location].name
     chain def can_be_targeted(location) = @possible_activation_targets << spaces[location].name
+    chain def without_tiles_belonging_to(player) 
+      to_board.each
+        .select { _1.tile&.owner == player }
+        .map { _1.with(tile: nil) }
+        .reduce(:merge)
+        .then { with_spaces _1 }
+    end
     chain def consider_activating(location)
       space = spaces[location]
       return without_player_options unless space&.occupied?

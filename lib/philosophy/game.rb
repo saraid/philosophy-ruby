@@ -34,6 +34,7 @@ module Philosophy
     def nearing_conclusion? = @current_context.to_board.nearing_conclusion?
     def conclusions = @current_context.to_board.conclusions
     def concluded? = conclusions.one?
+    def continuable? = !@current_context.to_board.playable_area_full? && @current_player.has_tiles?
 
     def started? = @started ||= !!@history.find { Placement === _1 }
 
@@ -63,7 +64,10 @@ module Philosophy
       Philosophy.logger.debug("Removing player #{color_code}")
       raise DisallowedByRule if @rules.can_leave.never?
       raise DisallowedByRule if @rules.can_leave.before_any_placement? && started?
-      @players.reject! { _1.color.code == color_code }
+      removed_player = @players.delete(players[color_code])
+      if @rules.can_leave.remove_their_tiles?
+        @board = @current_context.without_tiles_belonging_to(removed_player).to_board
+      end
       normalize_player_state
     end
 

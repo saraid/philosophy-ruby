@@ -30,7 +30,7 @@ module Philosophy
         WHEN = %i[ before_any_placement never anytime ]
 
         # What happens when a player leaves in the middle of a placement?
-        WHAT = %i[ ends_game rollback_placement ]
+        WHAT = %i[ ends_game rollback_placement remove_their_tiles ]
 
         { when: WHEN, what: WHAT }.each do |preposition, options|
           options.each do |option|

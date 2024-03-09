@@ -15,6 +15,7 @@ module Philosophy
     def has_idea?(type) = !!idea(type)
     def placed_tile(type) = @tiles.delete(idea(type))
     def tile_returned(tile) = @tiles << tile
+    def has_tiles? = @tiles.any?
 
     def notation = @color.code
     def to_s = color.to_s.capitalize

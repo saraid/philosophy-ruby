@@ -162,6 +162,7 @@ module Philosophy
 
     def inspect = "Board(#{notation(delimiter: '/')})"
     def [](location) = spaces[location]
+    def each(...) = NAMED_COORDINATES.keys.map { spaces[_1] }.each(...)
     def with(tile:, on_location:) = Board.new(spaces.merge(spaces[on_location].with(tile: tile)))
 
     # Providing a reliable ordering.
@@ -183,6 +184,8 @@ module Philosophy
         .compact
         .join(delimiter)
     end
+
+    def playable_area_full? = (1..9).map { spaces[:"C#{_1}"] }.all?(&:occupied?)
 
     COORDINATE_NAMES = NAMED_COORDINATES.invert
     CONCLUSIONS = COORDINATE_NAMES.each.with_object(Set.new) do |(coordinate, name), conclusions|

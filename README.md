@@ -102,6 +102,8 @@ We can optionally specify the full name of the color with `In+:indigo`. This is 
 
 You may theoretically do 'In+:Charlie;In-;In+:Chris'.
 
+A player concession should be notated as a leave event.
+
 ### The Board
 The board is notated as a description of every occupied space, ordered from C, NW, N, NE, E, SE, S, SW, W, delimited by `/`.
 
@@ -112,8 +114,8 @@ Notated simply with `R:In` to pass it to the Indigo player.
 
 ## To-do
 
-- [ ] Handle the game over conditions better.
-  - [ ] If there are multiple conclusions, the game is supposed to continue, so #concluded? is technically the wrong API. (Added a note on how to notate multiple conclusions.)
+- [x] Handle the game over conditions better.
+  - [x] If there are multiple conclusions, the game is supposed to continue, so #concluded? is technically the wrong API. (Added a note on how to notate multiple conclusions.)
   - [ ] The "full board" and "empty hand" states aren't accounted for.
   - [ ] There should be notation for conceding.
 - [ ] Formalize and implement rules about:

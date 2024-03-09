@@ -77,7 +77,7 @@ RSpec.describe Philosophy::Game::Rules do
 
   describe Philosophy::Game::Rules::LeaveRule do
     let(:leave_rule) { Philosophy::Game::Rules::LeaveRule.new(when_option: when_option, what: what_option) }
-    let(:when_option) { :before_any_placement }
+    let(:when_option) { :anytime }
     let(:what_option) { :ends_game }
 
     context 'never' do
@@ -129,12 +129,26 @@ RSpec.describe Philosophy::Game::Rules do
         game << 'Am+'
         game << 'Te+'
         game << 'In:C5PuNo'
-        expect { game << 'In-' }.to raise_error(Philosophy::Game::DisallowedByRule)
+        game << 'In-'
       end
     end
 
     context 'rollback_placement' do
       let(:what_option) { :rollback_placement }
+    end
+
+    context 'remove_their_tiles' do
+      let(:what_option) { :remove_their_tiles }
+
+      it 'removes their tiles' do
+        game << 'In+'
+        game << 'Am+'
+        game << 'In:C5PuNo'
+        game << 'Am:C4PuNo'
+        game << 'In:C6LsNo'
+        game << 'In-'
+        expect(game.board_state).to eq 'C4:AmPuNo'
+      end
     end
   end
 end
