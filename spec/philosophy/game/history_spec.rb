@@ -73,5 +73,19 @@ RSpec.describe Philosophy::Game::History do
       expect(game).to be_concluded
       expect(history).to eq 'In+;Te+;In:C1PuNo;Te:C7PuSo;In:C2SlNo;Te:C8SlSo;In:C3SrNo.'
     end
+
+    it 'notices multiple conclusions' do
+      game << 'In+:indigo'
+      game << 'Te+:teal'
+      game << 'In:C4PuSo'
+      game << 'Te:C1PuNo'
+      game << 'In:C5SlSo'
+      game << 'Te:C2SlNo'
+      game << 'In:C9SrNo'
+      game << 'Te:C6PeSo'
+      #expect(game).to be_concluded
+      byebug
+      expect(history).to eq 'In+;Te+;In:C4PuSo;Te:C1PuNo;In:C5SlSo;Te:C2SlNo;In:C9SrNo;Te:C6PeSo..'
+    end
   end
 end
