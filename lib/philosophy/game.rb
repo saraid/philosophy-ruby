@@ -19,6 +19,7 @@ module Philosophy
       @history = History.new
 
       @started = false
+      @force_conclusion = false
 
       @respect = nil
       @players = []
@@ -33,7 +34,7 @@ module Philosophy
     def player_options = @current_context.player_options.keys.sort
     def nearing_conclusion? = @current_context.to_board.nearing_conclusion?
     def conclusions = @current_context.to_board.conclusions
-    def concluded? = conclusions.one?
+    def concluded? = @force_conclusion || conclusions.one?
     def continuable? = !@current_context.to_board.playable_area_full? && @current_player.has_tiles?
 
     def started? = @started ||= !!@history.find { Placement === _1 }
@@ -49,10 +50,13 @@ module Philosophy
 
     def add_player(color)
       Philosophy.logger.debug("Adding player #{color}")
-      raise DisallowedByRule if started? && @rules.can_join.before_any_placement?
+      raise DisallowedByRule if started? && @rules.can_join.only_before_any_placement?
       if !started? || @rules.can_join.after_a_full_turn?
         Philosophy.logger.debug("Adding player to the end")
         @players << Player.new(color)
+      elsif player_options.any?
+        Philosophy.logger.debug("Adding player as next player")
+        @players.insert(1, Player.new(color))
       else
         Philosophy.logger.debug("Adding player to the beginning")
         @players.unshift Player.new(color)
@@ -63,10 +67,16 @@ module Philosophy
     def remove_player(color_code)
       Philosophy.logger.debug("Removing player #{color_code}")
       raise DisallowedByRule if @rules.can_leave.never?
-      raise DisallowedByRule if @rules.can_leave.before_any_placement? && started?
+      raise DisallowedByRule if @rules.can_leave.only_before_any_placement? && started?
       removed_player = @players.delete(players[color_code])
-      if @rules.can_leave.remove_their_tiles?
+      if @rules.upon_leaving.remove_their_tiles?
         @board = @current_context.without_tiles_belonging_to(removed_player).to_board
+      end
+      if @rules.upon_leaving.rollback_placement?
+        @board = @previous_context.to_board
+      end
+      if @rules.upon_leaving.ends_game?
+        @force_conclusion = true
       end
       normalize_player_state
     end
@@ -96,6 +106,7 @@ module Philosophy
         .then { @current_event = _1 }
         .then { @history << _1 }
 
+      @previous_context = @current_context if Placement === @current_event
       @current_event.execute(self).then do |new_context|
         next if new_context == @current_context
 

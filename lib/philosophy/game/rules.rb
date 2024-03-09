@@ -5,7 +5,7 @@ module Philosophy
 
       class JoinRule
         # At what points during the game may new players join?
-        WHEN = %i[ before_any_placement after_placement ]
+        WHEN = %i[ only_before_any_placement after_placement ]
 
         # Where in the turn order does the new player go?
         WHERE = %i[ immediately_next after_a_full_turn ]
@@ -18,7 +18,7 @@ module Philosophy
           end
         end
 
-        def self.default = new(when_option: :before_any_placement, where: :immediately_next)
+        def self.default = new(when_option: :only_before_any_placement, where: :immediately_next)
 
         def initialize(when_option:, where:)
           @when, @where = when_option, where
@@ -27,7 +27,7 @@ module Philosophy
 
       class LeaveRule
         # At what points during the game may a player leave?
-        WHEN = %i[ before_any_placement never anytime ]
+        WHEN = %i[ only_before_any_placement never anytime ]
 
         # What happens when a player leaves in the middle of a placement?
         WHAT = %i[ ends_game rollback_placement remove_their_tiles ]
@@ -40,7 +40,7 @@ module Philosophy
           end
         end
 
-        def self.default = new(when_option: :before_any_placement, what: :ends_game)
+        def self.default = new(when_option: :only_before_any_placement, what: :ends_game)
 
         def initialize(when_option:, what:)
           @when, @what = when_option, what
@@ -53,6 +53,7 @@ module Philosophy
 
       def can_join = @join
       def can_leave = @leave
+      def upon_leaving = @leave
     end
   end
 end

@@ -6,10 +6,10 @@ RSpec.describe Philosophy::Game::Rules do
 
   describe Philosophy::Game::Rules::JoinRule do
     let(:join_rule) { Philosophy::Game::Rules::JoinRule.new(when_option: when_option, where: where_option) }
-    let(:when_option) { :before_any_placement }
+    let(:when_option) { :only_before_any_placement }
     let(:where_option) { :immediately_next }
 
-    context 'before_any_placement' do
+    context 'only_before_any_placement' do
       it 'should allow player adds at start' do
         expect do
           game << 'In+'
@@ -31,12 +31,25 @@ RSpec.describe Philosophy::Game::Rules do
 
     context 'after_placement' do
       let(:when_option) { :after_placement }
+
       it 'should allow player adds after start' do
         game << 'In+'
         game << 'Te+'
         game << 'In:C5PuNo'
         expect { game << 'Sa+' }.not_to raise_error
         expect(game.player_order).to eq %i[ Sa Te In ]
+      end
+
+      it 'should does not interrupt an incomplete placement' do
+        game << 'In+'
+        game << 'Te+'
+        game << 'In:C2ReSw'
+        game << 'Te:C8PuSo'
+        game << 'In:C6DeSw[C4'
+        game << 'Sa+'
+        expect(game.player_order).to eq %i[ In Sa Te ]
+        expect(game.current_player.color.code).to eq :In
+        expect(game.player_options).not_to be_empty
       end
     end
 
@@ -92,8 +105,8 @@ RSpec.describe Philosophy::Game::Rules do
       end
     end
 
-    context 'before_any_placement' do
-      let(:when_option) { :before_any_placement }
+    context 'only_before_any_placement' do
+      let(:when_option) { :only_before_any_placement }
 
       it 'should allow leaving before game started' do
         game << 'In+'
@@ -118,6 +131,8 @@ RSpec.describe Philosophy::Game::Rules do
 
     context 'anytime' do
       let(:when_option) { :anytime }
+
+      # not sure there's a point to testing this.
     end
 
     context 'ends_game' do
@@ -129,12 +144,76 @@ RSpec.describe Philosophy::Game::Rules do
         game << 'Am+'
         game << 'Te+'
         game << 'In:C5PuNo'
+        expect(game).not_to be_concluded
         game << 'In-'
+        expect(game).to be_concluded
       end
     end
 
     context 'rollback_placement' do
       let(:what_option) { :rollback_placement }
+
+      it 'should do nothing if the last placement is complete' do
+        game << 'In+'
+        game << 'Te+'
+        game << 'Sa+'
+        game << 'In:C2ReSw'
+        game << 'Te:C8PuSo'
+        game << 'Sa:C5PuEa'
+        game << 'In:C6DeSw[C4So]'
+        game << 'In-'
+        expect(game.board_state).to eq 'C2:InReSw/C5:SaPuEa/C8:TePuSo'
+        expect(game.current_player.color.code).to eq :Te
+        game << 'Te:C3SrNo'
+        expect(game.board_state).to eq 'C2:InReSw/C3:TeSrNo/C5:SaPuEa/C8:TePuSo'
+      end
+
+      it 'should do nothing if the last choice completed a placement' do
+        game << 'In+'
+        game << 'Te+'
+        game << 'Sa+'
+        game << 'In:C2ReSw'
+        game << 'Te:C8PuSo'
+        game << 'Sa:C5PuEa'
+        game << 'In:C6DeSw[C4'
+        game << 'So'
+        game << 'In-'
+        expect(game.board_state).to eq 'C2:InReSw/C5:SaPuEa/C8:TePuSo'
+        expect(game.current_player.color.code).to eq :Te
+        game << 'Te:C3SrNo'
+        expect(game.board_state).to eq 'C2:InReSw/C3:TeSrNo/C5:SaPuEa/C8:TePuSo'
+      end
+
+      it 'should rollback if the placement is in progress' do
+        game << 'In+'
+        game << 'Te+'
+        game << 'Sa+'
+        game << 'In:C2ReSw'
+        game << 'Te:C8PuSo'
+        game << 'Sa:C5PuEa'
+        game << 'In:C6DeSw[C4'
+        game << 'In-'
+        expect(game.board_state).to eq 'C2:InReSw/C5:SaPuEa/C8:TePuSo'
+        expect(game.current_player.color.code).to eq :Te
+        game << 'Te:C3SrNo'
+        expect(game.board_state).to eq 'C2:InReSw/C3:TeSrNo/C5:SaPuEa/C8:TePuSo'
+      end
+
+      it 'should rollback if the last choice did not complete a placement' do
+        game << 'In+'
+        game << 'Te+'
+        game << 'Sa+'
+        game << 'In:C2ReSw'
+        game << 'Te:C8PuSo'
+        game << 'Sa:C5PuEa'
+        game << 'In:C6DeSw'
+        game << 'C4'
+        game << 'In-'
+        expect(game.board_state).to eq 'C2:InReSw/C5:SaPuEa/C8:TePuSo'
+        expect(game.current_player.color.code).to eq :Te
+        game << 'Te:C3SrNo'
+        expect(game.board_state).to eq 'C2:InReSw/C3:TeSrNo/C5:SaPuEa/C8:TePuSo'
+      end
     end
 
     context 'remove_their_tiles' do
