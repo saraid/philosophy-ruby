@@ -18,7 +18,10 @@ module Philosophy
           end
         end
 
-        def self.default = new(when_option: :only_before_any_placement, where: :immediately_next)
+        def self.default = {
+          when_option: :only_before_any_placement,
+          where: :immediately_next
+        }
 
         def initialize(when_option:, where:)
           @when, @where = when_option, where
@@ -40,7 +43,10 @@ module Philosophy
           end
         end
 
-        def self.default = new(when_option: :only_before_any_placement, what: :ends_game)
+        def self.default = {
+          when_option: :only_before_any_placement,
+          what: :ends_game
+        }
 
         def initialize(when_option:, what:)
           @when, @what = when_option, what
@@ -48,7 +54,7 @@ module Philosophy
       end
 
       def initialize(join: JoinRule.default, leave: LeaveRule.default)
-        @join, @leave = join, leave
+        @join, @leave = JoinRule.new(**join), LeaveRule.new(**leave)
       end
 
       def can_join = @join

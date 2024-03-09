@@ -13,6 +13,13 @@ module Philosophy
     class InsufficientPlayers < Error; end
     class DisallowedByRule < Error; end
 
+    def self.with_rules(join: {}, leave: {})
+      new(rules: Rules.new(
+        join: Rules::JoinRule.default.merge(join),
+        leave: Rules::LeaveRule.default.merge(leave)
+      ))
+    end
+
     def initialize(rules: Rules.default)
       @rules = rules
       @board = Board.new

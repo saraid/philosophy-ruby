@@ -112,19 +112,39 @@ For example, in `C3:SaSlNo/C5:InSrNo/E1:InDeNw`, there are 3 occupied spaces: C3
 ### The Respect Token
 Notated simply with `R:In` to pass it to the Indigo player.
 
+## Rule Variations
+
+### Joining
+- When can a new player join a game?
+  - `:only_before_any_placement` - Before any tiles have been played.
+  - `:after_placement` - Anytime
+- Where in the turn order is a new player inserted?
+  - `:immediately_next` - The new player will place the next tile.
+  - `:after_a_full_turn` - Every previous player will have the chance to play a tile first.
+
+### Leaving
+- When can a player leave the game?
+  - `:only_before_any_placement` - Players can only leave if the game hasn't started.
+  - `:never` - Joined players may not ever leave.
+  - `:anytime` - Joined players may leave at any point.
+- What happens to the board when a player leaves the game?
+  - `:ends_game` - The game if forced to end if a player leaves. No further tiles may be played.
+  - `:rollback_placement` - If the player was in the middle of placing a tile or activating chain reactions, those decisions are rolled back such that the player never placed a tile.
+  - `:remove_their_tiles` - All the tiles the player has played are removed from the board, clearing space.
+
 ## To-do
 
 - [x] Handle the game over conditions better.
   - [x] If there are multiple conclusions, the game is supposed to continue, so #concluded? is technically the wrong API. (Added a note on how to notate multiple conclusions.)
   - [ ] The "full board" and "empty hand" states aren't accounted for.
   - [ ] There should be notation for conceding.
-- [ ] Formalize and implement rules about:
+- [x] Formalize and implement rules about:
   - This is just because *I* want these things, not because they're part of the published rules.
   - [x] Joining a game midway
-  - [ ] Leaving a game midway (what if the leaving player is next?)
+  - [x] Leaving a game midway (what if the leaving player is next?)
     - If the leaving player is the second-to-last, then game goes on-hold, as far as the code cares.
       The remaining player can be declared winner by someone else.
-  - [ ] What happens if a placement is in progress?
+  - [x] What happens if a placement is in progress?
   - [ ] A rule-change mechanism is honestly probably useful, too.
 - [ ] Figure out a way to preload the four player colors.
   - Probably easiest to do via PGN metadata?

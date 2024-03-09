@@ -88,7 +88,9 @@ RSpec.describe Philosophy::Game::History do
     end
 
     context 'when a player can join anytime' do
-      let(:game) { Philosophy::Game.new(rules: Philosophy::Game::Rules.new(join: Philosophy::Game::Rules::JoinRule.new(when_option: :after_placement, where: :immediately_next))) }
+      let(:game) do
+        Philosophy::Game.with_rules(join: { when_option: :after_placement })
+      end
 
       it 'rolls up choices across a player change' do
         game << 'In+'

@@ -1,11 +1,11 @@
 RSpec.describe Philosophy::Game::Rules do
-  let(:game) { Philosophy::Game.new(rules: rules) }
-  let(:rules) { Philosophy::Game::Rules.new(join: join_rule, leave: leave_rule) }
+  let(:game) { Philosophy::Game.with_rules(**rules) }
+  let(:rules) { { join: join_rule, leave: leave_rule } }
   let(:join_rule) { Philosophy::Game::Rules::JoinRule.default }
   let(:leave_rule) { Philosophy::Game::Rules::LeaveRule.default }
 
   describe Philosophy::Game::Rules::JoinRule do
-    let(:join_rule) { Philosophy::Game::Rules::JoinRule.new(when_option: when_option, where: where_option) }
+    let(:join_rule) { { when_option: when_option, where: where_option } }
     let(:when_option) { :only_before_any_placement }
     let(:where_option) { :immediately_next }
 
@@ -89,7 +89,7 @@ RSpec.describe Philosophy::Game::Rules do
   end
 
   describe Philosophy::Game::Rules::LeaveRule do
-    let(:leave_rule) { Philosophy::Game::Rules::LeaveRule.new(when_option: when_option, what: what_option) }
+    let(:leave_rule) { { when_option: when_option, what: what_option } }
     let(:when_option) { :anytime }
     let(:what_option) { :ends_game }
 
