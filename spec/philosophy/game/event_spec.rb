@@ -45,7 +45,7 @@ RSpec.describe Philosophy::Game::Event do
         expect(event.tile).to eq :Pu
         expect(event.direction).to eq :No
         expect(event.parameters).to be_empty
-        expect(event).not_to be_conclusion
+        expect(event.conclusions).to eq 0
       end
 
       it 'supports an incomplete parameter list' do
@@ -55,7 +55,7 @@ RSpec.describe Philosophy::Game::Event do
         expect(event.tile).to eq :Pu
         expect(event.direction).to eq :No
         expect(event.parameters).to eq %i[ No ]
-        expect(event).not_to be_conclusion
+        expect(event.conclusions).to eq 0
       end
 
       it 'supports an complete parameter list' do
@@ -65,7 +65,7 @@ RSpec.describe Philosophy::Game::Event do
         expect(event.tile).to eq :Pu
         expect(event.direction).to eq :No
         expect(event.parameters).to eq %i[ No ]
-        expect(event).not_to be_conclusion
+        expect(event.conclusions).to eq 0
       end
 
       it 'supports a conclusion' do
@@ -75,7 +75,17 @@ RSpec.describe Philosophy::Game::Event do
         expect(event.tile).to eq :Pu
         expect(event.direction).to eq :No
         expect(event.parameters).to be_empty
-        expect(event).to be_conclusion
+        expect(event.conclusions).to eq 1
+      end
+
+      it 'supports many conclusions' do
+        event = Philosophy::Game::Placement.from_notation('In:C4PuNo...')
+        expect(event.player).to eq :In
+        expect(event.location).to eq :C4
+        expect(event.tile).to eq :Pu
+        expect(event.direction).to eq :No
+        expect(event.parameters).to be_empty
+        expect(event.conclusions).to eq 3
       end
     end
   end

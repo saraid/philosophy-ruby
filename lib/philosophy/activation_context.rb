@@ -196,5 +196,6 @@ module Philosophy
     end
 
     def to_board = Board.new(spaces)
+    def conclusions_count = to_board.conclusions.size
   end
 end
