@@ -13,6 +13,7 @@ module Philosophy
       def notation(delimiter: $/)
         last_placement = nil
         result = []
+        skipped_events = []
         iter = @events.each
         loop do
           event = iter.next
@@ -22,7 +23,16 @@ module Philosophy
             last_choice = nil
             choices = []
             begin
-              choices << (last_choice = iter.next).choice while Choice === iter.peek
+              loop do
+                case iter.peek
+                when Choice
+                  choices << (last_choice = iter.next).choice
+                when Placement
+                  break
+                else
+                  skipped_events << iter.next
+                end
+              end
             rescue StopIteration
               # ignore when peek raises StopIteration
             end
@@ -30,9 +40,12 @@ module Philosophy
               parameters: event.parameters + choices,
               options: (last_choice&.options || event.options).to_h
             )
-          else result << event.notation
+          else
+            skipped_events.each { result << _1.notation }
+            result << event.notation
           end
         end
+        skipped_events.each { result << _1.notation }
         result.join(delimiter)
       end
     end

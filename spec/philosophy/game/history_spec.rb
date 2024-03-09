@@ -86,5 +86,21 @@ RSpec.describe Philosophy::Game::History do
       expect(game).not_to be_concluded # because there are multiple conclusions
       expect(history).to eq 'In+;Te+;In:C4PuSo;Te:C1PuNo;In:C5SlSo;Te:C2SlNo;In:C9SrNo;Te:C6PeSo..'
     end
+
+    context 'when a player can join anytime' do
+      let(:game) { Philosophy::Game.new(rules: Philosophy::Game::Rules.new(join: Philosophy::Game::Rules::JoinRule.new(when_option: :after_placement, where: :immediately_next))) }
+
+      it 'rolls up choices across a player change' do
+        game << 'In+'
+        game << 'Te+'
+        game << 'In:C2ReSw'
+        game << 'Te:C8PuSo'
+        game << 'In:C6DeSw[C4'
+        game << 'Sa+'
+        game << 'So'
+        expect(game.player_options).to be_empty
+        expect(history).to eq 'In+;Te+;In:C2ReSw;Te:C8PuSo;In:C6DeSw[C4So];Sa+'
+      end
+    end
   end
 end
