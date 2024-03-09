@@ -26,7 +26,7 @@ module Philosophy
       @current_context = nil
     end
     attr_reader :current_player, :current_context
-    attr_reader :board
+    attr_reader :board, :history
 
     def player_order = @players.map(&:color).map(&:code)
     def board_state = @current_context.to_board.notation(delimiter: '/')

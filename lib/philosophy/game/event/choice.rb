@@ -1,4 +1,3 @@
-
 module Philosophy
   class Game
     class Choice < Event

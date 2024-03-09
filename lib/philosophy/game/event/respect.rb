@@ -15,6 +15,7 @@ module Philosophy
       end
       attr_reader :player
 
+      def notation = "R:#{player}"
       def execute(game)
         game.respect = player
         game.current_context
@@ -22,4 +23,3 @@ module Philosophy
     end
   end
 end
-

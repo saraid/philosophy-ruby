@@ -11,6 +11,7 @@ RSpec.describe Philosophy::Game do
         game << 'Te:C8PuNo'
         expect(game.board_state).to eq 'C2:InPuNo/C8:TePuNo'
         expect(game.current_player.color.name).to eq :indigo
+        expect(game.history.notation(delimiter: ';')).to eq 'In+;Te+;In:C5PuNo;Te:C8PuNo'
       end
     end
 

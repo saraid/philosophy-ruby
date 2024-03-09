@@ -92,20 +92,21 @@ module Philosophy
     chain def was_already_activated(location) = @already_activated << spaces[location].name
     chain def consider_activating(location)
       space = spaces[location]
-      return unless space&.occupied?
+      return without_player_options unless space&.occupied?
       if space.tile.owner.color == current_player.color
         can_activate location
       else
         can_be_targeted location
       end
+        .without_player_options
         .with_chain_reactions
     end
     chain def with_chain_reactions
-      #raise 'did you mean to do this' unless @player_options.empty?
-      #return unless @player_options.empty?
-      activation_candidates.each.with_object({}) do |candidate, memo|
-        memo[candidate] = lambda { activate(candidate) }
-      end.then { with_player_options _1 }
+      activation_candidates
+        .tap { Philosophy.logger.debug "with_chain_reactions: #{_1}" }
+        .each
+        .with_object({}) { |candidate, memo| memo[candidate] = lambda { activate(candidate) } }
+        .then { with_player_options _1 }
     end
 
     def activation_candidates
@@ -137,41 +138,31 @@ module Philosophy
       when Tile::Push, Tile::CornerPush,
         Tile::LongShot, Tile::CornerLongShot
         move(from_location: targeted_space.name, impact_direction: activated_tile.target)
-          .without_player_options
-          .with_chain_reactions
       when Tile::SlideLeft
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.left)
-          .without_player_options
       when Tile::SlideRight
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.right)
-          .without_player_options
       when Tile::PullLeft
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.pull_left)
-          .without_player_options
       when Tile::PullRight
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.pull_right)
-          .without_player_options
       when Tile::Toss
         move(
           from_location: targeted_space.name,
           impact_direction: activated_tile.target.backward,
           impact_distance: 2
         )
-          .without_player_options
       when Tile::Persuade
         # using collision to move yourself
         move(from_location: targeted_space.name, impact_direction: activated_tile.target.backward)
-          .without_player_options
       when Tile::Decision
         target_direction = activated_tile.target
         options = {}
         options[spaces[targeted_space.coordinate.translate(target_direction.left)]&.name || :OO] = lambda do
           move(from_location: targeted_space.name, impact_direction: target_direction.left)
-            .without_player_options
         end
         options[spaces[targeted_space.coordinate.translate(target_direction.right)]&.name || :OO] = lambda do
           move(from_location: targeted_space.name, impact_direction: target_direction.right)
-            .without_player_options
         end
         with_player_options(options)
       when Tile::Rephrase
@@ -180,27 +171,28 @@ module Philosophy
           .map { Board::Direction[_1] }
           .each.with_object({}) do |dir, memo|
             memo[dir.notation] = lambda do
-              rotate(target_location: ts, target_direction: dir).without_player_options
+              rotate(target_location: ts, target_direction: dir)
             end
           end
+          .tap { Philosophy.logger.debug("options: #{_1.keys.sort}") }
           .then { with_player_options _1 }
       end
     end
 
     def make_automatic_choices!
-      if @player_options.size == 1
-        choose(@player_options.keys.first)
-          .make_automatic_choices!
-      else
-        self
-      end
+      Philosophy.logger.debug("#make_automatic_choices! #{@player_options.size}")
+      return self unless @player_options.size == 1
+      choose(@player_options.keys.first)
+        .make_automatic_choices!
     end
 
     
     def choose(option)
+      Philosophy.logger.debug("#choose #{option}")
       raise Philosophy::Game::Choice::Error, option unless @player_options.key? option
 
       @player_options.fetch(option).call
+        .make_automatic_choices!
     end
 
     def to_board = Board.new(spaces)

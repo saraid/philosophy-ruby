@@ -24,6 +24,7 @@ module Philosophy
       end
       attr_reader :code, :type, :name
 
+      def notation = "#{code}#{TYPES.invert.fetch(type)}"
       def execute(game)
         raise PlayerCodeAlreadyUsed, code if type == :joined && game.players.key?(code)
         case type

@@ -43,6 +43,16 @@ module Philosophy
       attr_reader :player, :location, :tile, :direction, :parameters, :options
 
       def conclusion? = @conclusion
+      def notation(parameters: [])
+        option_notation = options.keys.sort.join.then { "(#{_1})" unless _1.empty? } || ''
+        parameter_notation = parameters
+          .join
+          .then { _1.prepend '[' unless _1.empty? }
+          &.then { if options.any? then _1 else _1 << ']' end } || ''
+        parameter_notation << option_notation
+
+        "#{player}:#{location}#{tile}#{direction}#{parameter_notation}#{'.' if conclusion?}"
+      end
       def execute(game)
         raise Game::InsufficientPlayers if game.players.size < 2
         raise IncorrectPlayer if game.current_player.color.code != player
@@ -50,8 +60,8 @@ module Philosophy
           .place(player: game.current_player, location: location, tile: tile, direction: direction)
           .make_automatic_choices!
           .then { parameters.reduce(_1, :choose) }
+          .tap { @options = _1.player_options }
       end
     end
   end
 end
-
