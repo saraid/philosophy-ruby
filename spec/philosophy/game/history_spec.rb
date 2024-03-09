@@ -39,5 +39,15 @@ RSpec.describe Philosophy::Game::History do
       expect(game.player_options).to eq %i[ Ea No So We ]
       expect(history).to eq 'In+;Te+;In:C2ReSw;Te:C8PuSo;In:C6DeSw[C4(EaNoSoWe)'
     end
+
+    it 'handles placements with multiple parameters' do
+      game << 'In+'
+      game << 'Te+'
+      game << 'In:C2ReSw'
+      game << 'Te:C8PuSo'
+      game << 'In:C6DeSw[C4So]'
+      expect(game.player_options).to be_empty
+      expect(history).to eq 'In+;Te+;In:C2ReSw;Te:C8PuSo;In:C6DeSw[C4So]'
+    end
   end
 end

@@ -30,7 +30,7 @@ module Philosophy
           location: md[:location].to_sym,
           tile: md[:tile].to_sym,
           direction: md[:direction].to_sym,
-          parameters: md[:parameters].each_char.each_cons(2).map(&:join).map(&:to_sym),
+          parameters: md[:parameters].each_char.each_slice(2).map(&:join).map(&:to_sym),
           conclusion: md[:conclusion] == '.'
         )
       end
