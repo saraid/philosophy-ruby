@@ -33,7 +33,7 @@ module Philosophy
     def player_options = @current_context.player_options.keys.sort
     def nearing_conclusion? = @current_context.to_board.nearing_conclusion?
     def conclusions = @current_context.to_board.conclusions
-    def concluded? = conclusions.size == 1
+    def concluded? = conclusions.one?
 
     def started? = @started ||= !!@history.find { Placement === _1 }
 
