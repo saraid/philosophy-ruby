@@ -116,7 +116,7 @@ Notated simply with `R:In` to pass it to the Indigo player.
   - [ ] There should be notation for conceding.
 - [ ] Formalize and implement rules about:
   - This is just because *I* want these things, not because they're part of the published rules.
-  - [ ] Joining a game midway
+  - [x] Joining a game midway
   - [ ] Leaving a game midway (what if the leaving player is next?)
     - If the leaving player is the second-to-last, then game goes on-hold, as far as the code cares.
       The remaining player can be declared winner by someone else.

@@ -16,9 +16,6 @@ module Philosophy
     def placed_tile(type) = @tiles.delete(idea(type))
     def tile_returned(tile) = @tiles << tile
 
-    #def without(tile: tile_type) = Player.new(color, tiles: tiles - [idea(tile_type)])
-    #def with(tile: tile_type) = Player.new(color, tiles: tiles + [ # TODO
-
     def notation = @color.code
     def to_s = color.to_s.capitalize
   end

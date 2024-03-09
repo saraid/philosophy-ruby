@@ -24,7 +24,7 @@ module Philosophy
 
     def self.target(type = nil)
       return @target if type.nil?
-      raise ArgumentError unless VALID_TARGETS.key? type
+      raise ArgumentError, type unless VALID_TARGETS.key? type
       @target = type
     end
 
@@ -37,7 +37,7 @@ module Philosophy
         return 1 if @target_distance.nil?
         return @target_distance 
       end
-      raise ArgumentError unless (1..2).include? value
+      raise ArgumentError, value unless (1..2).include? value
       @target_distance = value
     end
 
@@ -46,7 +46,7 @@ module Philosophy
         return :opponent if @target_type.nil?
         return @target_type 
       end
-      raise ArgumentError unless %i[ any opponent ].include? kind
+      raise ArgumentError, kind unless %i[ any opponent ].include? kind
       @target_type = kind
     end
 
