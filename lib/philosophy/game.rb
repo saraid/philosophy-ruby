@@ -18,8 +18,21 @@ module Philosophy
 
       REGEX = /^\[(?<name>\w+) "(?<value>.+)"\]$/
       def self.from_pgn(notation)
-        notation.each_line
+        notation.each_line.with_object({}) do |line, memo|
+          name, value = line.match(REGEX).values_at(:name, :value)
+          memo[name.to_sym] = value
+        end
+          .then { new _1 }
       end
+
+      def initialize(hash)
+        @values = hash
+      end
+
+      def each(...) = @values.each(...)
+      def [](...) = @values.[](...)
+      def fetch(...) = @values.fetch(...)
+      def to_pgn = @values.map { %Q![#{_1} "#{_2}"]! }.join($/)
     end
 
     def initialize(rules: Rules.default, metadata: Metadata.empty)

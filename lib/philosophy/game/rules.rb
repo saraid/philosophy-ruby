@@ -7,14 +7,11 @@ module Philosophy
         def self.define(variable, *options, default: options.first)
           @variables ||= {}
           @variables[variable] = { options: options, default: default }
-          puts "#{self} Rule.defined #{variable}"
         end
 
         def self.build!
           vars = @variables.keys
-          puts "#{self} #{vars.inspect}"
           defaults = @variables.transform_values { _1[:default] }
-            #def initialize(#{vars.map { "#{_1}:" }.join(', ')})
           class_eval <<~RUBY
             def self.default = { #{defaults.map { "#{_1}: :#{_2}" }.join(', ')} }
 
