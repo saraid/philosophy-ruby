@@ -5,8 +5,8 @@ RSpec.describe Philosophy::Game::Rules do
   let(:leave_rule) { Philosophy::Game::Rules::LeaveRule.default }
 
   describe Philosophy::Game::Rules::JoinRule do
-    let(:join_rule) { { at: at_option, where: where_option } }
-    let(:at_option) { :only_before_any_placement }
+    let(:join_rule) { { permitted: permitted_option, where: where_option } }
+    let(:permitted_option) { :only_before_any_placement }
     let(:where_option) { :immediately_next }
 
     context 'only_before_any_placement' do
@@ -30,7 +30,7 @@ RSpec.describe Philosophy::Game::Rules do
     end
 
     context 'after_placement' do
-      let(:at_option) { :after_placement }
+      let(:permitted_option) { :after_placement }
 
       it 'should allow player adds after start' do
         game << 'In+'
@@ -54,7 +54,7 @@ RSpec.describe Philosophy::Game::Rules do
     end
 
     context 'immediately_next' do
-      let(:at_option) { :after_placement }
+      let(:permitted_option) { :after_placement }
       let(:what_option) { :immediately_next }
 
       it 'should maintain the player order *before* game start' do
@@ -75,7 +75,7 @@ RSpec.describe Philosophy::Game::Rules do
     end
 
     context 'after_a_full_turn' do
-      let(:at_option) { :after_placement }
+      let(:permitted_option) { :after_placement }
       let(:where_option) { :after_a_full_turn }
 
       it 'should set the current player to the player who just joined' do
@@ -89,12 +89,12 @@ RSpec.describe Philosophy::Game::Rules do
   end
 
   describe Philosophy::Game::Rules::LeaveRule do
-    let(:leave_rule) { { at: at_option, what: what_option } }
-    let(:at_option) { :anytime }
+    let(:leave_rule) { { permitted: permitted_option, what: what_option } }
+    let(:permitted_option) { :anytime }
     let(:what_option) { :ends_game }
 
     context 'never' do
-      let(:at_option) { :never }
+      let(:permitted_option) { :never }
 
       it 'should disallow leaving entirely' do
         game << 'In+'
@@ -106,7 +106,7 @@ RSpec.describe Philosophy::Game::Rules do
     end
 
     context 'only_before_any_placement' do
-      let(:at_option) { :only_before_any_placement }
+      let(:permitted_option) { :only_before_any_placement }
 
       it 'should allow leaving before game started' do
         game << 'In+'
@@ -130,7 +130,7 @@ RSpec.describe Philosophy::Game::Rules do
     end
 
     context 'anytime' do
-      let(:at_option) { :anytime }
+      let(:permitted_option) { :anytime }
 
       # not sure there's a point to testing this.
     end

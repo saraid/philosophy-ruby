@@ -13,7 +13,17 @@ module Philosophy
     class InsufficientPlayers < Error; end
     class DisallowedByRule < Error; end
 
-    def initialize(rules: Rules.default)
+    class Metadata
+      def self.empty = {}
+
+      REGEX = /^\[(?<name>\w+) "(?<value>.+)"\]$/
+      def self.from_pgn(notation)
+        notation.each_line
+      end
+    end
+
+    def initialize(rules: Rules.default, metadata: Metadata.empty)
+      @metadata = metadata
       @rules = Rules.new(**rules)
       @board = Board.new
       @history = History.new

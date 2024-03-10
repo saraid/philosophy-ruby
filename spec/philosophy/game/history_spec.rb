@@ -91,7 +91,7 @@ RSpec.describe Philosophy::Game::History do
 
     context 'when a player can join anytime' do
       let(:game) do
-        Philosophy::Game.new(rules: { join: { at: :after_placement }})
+        Philosophy::Game.new(rules: { join: { permitted: :after_placement }})
       end
 
       it 'rolls up choices across a player change' do

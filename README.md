@@ -116,10 +116,10 @@ Notated simply with `R:In` to pass it to the Indigo player.
 
 You should be able to create a game with rule variations thus:
 ```ruby
-Philosophy::Game.with_rules(
-  join: { at: :after_placement, where: :after_a_full_turn },
-  leave: { at: :never, what: :remove_their_tiles }
-)
+Philosophy::Game.new(rules: {
+  join: { permitted: :after_placement, where: :after_a_full_turn },
+  leave: { permitted: :never, what: :remove_their_tiles }
+})
 ```
 
 ### Joining

@@ -33,7 +33,7 @@ module Philosophy
 
       class JoinRule < Rule
         # At what points during the game may new players join?
-        define :at, :only_before_any_placement, :after_placement
+        define :permitted, :only_before_any_placement, :after_placement
         # Where in the turn order does the new player go?
         define :where, :immediately_next, :after_a_full_turn
 
@@ -42,7 +42,7 @@ module Philosophy
 
       class LeaveRule < Rule
         # At what points during the game may a player leave?
-        define :at, :only_before_any_placement, :never, :anytime
+        define :permitted, :only_before_any_placement, :never, :anytime
 
         # What happens when a player leaves in the middle of a placement?
         define :what, :ends_game, :rollback_placement, :remove_their_tiles
