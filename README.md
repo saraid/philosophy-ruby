@@ -117,8 +117,8 @@ Notated simply with `R:In` to pass it to the Indigo player.
 You should be able to create a game with rule variations thus:
 ```ruby
 Philosophy::Game.with_rules(
-  join: { when_option: :after_placement, where: :after_a_full_turn },
-  leave: { when_option: :never, what: :remove_their_tiles }
+  join: { at: :after_placement, where: :after_a_full_turn },
+  leave: { at: :never, what: :remove_their_tiles }
 )
 ```
 

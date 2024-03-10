@@ -106,7 +106,9 @@ RSpec.describe Philosophy::Game do
 
         expect(game.board_state).to eq 'C1:InPuNo/C2:InSlNo/C3:InSrNo/C7:TePuSo/C8:TeSlSo'
         expect(game).to be_concluded
-        expect(game.conclusions).to eq [Set.new([:C1, :C2, :C3])]
+        conclusion = Set.new([:C1, :C2, :C3])
+        expect(game.conclusions).to eq({ conclusion => game.players[:indigo] })
+        expect(game.winner).to eq game.players[:indigo]
       end
 
       it 'sees near conclusions' do

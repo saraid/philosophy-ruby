@@ -202,6 +202,8 @@ module Philosophy
       CONCLUSIONS.select do |conclusion|
         owners = conclusion.map { spaces[_1].tile&.owner }
         owners.compact.size == 3 && owners.uniq.size == 1
+      end.each.with_object({}) do |conclusion, memo|
+        memo[conclusion] = spaces[conclusion.first].tile.owner
       end
     end
     def concluded? = conclusions.one?

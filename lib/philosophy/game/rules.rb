@@ -1,60 +1,58 @@
 module Philosophy
   class Game
     class Rules
-      def self.default = new
+      def self.default = { join: JoinRule.default, leave: LeaveRule.default }
 
-      class JoinRule
-        # At what points during the game may new players join?
-        WHEN = %i[ only_before_any_placement after_placement ]
-
-        # Where in the turn order does the new player go?
-        WHERE = %i[ immediately_next after_a_full_turn ]
-
-        { when: WHEN, where: WHERE }.each do |preposition, options|
-          options.each do |option|
-            eval(<<~RUBY)
-              def #{option}? = @#{preposition} == :#{option}
-            RUBY
-          end
+      class Rule
+        def self.define(variable, *options, default: options.first)
+          @variables ||= {}
+          @variables[variable] = { options: options, default: default }
+          puts "#{self} Rule.defined #{variable}"
         end
 
-        def self.default = {
-          when_option: :only_before_any_placement,
-          where: :immediately_next
-        }
+        def self.build!
+          vars = @variables.keys
+          puts "#{self} #{vars.inspect}"
+          defaults = @variables.transform_values { _1[:default] }
+            #def initialize(#{vars.map { "#{_1}:" }.join(', ')})
+          class_eval <<~RUBY
+            def self.default = { #{defaults.map { "#{_1}: :#{_2}" }.join(', ')} }
 
-        def initialize(when_option:, where:)
-          @when, @where = when_option, where
+            def initialize(**kwargs)
+              #{vars.map { "@#{_1}" }.join(', ')} = kwargs.values_at(#{vars.map { ":#{_1}" }.join(', ')})
+            end
+          RUBY
+          @variables.each do |variable, definition|
+            definition[:options].each do |option|
+              eval("def #{option}? = @#{variable} == :#{option}")
+              eval("def #{option}! = @#{variable} = :#{option}")
+            end
+          end
         end
       end
 
-      class LeaveRule
+      class JoinRule < Rule
+        # At what points during the game may new players join?
+        define :at, :only_before_any_placement, :after_placement
+        # Where in the turn order does the new player go?
+        define :where, :immediately_next, :after_a_full_turn
+
+        build!
+      end
+
+      class LeaveRule < Rule
         # At what points during the game may a player leave?
-        WHEN = %i[ only_before_any_placement never anytime ]
+        define :at, :only_before_any_placement, :never, :anytime
 
         # What happens when a player leaves in the middle of a placement?
-        WHAT = %i[ ends_game rollback_placement remove_their_tiles ]
+        define :what, :ends_game, :rollback_placement, :remove_their_tiles
 
-        { when: WHEN, what: WHAT }.each do |preposition, options|
-          options.each do |option|
-            eval(<<~RUBY)
-              def #{option}? = @#{preposition} == :#{option}
-            RUBY
-          end
-        end
-
-        def self.default = {
-          when_option: :only_before_any_placement,
-          what: :ends_game
-        }
-
-        def initialize(when_option:, what:)
-          @when, @what = when_option, what
-        end
+        build!
       end
 
       def initialize(join: JoinRule.default, leave: LeaveRule.default)
-        @join, @leave = JoinRule.new(**join), LeaveRule.new(**leave)
+        @join = JoinRule.new(**JoinRule.default.merge(join))
+        @leave = LeaveRule.new(**LeaveRule.default.merge(leave))
       end
 
       def can_join = @join
