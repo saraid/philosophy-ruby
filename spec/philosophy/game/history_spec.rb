@@ -107,4 +107,52 @@ RSpec.describe Philosophy::Game::History do
       end
     end
   end
+
+  context 'with ordinals' do
+    let(:history) { game.history.notation(with_ordinals: true) }
+
+    it 'notices conclusions' do
+      game << 'In+:indigo'
+      game << 'Te+:teal'
+      game << 'In:C1PuNo'
+      game << 'Te:C7PuSo'
+      game << 'In:C2SlNo'
+      game << 'Te:C8SlSo'
+      game << 'In:C3SrNo'
+      expect(game).to be_concluded
+      expect(game.winner).to eq game.players[:indigo]
+      expect(history).to eq <<~HISTORY.strip
+        1. In+
+        2. Te+
+        3. In:C1PuNo
+        4. Te:C7PuSo
+        5. In:C2SlNo
+        6. Te:C8SlSo
+        7. In:C3SrNo.
+      HISTORY
+    end
+  end
+
+  context 'without player change' do
+    let(:history) { game.history.notation(with_player_change: false, with_ordinals: true) }
+
+    it 'notices conclusions' do
+      game << 'In+:indigo'
+      game << 'Te+:teal'
+      game << 'In:C1PuNo'
+      game << 'Te:C7PuSo'
+      game << 'In:C2SlNo'
+      game << 'Te:C8SlSo'
+      game << 'In:C3SrNo'
+      expect(game).to be_concluded
+      expect(game.winner).to eq game.players[:indigo]
+      expect(history).to eq <<~HISTORY.strip
+        1. In:C1PuNo
+        2. Te:C7PuSo
+        3. In:C2SlNo
+        4. Te:C8SlSo
+        5. In:C3SrNo.
+      HISTORY
+    end
+  end
 end

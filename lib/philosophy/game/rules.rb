@@ -51,6 +51,13 @@ module Philosophy
         @join = JoinRule.new(**JoinRule.default.merge(join))
         @leave = LeaveRule.new(**LeaveRule.default.merge(leave))
       end
+      def change(rule:, variable:, value:)
+        case rule
+        when :join then @join
+        when :leave then @leave
+        else raise ArgumentError, rule
+        end.public_send(:"#{value}!")
+      end
 
       def can_join = @join
       def can_leave = @leave

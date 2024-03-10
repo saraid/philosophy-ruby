@@ -20,12 +20,12 @@ module Philosophy
 
       def initialize(code:, type:, name: nil)
         @code, @type, @name = code, type, name
-        @name ||= @code
       end
       attr_reader :code, :type, :name
 
       def notation = "#{code}#{TYPES.invert.fetch(type)}"
       def execute(game)
+        @name ||= game.metadata[:"Color#{code}"] || @code
         raise PlayerCodeAlreadyUsed, code if type == :joined && game.players.key?(code)
         case type
         when :joined then game.add_player(Player::Color.new(name, code))

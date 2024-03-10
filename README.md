@@ -112,6 +112,11 @@ For example, in `C3:SaSlNo/C5:InSrNo/E1:InDeNw`, there are 3 occupied spaces: C3
 ### The Respect Token
 Notated simply with `R:In` to pass it to the Indigo player.
 
+### Rule Change
+If you want to change the rules mid-game, you can issue a Rule Change. Example notation:
+- E.g. `rule:join:permitted:after_placement`
+- E.g. `rule:leave:what:remove_their_tiles`
+
 ## Rule Variations
 
 You should be able to create a game with rule variations thus:
@@ -154,7 +159,7 @@ Philosophy::Game.new(rules: {
     - If the leaving player is the second-to-last, then game goes on-hold, as far as the code cares.
       The remaining player can be declared winner by someone else.
   - [x] What happens if a placement is in progress?
-  - [ ] A rule-change mechanism is honestly probably useful, too.
+  - [x] A rule-change mechanism is honestly probably useful, too.
 - [ ] Figure out a way to preload the four player colors.
   - Probably easiest to do via PGN metadata?
   - [ ] It'd be neat to match colors with actual colorspace definitions.

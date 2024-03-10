@@ -14,7 +14,7 @@ module Philosophy
     class DisallowedByRule < Error; end
 
     class Metadata
-      def self.empty = {}
+      def self.empty = new({})
 
       REGEX = /^\[(?<name>\w+) "(?<value>.+)"\]$/
       def self.from_pgn(notation)
@@ -30,9 +30,21 @@ module Philosophy
       end
 
       def each(...) = @values.each(...)
-      def [](...) = @values.[](...)
       def fetch(...) = @values.fetch(...)
+      def [](...) = @values.[](...)
+      def []=(...)
+        @values.[]=(...)
+      end
+
       def to_pgn = @values.map { %Q![#{_1} "#{_2}"]! }.join($/)
+      def to_rules
+        ruleset = {}
+        self[:JoinPermitted]&.then { (ruleset[:join] ||= {})[:permitted] = _1.downcase.gsub(' ', '_').to_sym }
+        self[:JoinWhere]&.then { (ruleset[:join] ||= {})[:where] = _1.downcase.gsub(' ', '_').to_sym }
+        self[:LeavePermitted]&.then { (ruleset[:leave] ||= {})[:permitted] = _1.downcase.gsub(' ', '_').to_sym }
+        self[:LeaveWhat]&.then { (ruleset[:leave] ||= {})[:what] = _1.downcase.gsub(' ', '_').to_sym }
+        ruleset
+      end
     end
 
     def initialize(rules: Rules.default, metadata: Metadata.empty)
@@ -51,6 +63,7 @@ module Philosophy
     end
     attr_reader :current_player, :current_context
     attr_reader :board, :history
+    attr_reader :metadata
 
     def player_order = @players.map(&:color).map(&:code)
     def board_state = @current_context.to_board.notation(delimiter: '/')
@@ -65,6 +78,13 @@ module Philosophy
 
     def players
       @players.each.with_object({}) { _2.merge!(Hash[ _1.color.name => _1, _1.color.code => _1]) }
+    end
+
+    def rule_change(rule:, variable:, value:) 
+      @rules.change(rule:, variable:, value:)
+      @metadata[:"#{rule.to_s.capitalize}#{variable.to_s.capitalize}"] =
+        value.to_s.gsub('_', ' ').split(' ').map(&:capitalize).join(' ')
+      @current_context
     end
 
     private def normalize_player_state
@@ -86,6 +106,7 @@ module Philosophy
         Philosophy.logger.debug("Adding player to the beginning")
         @players.unshift Player.new(color)
       end
+      metadata[:"Color#{color.code}"] ||= color.name unless color.code == color.name
       normalize_player_state
         .with_player_options(previous_player_options)
     end
@@ -146,5 +167,22 @@ module Philosophy
 
       @current_event
     end
+
+    def self.from_pgn(pgn)
+      metadata, movetext = pgn.split("#{$/}#{$/}")
+      metadata = Metadata.from_pgn(metadata)
+      rules = metadata.to_rules
+
+      game = new(rules: rules, metadata: metadata)
+      movetext.each_line do
+        md = _1.match(/\d+\. (?<move>.*)/)
+        next if md.nil?
+
+        game << md[:move]
+      end
+      game
+    end
+
+    def to_pgn = [@metadata.to_pgn, nil, @history.notation(with_ordinals: true)].join($/)
   end
 end

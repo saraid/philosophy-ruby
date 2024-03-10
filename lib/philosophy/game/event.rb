@@ -2,7 +2,7 @@ module Philosophy
   class Game
     class Event
       def self.from_notation(notation)
-        [PlayerChange, Placement, Choice, Respect]
+        [PlayerChange, Placement, Choice, Respect, RuleChange]
           .find { _1::NOTATION_REGEX.match? notation }
           &.from_notation(notation)
           &.tap { raise ArgumentError, notation unless _1 }
@@ -18,3 +18,4 @@ require_relative 'event/choice'
 require_relative 'event/placement'
 require_relative 'event/player_change'
 require_relative 'event/respect'
+require_relative 'event/rule_change'
