@@ -146,12 +146,36 @@ Philosophy::Game.new(rules: {
   - `:rollback_placement` - If the player was in the middle of placing a tile or activating chain reactions, those decisions are rolled back such that the player never placed a tile.
   - `:remove_their_tiles` - All the tiles the player has played are removed from the board, clearing space.
 
+## Portable Game Notation (PGN)
+[Portable Game Notation](https://en.wikipedia.org/wiki/Portable_Game_Notation) was invented for chess, but the basic format is entirely usable for pretty much anything. Therefore, I stole the metadata tag pair format.
+
+The following can be used to preset the names for colors, as well as rules. This interacts poorly with mid-game changes in player names and rule variations, but hopefully that won't come up anywhere it'll be an issue. If there's a tournament setting, you should really not be making changes to rules and players mid-game; if this handling dynamic play simulating people entering and leaving a conversation, then metadata instability should be very excusable.
+```
+[ColorAm "Ambrose Bierce"]
+[ColorIn "Indiana Jones"]
+[ColorTe "Teotihual Batan"]
+[ColorSa "Sarah Connor"]
+[JoinPermitted "After Placement"]
+[LeaveWhat "Remove Their Tiles"]
+
+1. In+
+2. Am+
+3. Te+
+4: Sa+
+```
+
+Serialization and deserialization:
+```ruby
+game = Philosophy::Game.from_pgn(pgn)
+game.to_pgn
+```
+
 ## To-do
 
 - [x] Handle the game over conditions better.
   - [x] If there are multiple conclusions, the game is supposed to continue, so #concluded? is technically the wrong API. (Added a note on how to notate multiple conclusions.)
   - [ ] The "full board" and "empty hand" states aren't accounted for.
-  - [ ] There should be notation for conceding.
+  - [x] There should be notation for conceding. This should just be "player leave".
 - [x] Formalize and implement rules about:
   - This is just because *I* want these things, not because they're part of the published rules.
   - [x] Joining a game midway
@@ -160,10 +184,10 @@ Philosophy::Game.new(rules: {
       The remaining player can be declared winner by someone else.
   - [x] What happens if a placement is in progress?
   - [x] A rule-change mechanism is honestly probably useful, too.
-- [ ] Figure out a way to preload the four player colors.
+- [x] Figure out a way to preload the four player colors.
   - Probably easiest to do via PGN metadata?
   - [ ] It'd be neat to match colors with actual colorspace definitions.
-  - [ ] It'd be nice to actually assign names to players, too.
-- [ ] Oh yeah, actually get my PGN parser in here.
+  - [x] It'd be nice to actually assign names to players, too.
+- [x] Oh yeah, actually get my PGN parser in here.
 - [x] Figure out how to convert Game::Placement into notation safely.
   - [x] Figure out how to roll Game::Choice events back into Placements.
