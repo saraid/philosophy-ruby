@@ -23,12 +23,12 @@ game << Philosophy::Game::Placement.new(player: :In, location: :C5, tile: :Pu, d
 
 # When placing Decisions and Rephrases, you'll need to "complete" the placement.
 # You can do this in one action:
-game << 'In:C5DeNe[So]' # See below for notation. Equivalent to:
-game << Philosophy::Game::Placement.new(player: :In, location: :C5, tile: :De, direction: :Ne, parameters: [:So])
+game << 'In:C5ReNe[So]' # See below for notation. Equivalent to:
+game << Philosophy::Game::Placement.new(player: :In, location: :C5, tile: :Re, direction: :Ne, parameters: [:So])
 
 # or in two:
-game << 'In:C5DeNe' # See below for notation. Equivalent to:
-game << Philosophy::Game::Placement.new(player: :In, location: :C5, tile: :De, direction: :Ne)
+game << 'In:C5ReNe' # See below for notation. Equivalent to:
+game << Philosophy::Game::Placement.new(player: :In, location: :C5, tile: :Re, direction: :Ne)
 
 game << 'So' # See below for notation. Equivalent to:
 game << Philosophy::Game::Choice.new(choice: :So)
