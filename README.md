@@ -91,7 +91,7 @@ If the parameter is a decision moving a tile off the board, then the parameter i
 
 If a move is incomplete, we leave the right-bracket off, and instead list the options in parentheses:
 - E.g., `Am:C2ReNw(EaNoSoWe)` when a Rephrase tile is pointing at a Push tile, but has not decided where the tile should be oriented.
-- E.g., `Sa:C9PuNo[E1(C5NE)`
+- E.g., `Sa:C9PuNo[E1(C5NE)` when the placed Push tile created a situation between two possible activations, of which `E1` was chosen, but it is a Decision tile, so the resultant position of the tile being decided still needs choosing between `C5` and `NE`.
 
 If a move creates a conclusion, then we notate that with a trailing `.`. If it creates multiple conclusions, we notate each with an additional `.`.
 
@@ -118,7 +118,7 @@ You should be able to create a game with rule variations thus:
 ```ruby
 Philosophy::Game.with_rules(
   join: { when_option: :after_placement, where: :after_a_full_turn },
-  leave: { when_option: :never, where: :remove_their_tiles }
+  leave: { when_option: :never, what: :remove_their_tiles }
 )
 ```
 
