@@ -130,7 +130,7 @@ module Philosophy
 
     def advance_player(context)
       Philosophy.logger.debug("Advancing turn")
-      @board = context.to_board
+      @board = context.to_board.reset_state
       @players << @players.shift
       normalize_player_state
     end

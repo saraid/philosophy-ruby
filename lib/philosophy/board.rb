@@ -164,6 +164,10 @@ module Philosophy
     def [](location) = spaces[location]
     def each(...) = NAMED_COORDINATES.keys.map { spaces[_1] }.each(...)
     def with(tile:, on_location:) = Board.new(spaces.merge(spaces[on_location].with(tile: tile)))
+    def reset_state
+      each { _1.tile.reset_state if _1.occupied? }
+      self
+    end
 
     # Providing a reliable ordering.
     SPACE_NAMES = [

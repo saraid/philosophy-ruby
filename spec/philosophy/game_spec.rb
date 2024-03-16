@@ -14,6 +14,23 @@ RSpec.describe Philosophy::Game do
     end
   end
 
+  context 'on the next turn' do
+    it 'can activate the same tile' do
+      game = Philosophy::Game.new
+      game << 'In+:indigo'
+      game << 'Te+:teal'
+      game << 'In:C5PuNo'
+      game << 'Te:C2PuSo'
+      expect(game.board_state).to eq 'C2:TePuSo/C8:InPuNo'
+      expect(game.player_options).to be_empty
+      expect(game.board.spaces[:C2].tile).not_to be_already_activated
+      game << 'In:C3CpNe'
+      expect(game.board_state).to eq 'C2:TePuSo/C3:InCpNe/C8:InPuNo'
+      game << 'Te:C7SlEa'
+      expect(game.board_state).to eq 'C2:TePuSo/C3:InCpNe/C7:TeSlEa/C8:InPuNo'
+    end
+  end
+
   context 'handles a decision' do
     it 'handles player choice' do
       game = Philosophy::Game.new
