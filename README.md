@@ -114,7 +114,7 @@ Notated simply with `R:In` to pass it to the Indigo player.
 
 ### Rule Change
 If you want to change the rules mid-game, you can issue a Rule Change. Example notation:
-- E.g. `rule:join:permitted:after_placement`
+- E.g. `rule:join:permitted:between_turns`
 - E.g. `rule:leave:what:remove_their_tiles`
 
 ## Rule Variations
@@ -122,7 +122,7 @@ If you want to change the rules mid-game, you can issue a Rule Change. Example n
 You should be able to create a game with rule variations thus:
 ```ruby
 Philosophy::Game.new(rules: {
-  join: { permitted: :after_placement, where: :after_a_full_turn },
+  join: { permitted: :between_turns, where: :after_a_full_turn },
   leave: { permitted: :never, what: :remove_their_tiles }
 })
 ```
@@ -130,7 +130,7 @@ Philosophy::Game.new(rules: {
 ### Joining
 - When can a new player join a game?
   - `:only_before_any_placement` (default) - Before any tiles have been played.
-  - `:after_placement` - Anytime
+  - `:between_turns` - Anytime there isn't a placement in progress.
 - Where in the turn order is a new player inserted?
   - Note that this rule is ignored for joins before game start.
   - `:immediately_next` (default) - The new player will place the next tile.
@@ -155,7 +155,7 @@ The following can be used to preset the names for colors, as well as rules. This
 [ColorIn "Indiana Jones"]
 [ColorTe "Teotihual Batan"]
 [ColorSa "Sarah Connor"]
-[JoinPermitted "After Placement"]
+[JoinPermitted "Between Turns"]
 [LeaveWhat "Remove Their Tiles"]
 
 1. In+

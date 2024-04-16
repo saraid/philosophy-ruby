@@ -29,8 +29,8 @@ RSpec.describe Philosophy::Game::Rules do
       end
     end
 
-    context 'after_placement' do
-      let(:permitted_option) { :after_placement }
+    context 'between_turns' do
+      let(:permitted_option) { :between_turns }
 
       it 'should allow player adds after start' do
         game << 'In+'
@@ -54,7 +54,7 @@ RSpec.describe Philosophy::Game::Rules do
     end
 
     context 'immediately_next' do
-      let(:permitted_option) { :after_placement }
+      let(:permitted_option) { :between_turns }
       let(:what_option) { :immediately_next }
 
       it 'should maintain the player order *before* game start' do
@@ -75,7 +75,7 @@ RSpec.describe Philosophy::Game::Rules do
     end
 
     context 'after_a_full_turn' do
-      let(:permitted_option) { :after_placement }
+      let(:permitted_option) { :between_turns }
       let(:where_option) { :after_a_full_turn }
 
       it 'should set the current player to the player who just joined' do

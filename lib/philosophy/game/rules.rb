@@ -30,7 +30,7 @@ module Philosophy
 
       class JoinRule < Rule
         # At what points during the game may new players join?
-        define :permitted, :only_before_any_placement, :after_placement
+        define :permitted, :only_before_any_placement, :between_turns
         # Where in the turn order does the new player go?
         define :where, :immediately_next, :after_a_full_turn
 
