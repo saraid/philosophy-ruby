@@ -42,7 +42,7 @@ module Philosophy
         self[:JoinPermitted]&.then { (ruleset[:join] ||= {})[:permitted] = _1.downcase.gsub(' ', '_').to_sym }
         self[:JoinWhere]&.then { (ruleset[:join] ||= {})[:where] = _1.downcase.gsub(' ', '_').to_sym }
         self[:LeavePermitted]&.then { (ruleset[:leave] ||= {})[:permitted] = _1.downcase.gsub(' ', '_').to_sym }
-        self[:LeaveWhat]&.then { (ruleset[:leave] ||= {})[:what] = _1.downcase.gsub(' ', '_').to_sym }
+        self[:LeaveEffect]&.then { (ruleset[:leave] ||= {})[:effect] = _1.downcase.gsub(' ', '_').to_sym }
         ruleset
       end
     end

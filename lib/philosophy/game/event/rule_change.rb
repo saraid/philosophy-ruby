@@ -4,7 +4,7 @@ module Philosophy
       class RuleChange < Event
         REGEXES = {
           rule: "(?<rule>join|leave)",
-          variable: "(?<variable>permitted|where|what)",
+          variable: "(?<variable>permitted|where|effect)",
           value: "(?<value>\\w+)",
         }
         NOTATION_REGEX = REGEXES

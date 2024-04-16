@@ -115,7 +115,7 @@ Notated simply with `R:In` to pass it to the Indigo player.
 ### Rule Change
 If you want to change the rules mid-game, you can issue a Rule Change. Example notation:
 - E.g. `rule:join:permitted:between_turns`
-- E.g. `rule:leave:what:remove_their_tiles`
+- E.g. `rule:leave:effect:remove_their_tiles`
 
 ## Rule Variations
 
@@ -123,7 +123,7 @@ You should be able to create a game with rule variations thus:
 ```ruby
 Philosophy::Game.new(rules: {
   join: { permitted: :between_turns, where: :after_a_full_turn },
-  leave: { permitted: :never, what: :remove_their_tiles }
+  leave: { permitted: :never, effect: :remove_their_tiles }
 })
 ```
 
@@ -141,7 +141,7 @@ Philosophy::Game.new(rules: {
   - `:only_before_any_placement` (default) - Players can only leave if the game hasn't started.
   - `:never` - Joined players may not ever leave.
   - `:anytime` - Joined players may leave at any point.
-- What happens to the board when a player leaves the game?
+- What effect is had on the board when a player leaves the game?
   - `:ends_game` (default) - The game if forced to end if a player leaves. No further tiles may be played.
   - `:rollback_placement` - If the player was in the middle of placing a tile or activating chain reactions, those decisions are rolled back such that the player never placed a tile.
   - `:remove_their_tiles` - All the tiles the player has played are removed from the board, clearing space.
@@ -156,7 +156,7 @@ The following can be used to preset the names for colors, as well as rules. This
 [ColorTe "Teotihual Batan"]
 [ColorSa "Sarah Connor"]
 [JoinPermitted "Between Turns"]
-[LeaveWhat "Remove Their Tiles"]
+[LeaveEffect "Remove Their Tiles"]
 
 1. In+
 2. Am+

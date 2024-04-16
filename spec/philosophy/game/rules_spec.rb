@@ -55,7 +55,7 @@ RSpec.describe Philosophy::Game::Rules do
 
     context 'immediately_next' do
       let(:permitted_option) { :between_turns }
-      let(:what_option) { :immediately_next }
+      let(:effect_option) { :immediately_next }
 
       it 'should maintain the player order *before* game start' do
         game << 'In+'
@@ -89,9 +89,9 @@ RSpec.describe Philosophy::Game::Rules do
   end
 
   describe Philosophy::Game::Rules::LeaveRule do
-    let(:leave_rule) { { permitted: permitted_option, what: what_option } }
+    let(:leave_rule) { { permitted: permitted_option, effect: effect_option } }
     let(:permitted_option) { :anytime }
-    let(:what_option) { :ends_game }
+    let(:effect_option) { :ends_game }
 
     context 'never' do
       let(:permitted_option) { :never }
@@ -136,7 +136,7 @@ RSpec.describe Philosophy::Game::Rules do
     end
 
     context 'ends_game' do
-      let(:what_option) { :ends_game }
+      let(:effect_option) { :ends_game }
 
       it 'should disallow leaving after game started' do
         game << 'In+'
@@ -151,7 +151,7 @@ RSpec.describe Philosophy::Game::Rules do
     end
 
     context 'rollback_placement' do
-      let(:what_option) { :rollback_placement }
+      let(:effect_option) { :rollback_placement }
 
       it 'should do nothing if the last placement is complete' do
         game << 'In+'
@@ -217,7 +217,7 @@ RSpec.describe Philosophy::Game::Rules do
     end
 
     context 'remove_their_tiles' do
-      let(:what_option) { :remove_their_tiles }
+      let(:effect_option) { :remove_their_tiles }
 
       it 'removes their tiles' do
         game << 'In+'
