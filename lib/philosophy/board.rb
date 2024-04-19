@@ -94,9 +94,9 @@ module Philosophy
       [:S, 1..3] => [5, 2..4],
       [:S, 4..6] => [6, 2..4],
       [:S, :W] => [5, 1],
-      [:W, [2, 1]] => [2, 0..2],
-      [:W, [4, 3]] => [3, 0..2],
-      [:W, [6, 5]] => [4, 0..2],
+      [:W, 1..2] => [2, 0..2],
+      [:W, 3..4] => [3, 0..2],
+      [:W, 5..6] => [4, 0..2],
     }.each.with_object({}) do |(name_def, coord_def), memo|
       name1, name2 = name_def
       coord1, coord2 = coord_def

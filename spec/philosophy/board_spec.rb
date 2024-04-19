@@ -5,6 +5,11 @@ RSpec.describe Philosophy::Board do
   let(:indigo) { Philosophy::Player.new(Philosophy::Player::Color.new(:indigo, :In)) }
   let(:teal) { Philosophy::Player.new(Philosophy::Player::Color.new(:teal, :Te)) }
 
+  it 'should have W2 directly west of C1' do
+    board = initial_context.to_board
+    expect(board[:C1].neighbors[:west]).to eq board[:W2]
+  end
+
   describe '#concluded?' do
     it 'should notice a conclusion' do
       board = initial_context
