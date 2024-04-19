@@ -47,7 +47,12 @@ game.player_options #=> [ :C4, :N6 ]
 
 ## Notation
 
-I based my notation design off what I was able to find on the [Quality Beast Discord](https://discord.qualitybeast.com). Each region of the board is named after the cardinal directions, the center is `C`, and the diagonal directions have specific notation, with the numbers ascending as you move left-to-right, then top-to-bottom. The exception is the West region, which goes right-to-left.
+I based my notation design off what I was able to find on the [Quality Beast Discord](https://discord.qualitybeast.com) ([here](https://discord.com/channels/404051884131876864/768225424827351100/1079365130195849227)). Each region of the board is named after the cardinal directions, the center is `C`, and the diagonal directions have specific notation, with the numbers ascending as you move left-to-right, then top-to-bottom.
+
+<details>
+<summary>Image Names for Board Spaces</summary>
+<img src="doc/board_space_naming.webp" alt="Names for Board Spaces" width=/>
+</details>
 
 (In the code itself, this is abstracted away into a coordinate system for the 9x9 grid, but those coordinates aren't exposed.)
 
