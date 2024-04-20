@@ -184,5 +184,11 @@ module Philosophy
     end
 
     def to_pgn = [@metadata.to_pgn, nil, @history.notation(with_ordinals: true)].join($/)
+    def notation_for_current_state
+      [ board_state,
+        player_options.then { if _1.any? then "(#{_1.join('')})" else '-' end },
+        current_player.color.code
+      ].join(' ')
+    end
   end
 end

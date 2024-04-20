@@ -150,6 +150,14 @@ module Philosophy
       def to_s = @name.to_s
     end
 
+    def self.from_notation(notation)
+      notation.split(%r{[\s/]+}).each.with_object(new) do |notated_space, board|
+        space, player, tile, direction = notated_space
+          .match(%r!(?<space>\w{2}):(?<player>\w{2})(?<tile>\w{2})(?<direction>\w{2})!)
+          .values_at(:space, :player, :tile, :direction)
+      end
+    end
+
     def initialize(spaces = nil)
       @spaces = spaces || NAMED_COORDINATES.each.with_object({}) do |(name, coordinate), memo|
         space = Space.new(self, name, coordinate)
