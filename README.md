@@ -116,12 +116,6 @@ The board is notated as a description of every occupied space, ordered from C, N
 
 For example, in `C3:SaSlNo/C5:InSrNo/E1:InDeNw`, there are 3 occupied spaces: C3, C5, and E1.
 
-Then we add player options, if we're in the middle of a placement, as a sorted list of options wrapped in parentheses (or a `-` if empty), and then the currently active player code. E.g.,
-
-```
-C2:InReSw/C3:TeSrNo/C4:TePuSo/C5:SaPuEa/E3:InDeSw - In
-```
-
 ### The Respect Token
 Notated simply with `R:In` to pass it to the Indigo player.
 
@@ -204,5 +198,5 @@ game.to_pgn
 - [x] Oh yeah, actually get my PGN parser in here.
 - [x] Figure out how to convert Game::Placement into notation safely.
   - [x] Figure out how to roll Game::Choice events back into Placements.
-- [ ] Generate a correct game object from the full state notation.
-  - That might not work for players, since you can't reliably guarantee what players are present from the board state. Maybe I should add the current player list to the state notation?
+- ~Generate a correct game object from the full state notation.~
+  - Nope. I think it's too difficult to figure out the consequences of choosing a particular parameter without knowing the last move. It might be possible to do this by encoding the full last move into the notation, but I'm not sure I'm comfortable with that yet.
