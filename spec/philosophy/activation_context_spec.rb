@@ -203,7 +203,7 @@ RSpec.describe Philosophy::ActivationContext do
 
       it 'does not activate a tile twice' do
         context = initial_context
-          .place(player: indigo, tile: :long_shot, location: :E4, direction: :west, testing: true)
+          .place(player: indigo, tile: :long_shot, location: :E4, direction: :west, ignore_errors: true)
           .place(player: teal, tile: :push, location: :C5, direction: :north)
           .reset_context
           .place(player: indigo, tile: :push, location: :C4, direction: :east)
