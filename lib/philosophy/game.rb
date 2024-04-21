@@ -183,12 +183,37 @@ module Philosophy
       end
       game
     end
-
     def to_pgn = [@metadata.to_pgn, nil, @history.notation(with_ordinals: true)].join($/)
+
+    SPACE_NOTATION_REGEX = Philosophy::Game::Placement::REGEXES
+      .values_at(:location, :player, :tile, :direction).then do |regexes|
+        location, *rest = regexes
+        [location, rest.join].join(':').then { Regexp.new _1 }
+      end
+    def self.from_notation(notation, rules: Rules.default, metadata: Metadata.empty)
+      board, options, players = notation.split(' ')
+      game = new(rules: rules, metadata: metadata)
+      players.each_char.each_slice(2).map(&:join).each do |code|
+        game.add_player(Player::Color.new(code, code.to_sym))
+      end
+      placed_context = board.split('/').each.with_object(game.current_context) do |space_notation, context|
+        location, player, tile, direction = space_notation
+          .match(SPACE_NOTATION_REGEX)
+          .values_at(:location, :player, :tile, :direction)
+          .map(&:to_sym)
+        context.place(
+          player: game.players.fetch(player),
+          location: location, tile: tile, direction: direction,
+          ignore_errors: true
+        )
+      end
+      game.instance_variable_set(:@current_context, placed_context)
+      game
+    end
     def notation_for_current_state
       [ board_state,
         player_options.then { if _1.any? then "(#{_1.join('')})" else '-' end },
-        current_player.color.code
+        player_order.join(''),
       ].join(' ')
     end
   end
