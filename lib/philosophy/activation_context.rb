@@ -1,5 +1,17 @@
 module Philosophy
   class ActivationContext
+    module Operation
+      Place = Data.define(:player, :tile, :location, :direction) do
+        def to_tuple = [:place, player.color.code, tile.name, location.name, direction]
+      end
+      Move = Data.define(:from_location, :impact_direction, :impact_distance) do
+        def to_tuple = [:move, from_location.name, impact_direction, impact_distance]
+      end
+      Rotate = Data.define(:target_location, :target_direction) do
+        def to_tuple = [:rotate, target_location.name, target_direction.value]
+      end
+    end
+
     def initialize(current_player)
       @current_player = current_player
       @spaces = {}
@@ -7,11 +19,13 @@ module Philosophy
       @possible_activations = Set.new
       @possible_activation_targets = Set.new
       @player_options = {}
+      @operations = []
     end
     attr_reader :current_player
     attr_reader :spaces
     attr_reader :removed_tiles, :player_options
     attr_reader :possible_activations, :possible_activation_targets
+    attr_reader :operations
 
     def [](location) = spaces[location]
 
@@ -20,6 +34,7 @@ module Philosophy
       removed_tiles.each { new_context.removing_tile _1 }
       possible_activations.each { new_context.can_activate _1 }
       possible_activation_targets.each { new_context.can_be_targeted _1 }
+      operations.each { new_context.log _1 }
       new_context.with_player_options(@player_options)
     end
     def reset_context
@@ -41,6 +56,7 @@ module Philosophy
 
       next_context
         .with_spaces(spaces[location].with(tile: tile_instance))
+        .log(Operation::Place.new(player, tile, location, direction))
         .consider_activating(location)
     end
 
@@ -61,6 +77,7 @@ module Philosophy
       end
         .with_spaces(spaces[from_location].with(tile: nil))
         .with_spaces(target_space.with(tile: moved_tile))
+        .log(Operation::Move.new(spaces[from_location], impact_direction, impact_distance))
         .consider_activating(target_space.coordinate)
     end
 
@@ -70,6 +87,7 @@ module Philosophy
       possible_activation = spaces[spaces[target_location].coordinate.translate(direction)]
       next_context
         .with_spaces(spaces[target_location].with(tile: new_tile))
+        .log(Operation::Rotate.new(spaces[target_location], target_direction))
         .consider_activating(possible_activation.coordinate)
     end
 
@@ -81,6 +99,7 @@ module Philosophy
       end
     end
 
+    chain def log(op) = @operations << op
     chain def with_spaces(new_spaces) = spaces.merge!(new_spaces.to_h)
     chain def with_player_options(options) = @player_options = options
     chain def without_player_options = @player_options = {}

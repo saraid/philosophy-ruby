@@ -74,6 +74,10 @@ RSpec.describe Philosophy::ActivationContext do
       expect(context.possible_activations).to be_empty
       expect(context.possible_activation_targets).not_to be_empty
       expect(context.possible_activation_targets.as_notation(context)).to eq %w[C6:TePuNo E3:TeCpNw]
+      expect(context.operations.map(&:to_tuple)).to eq [
+        [:move, :C6, :east, 1],
+        [:move, :C5, :east, 1],
+      ]
     end
 
     it 'should handle multiple tiles with mixed ownership' do
@@ -87,6 +91,10 @@ RSpec.describe Philosophy::ActivationContext do
       expect(context.possible_activations.as_notation(context)).to eq %w[C6:InPuNo]
       expect(context.possible_activation_targets).not_to be_empty
       expect(context.possible_activation_targets.as_notation(context)).to eq %w[E3:TeCpNw]
+      expect(context.operations.map(&:to_tuple)).to eq [
+        [:move, :C6, :east, 1],
+        [:move, :C5, :east, 1],
+      ]
     end
   end
 
@@ -268,7 +276,6 @@ RSpec.describe Philosophy::ActivationContext do
           .place(player: teal, tile: :push, location: :C2, direction: :east)
           .reset_context
           .place(player: indigo, tile: :persuade, location: :C5, direction: :north)
-          .tap { $debug = true }
           .activate(:C5)
 
         expect(context[:C2]).not_to be_occupied

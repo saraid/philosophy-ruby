@@ -68,6 +68,7 @@ module Philosophy
     def player_order = @players.map(&:color).map(&:code)
     def board_state = @current_context.to_board.notation(delimiter: '/')
     def player_options = @current_context.player_options.keys.sort
+    def board_operations = @current_context.operations.map(&:to_tuple)
     def nearing_conclusion? = @current_context.to_board.nearing_conclusion?
     def conclusions = @current_context.to_board.conclusions
     def concluded? = @force_conclusion || conclusions.one?
