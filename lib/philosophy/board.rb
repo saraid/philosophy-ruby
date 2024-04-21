@@ -109,13 +109,6 @@ module Philosophy
     end
     
     class Space
-      class State
-        def initialize
-          @targeted_by = []
-        end
-        attr_reader :targeted_by
-      end
-
       def initialize(board, name, coordinate)
         @board, @name, @coordinate = board, name, coordinate
         @tile = nil
