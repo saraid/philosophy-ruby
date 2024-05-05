@@ -27,6 +27,7 @@ module Philosophy
       def execute(game)
         @name ||= game.metadata[:"Color#{code}"] || @code
         raise PlayerCodeAlreadyUsed, code if type == :joined && game.players.key?(code)
+
         case type
         when :joined then game.add_player(Player::Color.new(name, code))
         when :left then game.remove_player(code)

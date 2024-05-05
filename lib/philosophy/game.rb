@@ -96,7 +96,7 @@ module Philosophy
     def add_player(color)
       Philosophy.logger.debug("Adding player #{color}")
       raise DisallowedByRule if started? && @rules.can_join.only_before_any_placement?
-      previous_player_options = @current_context&.player_options
+      previous_player_options = @current_context&.player_options || {}
       if !started? || @rules.can_join.after_a_full_turn?
         Philosophy.logger.debug("Adding player to the end")
         @players << Player.new(color)

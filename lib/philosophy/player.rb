@@ -1,4 +1,3 @@
-
 module Philosophy
   class Player
     Color = Data.define(:name, :code)
@@ -19,15 +18,5 @@ module Philosophy
 
     def notation = @color.code
     def to_s = color.to_s.capitalize
-  end
-
-  #Player.register Player::Color.new(:teal, :Te)
-  #Player.register Player::Color.new(:indigo, :In)
-  #Player.register Player::Color.new(:amber, :Am)
-  #Player.register Player::Color.new(:sage, :Sa)
-#
-  class Lemma
-    def initialize(player, key, &lemma)
-    end
   end
 end
