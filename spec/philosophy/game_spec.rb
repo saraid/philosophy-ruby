@@ -4,13 +4,13 @@ RSpec.describe Philosophy::Game do
       game = Philosophy::Game.new
       game << 'In+:indigo'
       game << 'Te+:teal'
-      game << 'In:C5PuNo'
-      expect(game.board_state).to eq 'C5:InPuNo'
+      game << 'In:C4PuNo'
+      expect(game.board_state).to eq 'C4:InPuNo'
       expect(game.current_player.color.name).to eq :teal
-      game << 'Te:C8PuNo'
-      expect(game.board_state).to eq 'C2:InPuNo/C8:TePuNo'
+      game << 'Te:C7PuNo'
+      expect(game.board_state).to eq 'C1:InPuNo/C7:TePuNo'
       expect(game.current_player.color.name).to eq :indigo
-      expect(game.history.notation(delimiter: ';')).to eq 'In+;Te+;In:C5PuNo;Te:C8PuNo'
+      expect(game.history.notation(delimiter: ';')).to eq 'In+;Te+;In:C4PuNo;Te:C7PuNo'
     end
   end
 
@@ -19,15 +19,15 @@ RSpec.describe Philosophy::Game do
       game = Philosophy::Game.new
       game << 'In+:indigo'
       game << 'Te+:teal'
-      game << 'In:C5PuNo'
-      game << 'Te:C2PuSo'
-      expect(game.board_state).to eq 'C2:TePuSo/C8:InPuNo'
+      game << 'In:C6PuNo'
+      game << 'Te:C3PuSo'
+      expect(game.board_state).to eq 'C3:TePuSo/C9:InPuNo'
       expect(game.player_options).to be_empty
-      expect(game.board.spaces[:C2].tile).not_to be_already_activated
-      game << 'In:C3CpNe'
-      expect(game.board_state).to eq 'C2:TePuSo/C3:InCpNe/C8:InPuNo'
+      expect(game.board.spaces[:C3].tile).not_to be_already_activated
+      game << 'In:C1CpNe'
+      expect(game.board_state).to eq 'C1:InCpNe/C3:TePuSo/C9:InPuNo'
       game << 'Te:C7SlEa'
-      expect(game.board_state).to eq 'C2:TePuSo/C3:InCpNe/C7:TeSlEa/C8:InPuNo'
+      expect(game.board_state).to eq 'C1:InCpNe/C3:TePuSo/C7:TeSlEa/C9:InPuNo'
     end
   end
 
@@ -36,14 +36,14 @@ RSpec.describe Philosophy::Game do
       game = Philosophy::Game.new
       game << 'In+:indigo'
       game << 'Te+:teal'
-      game << 'In:C5PuNo'
-      expect(game.board_state).to eq 'C5:InPuNo'
+      game << 'In:C3PuNo'
+      expect(game.board_state).to eq 'C3:InPuNo'
       expect(game.current_player.color.name).to eq :teal
-      game << 'Te:C7DeNe'
-      expect(game.player_options).to eq %i[ C1 C9 ]
+      game << 'Te:C5DeNe'
+      expect(game.player_options).to eq %i[ E3 N5 ]
       expect(game.current_player.color.name).to eq :teal
-      game << 'C1'
-      expect(game.board_state).to eq 'C1:InPuNo/C7:TeDeNe'
+      game << 'E3'
+      expect(game.board_state).to eq 'C5:TeDeNe/E3:InPuNo'
       expect(game.player_options).to be_empty
       expect(game.current_player.color.name).to eq :indigo
     end
@@ -52,12 +52,12 @@ RSpec.describe Philosophy::Game do
       game = Philosophy::Game.new
       game << 'In+:indigo'
       game << 'Te+:teal'
-      game << 'In:C5PuNo'
-      expect(game.board_state).to eq 'C5:InPuNo'
+      game << 'In:C3PuNo'
+      expect(game.board_state).to eq 'C3:InPuNo'
       expect(game.current_player.color.name).to eq :teal
-      game << 'Te:C7DeNe[C1]'
+      game << 'Te:C5DeNe[E3]'
       expect(game.player_options).to be_empty
-      expect(game.board_state).to eq 'C1:InPuNo/C7:TeDeNe'
+      expect(game.board_state).to eq 'C5:TeDeNe/E3:InPuNo'
       expect(game.current_player.color.name).to eq :indigo
     end
 
@@ -83,14 +83,14 @@ RSpec.describe Philosophy::Game do
       game = Philosophy::Game.new
       game << 'In+:indigo'
       game << 'Te+:teal'
-      game << 'In:C5PuNo'
-      expect(game.board_state).to eq 'C5:InPuNo'
+      game << 'In:C6PuNo'
+      expect(game.board_state).to eq 'C6:InPuNo'
       expect(game.current_player.color.name).to eq :teal
-      game << 'Te:C7ReNe'
+      game << 'Te:C8ReNe'
       expect(game.player_options).to eq %i[ Ea No So We ]
       expect(game.current_player.color.name).to eq :teal
       game << 'We'
-      expect(game.board_state).to eq 'C5:InPuWe/C7:TeReNe'
+      expect(game.board_state).to eq 'C6:InPuWe/C8:TeReNe'
       expect(game.current_player.color.name).to eq :indigo
     end
 
@@ -98,11 +98,11 @@ RSpec.describe Philosophy::Game do
       game = Philosophy::Game.new
       game << 'In+:indigo'
       game << 'Te+:teal'
-      game << 'In:C5PuNo'
-      expect(game.board_state).to eq 'C5:InPuNo'
+      game << 'In:C6PuNo'
+      expect(game.board_state).to eq 'C6:InPuNo'
       expect(game.current_player.color.name).to eq :teal
-      game << 'Te:C7ReNe[We]'
-      expect(game.board_state).to eq 'C5:InPuWe/C7:TeReNe'
+      game << 'Te:C8ReNe[We]'
+      expect(game.board_state).to eq 'C6:InPuWe/C8:TeReNe'
       expect(game.current_player.color.name).to eq :indigo
     end
   end
@@ -153,7 +153,7 @@ RSpec.describe Philosophy::Game do
       game = Philosophy::Game.new
       game << 'In+:indigo'
       game << 'Te+:teal'
-      game << 'In:C5PuNo'
+      game << 'In:C4PuNo'
       game << 'R:In'
       expect(game.holding_respect_token).to eq :In
     end
@@ -162,7 +162,7 @@ RSpec.describe Philosophy::Game do
       game = Philosophy::Game.new
       game << 'In+:indigo'
       game << 'Te+:teal'
-      game << 'In:C5PuNo'
+      game << 'In:C4PuNo'
       game << 'R:In'
       expect(game.holding_respect_token).to eq :In
       game << 'Te:C8PuNo'
@@ -193,12 +193,12 @@ RSpec.describe Philosophy::Game do
     end
 
     it 'should not allow placement by a different player' do
-      expect { game << 'Sa:C5PuNo' }
+      expect { game << 'Sa:C4PuNo' }
         .to raise_error(Philosophy::Game::Placement::IncorrectPlayer)
     end
 
     it 'should not allow invalid tile types' do
-      expect { game << 'In:C5XxNo' }
+      expect { game << 'In:C4XxNo' }
         .to raise_error(Philosophy::Game::Placement::InvalidTileType)
     end
 
@@ -213,33 +213,33 @@ RSpec.describe Philosophy::Game do
     end
 
     it 'should not allow orienting somewhere invalid' do
-      expect { game << 'In:C5PuNw' }
+      expect { game << 'In:C4PuNw' }
         .to raise_error(Philosophy::Game::Placement::CannotOrientInTargetDirection)
     end
 
     it 'should not allow an unavailable choice with parameter notation' do
-      game << 'In:C5SrSo'
+      game << 'In:C4SrSo'
       expect { game << 'Te:C7DeNe[C8]' }
         .to raise_error(Philosophy::Game::Choice::Error)
     end
 
     it 'should not allow an unavailable choice with manual choice' do
-      game << 'In:C5SrSo'
+      game << 'In:C4SrSo'
       game << 'Te:C7DeNe'
       expect { game << 'No' }
         .to raise_error(Philosophy::Game::Choice::Error)
     end
 
     it 'should not allow unavailable tiles' do
-      game << 'In:C5SrNo'
+      game << 'In:C4SrNo'
       game << 'Te:C2SlNo'
       expect { game << 'In:C8SrNo' }
         .to raise_error(Philosophy::Game::Placement::UnavailableTile)
     end
 
     it 'should not allow stacking tiles' do
-      game << 'In:C5SrNo'
-      expect { game << 'Te:C5SrNo' }
+      game << 'In:C4SrNo'
+      expect { game << 'Te:C4SrNo' }
         .to raise_error(Philosophy::Game::Placement::CannotPlaceAtopExistingTile)
     end
   end

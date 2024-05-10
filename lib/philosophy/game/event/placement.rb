@@ -5,6 +5,7 @@ module Philosophy
       class InvalidTileType < Error; end
       class UnavailableTile < Error; end
       class InvalidLocation < Error; end
+      class InvalidFirstMove < InvalidLocation; end
       class LocationOutsidePlacementSpace < InvalidLocation; end
       class CannotPlaceAtopExistingTile < Error; end
       class CannotOrientInTargetDirection < Error; end
@@ -56,6 +57,7 @@ module Philosophy
       def execute(game)
         raise Game::InsufficientPlayers if game.players.size < 2
         raise IncorrectPlayer if game.current_player.color.code != player
+        raise InvalidFirstMove if game.first_move?(self) && location == :C5
         game.current_context
           .place(player: game.current_player, location: location, tile: tile, direction: direction)
           .make_automatic_choices!

@@ -76,6 +76,7 @@ module Philosophy
     def continuable? = !@current_context.to_board.playable_area_full? && @current_player.has_tiles?
 
     def started? = @started ||= !!@history.find { Placement === _1 }
+    def first_move?(event) = @history.find { Placement === _1 } == event
 
     def players
       @players.each.with_object({}) { _2.merge!(Hash[ _1.color.name => _1, _1.color.code => _1]) }

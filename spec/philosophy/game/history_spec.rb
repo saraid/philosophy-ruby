@@ -7,27 +7,27 @@ RSpec.describe Philosophy::Game::History do
     it 'handles placements' do
       game << 'In+'
       game << 'Te+'
-      game << 'In:C5PuNo'
+      game << 'In:C4PuNo'
       game << 'Te:C8PuNo'
-      expect(history).to eq 'In+;Te+;In:C5PuNo;Te:C8PuNo'
+      expect(history).to eq 'In+;Te+;In:C4PuNo;Te:C8PuNo'
     end
 
     it 'handles placements with parameters' do
       game << 'In+'
       game << 'Te+'
-      game << 'In:C5PuNo'
-      game << 'Te:C7ReNe[Ea]'
+      game << 'In:C6PuNo'
+      game << 'Te:C8ReNe[Ea]'
       expect(game.player_options).to be_empty
-      expect(history).to eq 'In+;Te+;In:C5PuNo;Te:C7ReNe[Ea]'
+      expect(history).to eq 'In+;Te+;In:C6PuNo;Te:C8ReNe[Ea]'
     end
 
     it 'handles incomplete placements' do
       game << 'In+'
       game << 'Te+'
-      game << 'In:C5PuNo'
-      game << 'Te:C7ReNe'
+      game << 'In:C6PuNo'
+      game << 'Te:C8ReNe'
       expect(game.player_options).to eq %i[ Ea No So We ]
-      expect(history).to eq 'In+;Te+;In:C5PuNo;Te:C7ReNe(EaNoSoWe)'
+      expect(history).to eq 'In+;Te+;In:C6PuNo;Te:C8ReNe(EaNoSoWe)'
     end
 
     it 'handles partially complete placements' do

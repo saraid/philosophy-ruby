@@ -23,7 +23,7 @@ RSpec.describe Philosophy::Game::Rules do
       it 'should not allow player adds after start' do
         game << 'In+'
         game << 'Te+'
-        game << 'In:C5PuNo'
+        game << 'In:C4PuNo'
         expect { game << 'Sa+' }.to raise_error(Philosophy::Game::DisallowedByRule)
         expect(game.player_order).to eq %i[ Te In ]
       end
@@ -35,7 +35,7 @@ RSpec.describe Philosophy::Game::Rules do
       it 'should allow player adds after start' do
         game << 'In+'
         game << 'Te+'
-        game << 'In:C5PuNo'
+        game << 'In:C4PuNo'
         expect { game << 'Sa+' }.not_to raise_error
         expect(game.player_order).to eq %i[ Sa Te In ]
       end
@@ -67,7 +67,7 @@ RSpec.describe Philosophy::Game::Rules do
       it 'should set the current player to the player who just joined' do
         game << 'In+'
         game << 'Te+'
-        game << 'In:C5PuNo'
+        game << 'In:C4PuNo'
         expect { game << 'Sa+' }.not_to raise_error
         expect(game.current_player.color.code).to eq :Sa
         expect(game.player_order).to eq %i[ Sa Te In ]
@@ -81,7 +81,7 @@ RSpec.describe Philosophy::Game::Rules do
       it 'should set the current player to the player who just joined' do
         game << 'In+'
         game << 'Te+'
-        game << 'In:C5PuNo'
+        game << 'In:C4PuNo'
         expect { game << 'Sa+' }.not_to raise_error
         expect(game.player_order).to eq %i[ Te In Sa ]
       end
@@ -124,7 +124,7 @@ RSpec.describe Philosophy::Game::Rules do
         game << 'Sa+'
         game << 'Am+'
         game << 'Te+'
-        game << 'In:C5PuNo'
+        game << 'In:C4PuNo'
         expect { game << 'In-' }.to raise_error(Philosophy::Game::DisallowedByRule)
       end
     end
@@ -143,7 +143,7 @@ RSpec.describe Philosophy::Game::Rules do
         game << 'Sa+'
         game << 'Am+'
         game << 'Te+'
-        game << 'In:C5PuNo'
+        game << 'In:C4PuNo'
         expect(game).not_to be_concluded
         game << 'In-'
         expect(game).to be_concluded
@@ -222,11 +222,11 @@ RSpec.describe Philosophy::Game::Rules do
       it 'removes their tiles' do
         game << 'In+'
         game << 'Am+'
-        game << 'In:C5PuNo'
-        game << 'Am:C4PuNo'
+        game << 'In:C4PuNo'
+        game << 'Am:C8PuNo'
         game << 'In:C6LsNo'
         game << 'In-'
-        expect(game.board_state).to eq 'C4:AmPuNo'
+        expect(game.board_state).to eq 'C8:AmPuNo'
       end
     end
   end
