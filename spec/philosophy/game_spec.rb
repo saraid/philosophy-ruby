@@ -31,6 +31,15 @@ RSpec.describe Philosophy::Game do
     end
   end
 
+  context 'first move' do
+    it 'cannot be on C5' do
+      game = Philosophy::Game.new
+      game << 'In+:indigo'
+      game << 'Te+:teal'
+      expect { game << 'In:C5PuNo' }.to raise_error(Philosophy::Game::Placement::InvalidFirstMove)
+    end
+  end
+
   context 'handles a decision' do
     it 'handles player choice' do
       game = Philosophy::Game.new

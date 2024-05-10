@@ -42,10 +42,11 @@ module Philosophy
     end
 
     PErr = Philosophy::Game::Placement
-    def place(player:, tile:, location:, direction:, ignore_errors: false)
+    def place(player:, tile:, location:, direction:, first_move: false, ignore_errors: false)
       Philosophy.logger.debug("#place #{player.color.name} #{tile} #{location} #{direction}")
       raise PErr::InvalidTileType, tile unless IdeaTile.registry.key?(tile)
       raise PErr::InvalidLocation, location unless spaces.key?(location)
+      raise PErr::InvalidFirstMove, location if first_move && spaces[location].name == :C5
       raise PErr::LocationOutsidePlacementSpace, location unless spaces[location].playable? || ignore_errors
       raise PErr::CannotPlaceAtopExistingTile, location if spaces[location].occupied?
 

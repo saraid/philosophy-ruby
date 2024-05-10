@@ -57,9 +57,12 @@ module Philosophy
       def execute(game)
         raise Game::InsufficientPlayers if game.players.size < 2
         raise IncorrectPlayer if game.current_player.color.code != player
-        raise InvalidFirstMove if game.first_move?(self) && location == :C5
         game.current_context
-          .place(player: game.current_player, location: location, tile: tile, direction: direction)
+          .place(player: game.current_player,
+                 location: location,
+                 tile: tile,
+                 direction: direction,
+                 first_move: game.first_move?(self))
           .make_automatic_choices!
           .then { parameters.reduce(_1, :choose) }
           .tap { @options = _1.player_options }
