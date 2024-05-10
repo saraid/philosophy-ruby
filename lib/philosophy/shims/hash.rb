@@ -12,6 +12,23 @@ module Philosophy
     end
   end
 
+  class Board
+    class Space
+      def to_h
+        { tile: tile.class.key,
+          owner: tile.owner.color.code,
+          direction: tile.target,
+        }
+      end
+    end
+
+    def to_h
+      SPACE_NAMES
+        .map { @spaces[_1] }
+        .each.with_object({}) { _2[_1.name] = _1.to_h if _1.occupied? }
+    end
+  end
+
   class Game
     class Event
       def serializable = raise NoMethodError, self.class.name
@@ -38,23 +55,6 @@ module Philosophy
       def serializable = %i(rule variable value)
     end
 
-    class Board
-      class Space
-        def to_h
-          { tile: tile.class.key,
-            owner: tile.owner.color.code,
-            direction: tile.direction,
-          }
-        end
-      end
-
-      def to_h
-        SPACE_NAMES
-          .map { @spaces[_1] }
-          .each.with_object({}) { _2[_1.name] = _1.to_h if _1.occupied? }
-      end
-    end
-
     class History
       def to_h = @events.map(&:to_h)
     end
@@ -70,7 +70,8 @@ module Philosophy
         current_player: current_player.color.code,
         player_options: player_options,
         players: @players.map(&:to_h),
-        board: @current_context.to_board.to_h
+        board: @current_context.to_board.to_h,
+        board_operations: board_operations
       }
     end
   end

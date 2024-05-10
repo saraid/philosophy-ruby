@@ -90,7 +90,7 @@ module Philosophy
 
     private def normalize_player_state
       @current_player = @players.first
-      @current_context = ActivationContext.new(@current_player).with_spaces(@board.spaces)
+      @current_context = ActivationContext.new(@current_player).with_spaces(@board&.spaces || {})
     end
 
     def add_player(color)
