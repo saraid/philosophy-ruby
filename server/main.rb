@@ -22,8 +22,9 @@ end
 
 require_relative '../lib/philosophy'
 require_relative '../lib/philosophy/shims/svg'
+require_relative 'tests'
 
-def render_game(game)
+def render_game(game = current_game)
   # clean the state
   JS.global[:document].querySelector('#error')[:innerHTML] = ""
   game.board.each do
@@ -86,21 +87,15 @@ def render_game(game)
   end
 end
 
-game = Philosophy::Game.new
-game << 'In+:indigo'
-game << 'Te+:teal'
-game << 'In:C4PuNo'
-game << 'Te:C1ToSo'
-#game << 'Te:C7PuNo'
-#game << 'Te:C1PuSo'
-#game << 'Te:C2ReSw[Ea]'
+def current_game = @current_game
+@current_game = Philosophy::Game.new
 
 input = JS.global[:document].querySelector('#input input')
 button = JS.global[:document].querySelector('#input button')
 button.addEventListener("click") do |event|
   begin
-    game << input[:value].to_s
-    render_game(game)
+    current_game << input[:value].to_s
+    render_game
   rescue Philosophy::Game::Placement::InvalidFirstMove
     JS.global[:document].querySelector('#error')[:innerHTML] = "You may not play C5 first."
   rescue Philosophy::Game::Placement::LocationOutsidePlacementSpace
@@ -122,4 +117,4 @@ button.addEventListener("click") do |event|
   end
 end
 
-render_game(game)
+render_game
