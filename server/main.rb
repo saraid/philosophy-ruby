@@ -24,6 +24,8 @@ require_relative '../lib/philosophy'
 require_relative '../lib/philosophy/shims/svg'
 require_relative 'tests'
 
+def document = JS.global[:document]
+
 def render_game(game = current_game)
   # clean the state
   JS.global[:document].querySelector('#error')[:innerHTML] = ""
@@ -41,10 +43,8 @@ def render_game(game = current_game)
     JS.global[:document].querySelector("#space-#{_1.name}")[:innerHTML] = _1.tile.notation
   end
 
-  puts game.last_board_operations.map(&:to_tuple).inspect
   game.last_board_operations.each do |operation|
     case operation
-    #in [:place, _, _, location, _]
     when Philosophy::ActivationContext::Operation::Place
       location = operation.location.name
       current_html = JS.global[:document].querySelector("#space-#{location}")[:innerHTML]
@@ -72,17 +72,18 @@ def render_game(game = current_game)
       grid_position =
         [ [start_column, end_column].sort.then { "grid-column-start:#{_1};grid-column-end:span #{_2};" },
           [start_row, end_row].sort.then { "grid-row-start:#{_1};grid-row-end:span #{_2};" },
-        ].join.tap { puts "v2: #{_1}" }
+        ].join#.tap { puts "v2: #{_1}" }
 
       div = JS.global[:document].createElement("div")
       div[:class] = "operation-move"
       div[:style] = [
-      grid_position,
+        grid_position,
         "z-index:2;"
       ].join
       div[:innerHTML] = operation.to_svg
       JS.global[:document].querySelector("#operations").appendChild(div)
     else
+      puts "unknown operation: #{operation.inspect}"
     end
   end
 end
@@ -90,9 +91,9 @@ end
 def current_game = @current_game
 @current_game = Philosophy::Game.new
 
-input = JS.global[:document].querySelector('#input input')
-button = JS.global[:document].querySelector('#input button')
-handle_input = proc do
+def input = document.querySelector('#input input')
+def handle_input
+  puts 'handle_input called'
   begin
     current_game << input[:value].to_s
     render_game
@@ -116,12 +117,12 @@ handle_input = proc do
     JS.global[:document].querySelector('#error')[:innerHTML] = "Not a valid choice."
   end
 end
-button.addEventListener("click", &handle_input)
+document.querySelector('#input button').call(:addEventListener, "click") { |event| handle_input }
 input.addEventListener("keypress") do |event|
   case event[:key]
   when 'Enter'
     puts 'Enter pressed'
-    handle_input.call
+    handle_input
   end
 end
 
