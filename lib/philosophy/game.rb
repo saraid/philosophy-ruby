@@ -60,6 +60,7 @@ module Philosophy
       @players = []
       @current_player = @players.first
       @current_context = nil
+      @last_board_operations = []
     end
     attr_reader :current_player, :current_context
     attr_reader :board, :history
@@ -68,7 +69,7 @@ module Philosophy
     def player_order = @players.map(&:color).map(&:code)
     def board_state = @current_context.to_board.notation(delimiter: '/')
     def player_options = @current_context.player_options.keys.sort
-    def board_operations = @current_context.operations.map(&:to_tuple)
+    def last_board_operations = @last_board_operations
     def nearing_conclusion? = @current_context.to_board.nearing_conclusion?
     def conclusions = @current_context.to_board.conclusions
     def concluded? = @force_conclusion || conclusions.one?
@@ -158,6 +159,7 @@ module Philosophy
       @previous_context = @current_context if Placement === @current_event
       @current_event.execute(self).then do |new_context|
         next if new_context == @current_context
+        @last_board_operations = new_context.operations
 
         return_tiles(new_context.removed_tiles)
         @current_context =

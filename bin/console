@@ -16,5 +16,12 @@ require "philosophy/shims/hash"
 def game = @game ||= Philosophy::Game.new
 def log(...) = Philosophy.logger.info(...)
 
+def setup
+  game << 'In+:indigo'
+  game << 'Te+:teal'
+  game << 'In:C4PuNo'
+  game << 'Te:C7PuNo'
+end
+
 require "irb"
 IRB.start(__FILE__)
