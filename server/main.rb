@@ -53,58 +53,25 @@ def render_game(game)
       current_html = JS.global[:document].querySelector("#space-#{location}")[:innerHTML]
       JS.global[:document].querySelector("#space-#{location}")[:innerHTML] = "#{current_html}<br/>#{operation.to_svg}"
     when Philosophy::ActivationContext::Operation::Move
-      grid_position =
+      from_location = operation.from_location.coordinate
+      start_column = from_location.col + 1
+      end_column =
         case operation.impact_direction.value
-        when :north
-          { "grid-column-start": "#{operation.from_location.coordinate.col+1};",
-            "grid-column-end": "#{operation.from_location.coordinate.col+1};",
-            "grid-row-start": "#{operation.from_location.coordinate.row};",
-            "grid-row-end": "span #{operation.from_location.coordinate.row+1};",
-          }
-        when :south
-          { "grid-column-start": "#{operation.from_location.coordinate.col+1};",
-            "grid-column-end": "#{operation.from_location.coordinate.col+1};",
-            "grid-row-start": "#{operation.from_location.coordinate.row+1};",
-            "grid-row-end": "span #{operation.from_location.coordinate.row+2};",
-          }
-        when :west
-          { "grid-column-start": "#{operation.from_location.coordinate.col};",
-            "grid-column-end": "span #{operation.from_location.coordinate.col+1};",
-            "grid-row-start": "#{operation.from_location.coordinate.row+1};",
-            "grid-row-end": "#{operation.from_location.coordinate.row+1};",
-          }
-        when :east
-          { "grid-column-start": "#{operation.from_location.coordinate.col+1};",
-            "grid-column-end": "span #{operation.from_location.coordinate.col+2};",
-            "grid-row-start": "#{operation.from_location.coordinate.row+1};",
-            "grid-row-end": "#{operation.from_location.coordinate.row+1};",
-          }
-        when :ne
-          { "grid-column-start": "#{operation.from_location.coordinate.col+1};",
-            "grid-column-end": "span #{operation.from_location.coordinate.col+2};",
-            "grid-row-start": "#{operation.from_location.coordinate.row};",
-            "grid-row-end": "span #{operation.from_location.coordinate.row+1};",
-          }
-        when :se
-          { "grid-column-start": "#{operation.from_location.coordinate.col+1};",
-            "grid-column-end": "span #{operation.from_location.coordinate.col+2};",
-            "grid-row-start": "#{operation.from_location.coordinate.row+1};",
-            "grid-row-end": "span #{operation.from_location.coordinate.row+2};",
-          }
-        when :sw
-          { "grid-column-start": "#{operation.from_location.coordinate.col};",
-            "grid-column-end": "span #{operation.from_location.coordinate.col+1};",
-            "grid-row-start": "#{operation.from_location.coordinate.row+1};",
-            "grid-row-end": "span #{operation.from_location.coordinate.row+2};",
-          }
-        when :nw
-          { "grid-column-start": "#{operation.from_location.coordinate.col};",
-            "grid-column-end": "span #{operation.from_location.coordinate.col+1};",
-            "grid-row-start": "#{operation.from_location.coordinate.row};",
-            "grid-row-end": "span #{operation.from_location.coordinate.row+1};",
-          }
-        end.map { "#{_1}:#{_2}" }.join
-      puts grid_position
+        when :east, :ne, :se then start_column - operation.impact_distance
+        when :west, :nw, :sw then start_column + operation.impact_distance
+        else start_column
+        end
+      start_row = from_location.row + 1
+      end_row =
+        case operation.impact_direction.value
+        when :north, :nw, :ne then start_row - operation.impact_distance
+        when :south, :sw, :se then start_row + operation.impact_distance
+        else start_row
+        end
+      grid_position =
+        [ [start_column, end_column].sort.then { "grid-column-start:#{_1};grid-column-end:span #{_2};" },
+          [start_row, end_row].sort.then { "grid-row-start:#{_1};grid-row-end:span #{_2};" },
+        ].join.tap { puts "v2: #{_1}" }
 
       div = JS.global[:document].createElement("div")
       div[:class] = "operation-move"
