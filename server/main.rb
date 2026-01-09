@@ -58,8 +58,8 @@ def render_game(game = current_game)
       start_column = from_location.col + 1
       end_column =
         case operation.impact_direction.value
-        when :east, :ne, :se then start_column - operation.impact_distance
-        when :west, :nw, :sw then start_column + operation.impact_distance
+        when :east, :ne, :se then start_column + operation.impact_distance
+        when :west, :nw, :sw then start_column - operation.impact_distance
         else start_column
         end
       start_row = from_location.row + 1
@@ -92,7 +92,7 @@ def current_game = @current_game
 
 input = JS.global[:document].querySelector('#input input')
 button = JS.global[:document].querySelector('#input button')
-button.addEventListener("click") do |event|
+handle_input = proc do
   begin
     current_game << input[:value].to_s
     render_game
@@ -114,6 +114,14 @@ button.addEventListener("click") do |event|
     JS.global[:document].querySelector('#error')[:innerHTML] = "It is not this player's turn."
   rescue Philosophy::Game::Choice::Error
     JS.global[:document].querySelector('#error')[:innerHTML] = "Not a valid choice."
+  end
+end
+button.addEventListener("click", &handle_input)
+input.addEventListener("keypress") do |event|
+  case event[:key]
+  when 'Enter'
+    puts 'Enter pressed'
+    handle_input.call
   end
 end
 

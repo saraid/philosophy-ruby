@@ -157,16 +157,21 @@ module Philosophy
         .then { @history << _1 }
 
       @previous_context = @current_context if Placement === @current_event
-      @current_event.execute(self).then do |new_context|
-        next if new_context == @current_context
-        @last_board_operations = new_context.operations
+      begin
+        @current_event.execute(self).then do |new_context|
+          next if new_context == @current_context
+          @last_board_operations = new_context.operations
 
-        return_tiles(new_context.removed_tiles)
-        @current_context =
-          if new_context.player_options.empty?
-            advance_player(new_context)
-          else new_context
-          end
+          return_tiles(new_context.removed_tiles)
+          @current_context =
+            if new_context.player_options.empty?
+              advance_player(new_context)
+            else new_context
+            end
+        end
+      rescue Game::Placement::Error, Game::Choice::Error
+        @history.pop
+        raise
       end
 
       @current_event

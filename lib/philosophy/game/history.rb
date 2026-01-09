@@ -8,6 +8,7 @@ module Philosophy
       end
 
       def <<(event) = @events << event
+      def pop = @events.pop
       def each(...) = @events.each(...)
 
       def notation(delimiter: $/, with_ordinals: false, with_player_change: true, with_rule_change: true)
