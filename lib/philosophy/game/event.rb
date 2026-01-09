@@ -1,6 +1,7 @@
 module Philosophy
   class Game
     class Event
+
       def self.from_notation(notation)
         [PlayerChange, Placement, Choice, Respect, RuleChange]
           .find { _1::NOTATION_REGEX.match? notation }

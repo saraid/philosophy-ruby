@@ -1,10 +1,10 @@
-#board-wrapper {
+#board {
   position: relative;
 
   width: 770px;
   height: 770px;
 }
-#board, #overlay {
+#spaces, #operations {
   position: absolute;
   top: 0;
   left: 0;
@@ -17,7 +17,7 @@
   grid-template-rows: repeat(7, 1fr);
   gap: 2px;
 }
-#overlay {
+#operations {
   pointer-events: none;
 }
 .space {
@@ -44,18 +44,24 @@
 }
 
 #space-c1 {
+  border-top: solid 1px green;
+  border-left: solid 1px green;
   grid-row: 3;
   grid-column: 3;
 }
 #space-c2 {
+  border-top: solid 1px green;
   grid-row: 3;
   grid-column: 4;
 }
 #space-c3 {
+  border-top: solid 1px green;
+  border-right: solid 1px green;
   grid-row: 3;
   grid-column: 5;
 }
 #space-c4 {
+  border-left: solid 1px green;
   grid-row: 4;
   grid-column: 3;
 }
@@ -64,18 +70,24 @@
   grid-column: 4;
 }
 #space-c6 {
+  border-right: solid 1px green;
   grid-row: 4;
   grid-column: 5;
 }
 #space-c7 {
+  border-left: solid 1px green;
+  border-bottom: solid 1px green;
   grid-row: 5;
   grid-column: 3;
 }
 #space-c8 {
+  border-bottom: solid 1px green;
   grid-row: 5;
   grid-column: 4;
 }
 #space-c9 {
+  border-bottom: solid 1px green;
+  border-right: solid 1px green;
   grid-row: 5;
   grid-column: 5;
 }

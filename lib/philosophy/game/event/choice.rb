@@ -1,7 +1,7 @@
 module Philosophy
   class Game
     class Choice < Event
-      class Error < ArgumentError; end
+      class Error < Game::Error; end
 
       NOTATION_REGEX = /^(?<choice>[CNESW][owe1-9]|OO)$/
 

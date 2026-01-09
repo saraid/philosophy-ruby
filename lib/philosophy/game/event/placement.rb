@@ -1,7 +1,7 @@
 module Philosophy
   class Game
     class Placement < Event
-      class Error < ArgumentError; end
+      class Error < Game::Error; end
       class InvalidTileType < Error; end
       class UnavailableTile < Error; end
       class InvalidLocation < Error; end

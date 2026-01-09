@@ -1,107 +1,7 @@
 <html>
   <head>
     <script src="https://cdn.jsdelivr.net/npm/@ruby/4.0-wasm-wasi@2.8.1/dist/browser.script.iife.js"></script>
-    <script type="text/ruby" data-eval="async">
-      puts RUBY_VERSION # (Printed to the Web browser console)
-
-      # Patch require_relative to load from remote
-      require 'js/require_remote'
-
-      module Kernel
-        alias original_require_relative require_relative
-
-        # The require_relative may be used in the embedded Gem.
-        # First try to load from the built-in filesystem, and if that fails,
-        # load from the URL.
-        def require_relative(path)
-          caller_path = caller_locations(1, 1).first.absolute_path || ''
-          dir = File.dirname(caller_path)
-          file = File.absolute_path(path, dir)
-
-          original_require_relative(file)
-        rescue LoadError
-          JS::RequireRemote.instance.load(path)
-        end
-      end
-
-      # The above patch should not break the original require_relative
-      require 'uri'
-      URI.parse('http://example.com')
-
-      # Load the main script
-      require_relative '../lib/philosophy'
-      require_relative '../lib/philosophy/shims/svg'
-
-      game = Philosophy::Game.new
-      game << 'In+:indigo'
-      game << 'Te+:teal'
-      game << 'In:C4PuNo'
-      #game << 'Te:C7PuNo'
-      #game << 'Te:C1PuSo'
-      game << 'Te:C2ReSw[Ea]'
-
-      def render_game(game)
-        JS.global[:document].querySelector('#pgn')[:innerHTML] = game.to_pgn
-        game.board.each do
-          JS.global[:document].querySelector("#space-#{_1.name}")[:innerHTML] = _1.name.to_s
-        end
-
-        game.board.each.select(&:occupied?).each do
-          JS.global[:document].querySelector("#space-#{_1.name}")[:innerHTML] = _1.tile.notation
-        end
-
-        puts game.last_board_operations.map(&:to_tuple).inspect
-        game.last_board_operations.each do |operation|
-          case operation
-          #in [:place, _, _, location, _]
-          when Philosophy::ActivationContext::Operation::Place
-            location = operation.location.name
-            current_html = JS.global[:document].querySelector("#space-#{location}")[:innerHTML]
-            JS.global[:document].querySelector("#space-#{location}")[:innerHTML] = "#{current_html}<br/>#{operation.to_svg}"
-          when Philosophy::ActivationContext::Operation::Rotate
-            location = operation.target_location.name
-            current_html = JS.global[:document].querySelector("#space-#{location}")[:innerHTML]
-            JS.global[:document].querySelector("#space-#{location}")[:innerHTML] = "#{current_html}<br/>#{operation.to_svg}"
-          when Philosophy::ActivationContext::Operation::Move
-            grid_position =
-              case operation.impact_direction.value
-              when :north
-                { "grid-column-start": "#{operation.from_location.coordinate.col+1};",
-                  "grid-column-end": "#{operation.from_location.coordinate.col+1};",
-                  "grid-row-start": "#{operation.from_location.coordinate.row};",
-                  "grid-row-end": "span #{operation.from_location.coordinate.row+1};",
-                }
-              when :south
-                { "grid-column-start": "#{operation.from_location.coordinate.col+1};",
-                  "grid-column-end": "#{operation.from_location.coordinate.col+1};",
-                  "grid-row-start": "#{operation.from_location.coordinate.row+1};",
-                  "grid-row-end": "span #{operation.from_location.coordinate.row+2};",
-                }
-              end.map { "#{_1}:#{_2}" }.join
-            puts grid_position
-
-            div = JS.global[:document].createElement("div")
-            div[:class] = "operation-move"
-            div[:style] = [
-            grid_position,
-              "z-index:2;"
-            ].join
-            div[:innerHTML] = operation.to_svg
-            JS.global[:document].querySelector("#overlay").appendChild(div)
-          else
-          end
-        end
-      end
-
-      input = JS.global[:document].querySelector('#input input')
-      button = JS.global[:document].querySelector('#input button')
-      button.addEventListener("click") do |event|
-        game << input[:value].to_s
-        render_game(game)
-      end
-
-      render_game(game)
-    </script>
+    <script type="text/ruby" data-eval="async" src="./main.rb"></script>
     <link rel="stylesheet" href="./board.css">
     <style type="text/css">
       main {
@@ -111,8 +11,8 @@
   </head>
   <body>
     <main>
-      <div id="board-wrapper">
-        <div id="board">
+      <div id="board">
+        <div id="spaces">
           <div id="space-c1" class="space playable">C1</div>
           <div id="space-c2" class="space playable">C2</div>
           <div id="space-c3" class="space playable">C3</div>
@@ -159,13 +59,16 @@
 
           <div id="space-nw" class="space">NW</div>
         </div>
-        <div id="overlay"></div>
+        <div id="operations"></div>
       </div>
-      <pre id="pgn">
-      </pre>
-      <div id="input">
-        <input type="text" />
-        <button>Submit</button>
+      <div id="meh">
+        <div id="input">
+          <input type="text" />
+          <button>Submit</button>
+          <div id="error"></div>
+        </div>
+        <pre id="pgn">
+        </pre>
       </div>
     </main>
   </body>

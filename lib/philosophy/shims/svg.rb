@@ -31,7 +31,55 @@ module Philosophy
                 end_x: chunk / 2 + 5,
                 end_y: (chunk * (impact_distance + 0.5)).to_i,
               }
-            end.values_at(:height, :width, :start_x, :start_y, :end_x, :end_y)
+            when :west
+              { height: chunk,
+                width: chunk * impact_distance.succ,
+                start_x: (chunk * (impact_distance + 0.5)).to_i,
+                start_y: chunk / 2 + 5,
+                end_x: (chunk * 0.7).to_i,
+                end_y: chunk / 2 + 5,
+              }
+            when :east
+              { height: chunk,
+                width: chunk * impact_distance.succ,
+                start_x: (chunk * 0.7).to_i,
+                start_y: chunk / 2 + 5,
+                end_x: (chunk * (impact_distance + 0.5)).to_i,
+                end_y: chunk / 2 + 5,
+              }
+            when :ne
+              { height: chunk * impact_distance.succ,
+                width: chunk * impact_distance.succ,
+                start_x: (chunk * 0.7).to_i,
+                start_y: (chunk * 1.5).to_i,
+                end_x: (chunk * (impact_distance + 0.5)).to_i,
+                end_y: (chunk * 0.7).to_i,
+              }
+            when :se
+              { height: chunk * impact_distance.succ,
+                width: chunk * impact_distance.succ,
+                start_x: (chunk * 0.7).to_i,
+                start_y: (chunk * 0.7).to_i,
+                end_x: (chunk * (impact_distance + 0.5)).to_i,
+                end_y: (chunk * 1.5).to_i,
+              }
+            when :sw
+              { height: chunk * impact_distance.succ,
+                width: chunk * impact_distance.succ,
+                start_x: (chunk * (impact_distance + 0.5)).to_i,
+                start_y: (chunk * 0.7).to_i,
+                end_x: (chunk * 0.7).to_i,
+                end_y: (chunk * 1.5).to_i,
+              }
+            when :nw
+              { height: chunk * impact_distance.succ,
+                width: chunk * impact_distance.succ,
+                start_x: (chunk * (impact_distance + 0.5)).to_i,
+                start_y: (chunk * 1.5).to_i,
+                end_x: (chunk * 0.7).to_i,
+                end_y: (chunk * 0.7).to_i,
+              }
+            end.values_at(:height, :width, :start_x, :start_y, :end_x, :end_y).map(&:to_i)
 
           <<~SVG
           <svg width="#{width}" height="#{height}">
