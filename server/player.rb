@@ -56,7 +56,7 @@ def render_player(player)
     player_hand = hand
   end
 
-  player_hand[:childNodes].forEach { |node| player_hand.removeChild(node) }
+  player_hand[:innerHTML] = ''
 
   player_name = document.createElement('span')
   player_name[:innerHTML] = player.color.name.to_s

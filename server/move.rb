@@ -53,13 +53,29 @@ def activate_compass!
   grid_position =
     case current_move[:location]
     when :C1 then 'grid-column:3;grid-row:3;'
+    when :C2 then 'grid-column:4;grid-row:3;'
+    when :C3 then 'grid-column:5;grid-row:3;'
+    when :C4 then 'grid-column:3;grid-row:4;'
+    when :C5 then 'grid-column:4;grid-row:4;'
+    when :C6 then 'grid-column:5;grid-row:4;'
+    when :C7 then 'grid-column:3;grid-row:5;'
+    when :C8 then 'grid-column:4;grid-row:5;'
+    when :C9 then 'grid-column:5;grid-row:5;'
     end
   compass[:style] = [
     grid_position,
     'display:grid;',
   ].join
+  valid_directions =
+    case Philosophy::IdeaTile.registry[current_move[:tile]].target
+    when :cardinal then Philosophy::Board::CARDINAL_DIRECTIONS
+    when :diagonal then Philosophy::Board::DIRECTIONAL_KEYS - Philosophy::Board::CARDINAL_DIRECTIONS
+    else raise 'wtf'
+    end
   Philosophy::Board::TWO_CHAR_DIRECTIONS.each_value do |direction|
+    next unless valid_directions.include? Philosophy::Board::NOTATION_TO_DIRECTION[direction]
     button = document.querySelector("#compass-#{direction}")
+    button[:style] = 'display:block;'
     button.addEventListener('click') do
       set_current_move_direction(direction)
       deactivate_compass!
@@ -73,4 +89,7 @@ def deactivate_compass!
   wrapper[:style] = 'pointer-events:none;'
   compass = document.querySelector('#compass')
   compass[:style] = 'display:none;'
+  compass[:childNodes].forEach do |button|
+    button[:style] = 'display:none;'
+  end
 end
