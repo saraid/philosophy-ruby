@@ -3,6 +3,8 @@
 
   width: 770px;
   height: 770px;
+
+  flex-basis: 770px;
 }
 #spaces, #operations, #compass-wrapper {
   position: absolute;
@@ -35,6 +37,9 @@
 .space.clickable {
   border: solid 2px blue;
   cursor: pointer;
+}
+.space.conclusion {
+  background-color: green;
 }
 
 .space svg {

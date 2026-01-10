@@ -13,21 +13,23 @@ def set_current_move_tile(tile) = current_move.store(:tile, tile)
 def set_current_move_direction(direction) = current_move.store(:direction, direction)
 
 def submit_current_move
-  puts 'submitting current move'
   current_game << Philosophy::Game::Placement.new(**current_move)
-  if current_game.player_options.any?
-    add_listeners_to_player_options!
-    nil
-  else
-    @current_move = nil
-    render_game
-  end
+  complete_submission
 end
 
 def submit_choice(choice)
   current_game << Philosophy::Game::Choice.new(choice:)
-  @current_move = nil
-  render_game
+  complete_submission
+end
+
+def complete_submission
+  if current_game.player_options.any?
+    add_listeners_to_player_options!
+  else
+    @current_move = nil
+    set_current_state! :choose_tile_for_move
+    render_game
+  end
 end
 
 REPHRASE_OPTIONS = Philosophy::IdeaTile::VALID_TARGETS.values
@@ -36,6 +38,7 @@ def add_listeners_to_player_options!
   case current_game.player_options
   when *REPHRASE_OPTIONS # rephrase
     puts "rephrase options: #{current_game.player_options.inspect}"
+    set_current_state! :choose_direction_for_choice
     coord = current_game.board[current_move[:location]].coordinate
       .translate(Philosophy::Board::Direction[current_move[:direction]])
     grid_position = coord.then { "grid-column:#{_1.col+1};grid-row:#{_1.row+1};" }
@@ -57,6 +60,7 @@ def add_listeners_to_player_options!
     end
   else # choose a space
     puts "space options: #{current_game.player_options.inspect}"
+    set_current_state! :choose_space_for_choice
     current_game.player_options.each do |location|
       space = document.querySelector("#space-#{location}")
       space[:classList].add 'clickable'
@@ -125,13 +129,16 @@ def activate_compass!
 end
 
 def select_direction(direction)
-  if current_game.player_options.any?
+  case current_state
+  when :choose_direction_for_choice
     deactivate_compass!
     submit_choice direction
-  else
+  when :choose_direction_for_move
     set_current_move_direction(direction)
     deactivate_compass!
     submit_current_move
+  else
+    puts "Invalid state for selecting direction: #{current_state}"
   end
   nil
 end
@@ -148,15 +155,19 @@ end
 
 def select_space(location)
   puts "handling click on #{location}"
-  if current_game.player_options.any?
+  case current_state
+  when :choose_space_for_choice
     puts "chose #{location}"
     submit_choice(location)
     deactivate_clickability_from_spaces!
-  else
+  when :choose_space_for_move
     puts "place at #{location}"
     set_current_move_location(location)
     deactivate_clickability_from_spaces!
+    set_current_state! :choose_direction_for_move
     activate_compass!
+  else
+    puts "Invalid state for selecting space: #{current_state}"
   end
   nil
 end

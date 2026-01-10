@@ -1,11 +1,11 @@
 <html>
   <head>
     <script src="https://cdn.jsdelivr.net/npm/@ruby/4.0-wasm-wasi@2.8.1/dist/browser.script.iife.js"></script>
-    <script type="text/ruby" data-eval="async" src="./main.rb"></script>
-    <link rel="stylesheet" href="./board.css">
-    <link rel="stylesheet" href="./main.css">
-    <link rel="stylesheet" href="./move.css">
-    <link rel="stylesheet" href="./player.css">
+    <script type="text/ruby" data-eval="async" src="./src/main.rb"></script>
+    <link rel="stylesheet" href="./styles/board.css">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/move.css">
+    <link rel="stylesheet" href="./styles/player.css">
     <style type="text/css">
       main {
         display: flex;
@@ -77,19 +77,23 @@
           </div>
         </div>
       </div>
-      <div id="meh">
-        <details id="tests" open="true"><summary>Prebuilt Games: </summary></details>
-        <div id="input">
-          Movetext:
-          <input type="text" />
-          <button>Submit</button>
-          <div id="error"></div>
+      <div id="console">
+        <div id="console-dev">
+          <details id="tests" open="true"><summary>Prebuilt Games: </summary></details>
+          <div id="input">
+            Movetext:
+            <input type="text" />
+            <button>Submit</button>
+            <div id="error"></div>
+          </div>
         </div>
-        <div id="player-add">
-          Add Player:
-          <input type="text" placeholder="Player Name" />
-        </div>
-        <div id="player-hands">
+        <div id="console-prod">
+          <div id="player-add">
+            Add Player:
+            <input type="text" placeholder="Player Name" />
+          </div>
+          <div id="player-hands">
+          </div>
         </div>
         <pre id="pgn"></pre>
       </div>

@@ -1,3 +1,6 @@
+#console-dev { display: none; }
+#console-prod { display: block; }
+
 #error {
   color: red;
 }

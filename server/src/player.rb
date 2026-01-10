@@ -58,6 +58,17 @@ def render_player(player)
 
   player_hand[:innerHTML] = ''
 
+  if false
+    remove_player = document.createElement('button')
+    remove_player[:innerHTML] = 'X'
+    remove_player.addEventListener('click') do
+      current_game << "#{player.color.code}-"
+      update_pgn
+      update_playable
+    end
+    player_hand.appendChild(remove_player)
+  end
+
   player_name = document.createElement('span')
   player_name[:innerHTML] = player.color.name.to_s
   player_hand.appendChild(player_name)
@@ -73,6 +84,7 @@ def render_player(player)
       player_hand[:classList].add 'cannot-play'
       player_hand.removeChild(tile)
       puts "Current Move: #{current_move.inspect}"
+      set_current_state! :choose_space_for_move
       add_listeners_to_playable_area!
     end
     player_hand.appendChild(tile)
@@ -85,7 +97,12 @@ def render_all_players
 end
 
 def update_playable
-  if current_game.player_order.size >= 2
+  if current_game.concluded?
+    render_conclusions
+    document.querySelectorAll(".player-hand").forEach do |node|
+      node[:classList].add 'cannot-play'
+    end
+  elsif current_game.player_order.size >= 2
     document.querySelectorAll("#player-#{current_game.current_player.color.code}").forEach do |node|
       puts node[:id]
       puts "before: #{node[:classList]}"
@@ -95,6 +112,15 @@ def update_playable
         node[:classList].add 'cannot-play'
       end
       puts "after: #{node[:classList]}"
+    end
+  end
+end
+
+def render_conclusions
+  current_game.conclusions.each do |conclusion, player|
+    conclusion.each do |location|
+      space = document.querySelector("#space-#{location}")
+      space[:classList].add 'conclusion'
     end
   end
 end

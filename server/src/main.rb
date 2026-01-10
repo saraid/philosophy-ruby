@@ -22,11 +22,26 @@ end
 
 require_relative '../lib/philosophy'
 require_relative '../lib/philosophy/shims/svg'
-require_relative 'move'
-require_relative 'player'
-require_relative 'tests'
+require_relative './src/move'
+require_relative './src/player'
+require_relative './src/tests'
 
 def document = JS.global[:document]
+
+STATES = %i[
+  choose_tile_for_move
+  choose_space_for_move
+  choose_space_for_choice
+  choose_direction_for_move
+  choose_direction_for_choice
+].map { [_1, _1] }.to_h
+
+def current_state = @current_state
+def set_current_state!(state)
+  @current_state = STATES.fetch(state)
+  puts "Current state: #{current_state}"
+end
+set_current_state!(:choose_tile_for_move)
 
 def update_pgn = JS.global[:document].querySelector('#pgn')[:innerHTML] = current_game.to_pgn
 
@@ -45,7 +60,13 @@ def render_game(game = current_game)
   render_all_players
   update_pgn
   game.board.each.select(&:occupied?).each do
-    JS.global[:document].querySelector("#space-#{_1.name}")[:innerHTML] = _1.tile.notation
+    space = JS.global[:document].querySelector("#space-#{_1.name}")
+    space[:innerHTML] = _1.tile.notation
+    space[:title] = <<~TEXT
+      Player: #{_1.tile.owner.color.name}
+      Tile: #{_1.to_s}
+      Direction: #{_1.tile.target}
+    TEXT
   end
 
   game.last_board_operations.each do |operation|

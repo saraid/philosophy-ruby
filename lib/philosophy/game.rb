@@ -71,7 +71,7 @@ module Philosophy
     def player_options = @current_context.player_options.keys.sort
     def last_board_operations = @last_board_operations
     def nearing_conclusion? = @current_context.to_board.nearing_conclusion?
-    def conclusions = @current_context.to_board.conclusions
+    def conclusions = @current_context&.to_board&.conclusions || {}
     def concluded? = @force_conclusion || conclusions.one?
     def winner = conclusions.then { _1.values.first if _1.one? }
     def continuable? = !@current_context.to_board.playable_area_full? && @current_player.has_tiles?
