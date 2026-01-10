@@ -10,3 +10,7 @@ Run from toplevel; it will use port 8000:
 ```
 static-wasm/self-host
 ```
+
+# Demo
+
+It is deployed to https://saraid.github.io/philosophy-ruby/static-wasm/
