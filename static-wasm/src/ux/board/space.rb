@@ -9,7 +9,7 @@ module Ux
       def self.build_elements
         spaces = Ux.build_element element: :div, id: :spaces
         current_game.board.each do |space|
-          classes = %w[ space ]
+          classes = %W[ space space-#{space.name} ]
           classes << 'playable' if space.playable?
           Ux.build_element(element: :div, id: "space-#{space.name}", classes:, innerHTML: space.name)
             .tap { _1.addEventListener('click') { select space.name } }
