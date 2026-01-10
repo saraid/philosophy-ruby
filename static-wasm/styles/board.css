@@ -3,6 +3,8 @@
 
   width: 770px;
   height: 770px;
+
+  clear: both;
 }
 #spaces, #operations, #compass-wrapper {
   position: absolute;
