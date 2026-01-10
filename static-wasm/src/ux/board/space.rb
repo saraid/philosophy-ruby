@@ -3,6 +3,7 @@ module Ux
     module Space
       CLICKABLE = 'clickable'
       CONCLUSION = 'conclusion'
+      OCCUPIED = 'occupied'
 
       def self.for(location) = document.querySelector("#space-#{location}")
 
@@ -55,7 +56,7 @@ module Ux
       def self.all = document.querySelectorAll(".space")
       def self.playable
         if current_game.started?
-          document.querySelectorAll('.space.playable')
+          document.querySelectorAll('.space.playable:not(.occupied)')
         else
           document.querySelectorAll('.space.playable:not(#space-C5)')
         end

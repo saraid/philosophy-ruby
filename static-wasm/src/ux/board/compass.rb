@@ -29,7 +29,9 @@ module Ux
       def self.activate!(location:, options: [])
         puts "Compass.activate! #{location} #{options.inspect} #{grid_position(location)}"
         actual[:style] = [grid_position(location), 'display:grid;'].join
-        options.each { button_for(_1)[:style] = 'display:block;pointer-events:auto;' }
+        options
+          .map { Philosophy::Board::TWO_CHAR_DIRECTIONS.fetch(_1, _1) }
+          .each { button_for(_1)[:style] = 'display:block;pointer-events:auto;' }
       end
 
       def self.deactivate!

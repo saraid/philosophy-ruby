@@ -7,7 +7,9 @@ module Ux
 
     def self.clean
       current_game.board.each do
-        Space.for(_1.name)[:innerHTML] = _1.name.to_s
+        space = Space.for(_1.name)
+        space[:classList].remove Space::OCCUPIED
+        space[:innerHTML] = _1.name.to_s
       end
       operations[:childNodes].forEach do |child|
         operations.removeChild(child)
@@ -17,6 +19,7 @@ module Ux
     def self.render_occupied_spaces
       current_game.board.each.select(&:occupied?).each do
         space = Space.for _1.name
+        space[:classList].add Space::OCCUPIED
         space[:innerHTML] = _1.tile.notation
         space[:title] = <<~TEXT
           Player: #{_1.tile.owner.color.name}
