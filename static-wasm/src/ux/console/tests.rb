@@ -20,6 +20,17 @@ module Ux
           In:C4PuNo
           Te:C7ToNo
         ],
+        'two conclusions' => %w[
+          Am+
+          In+
+          Am:C1PuWe
+          In:C3CpNe
+          Am:C4CpNw
+          In:C6SlEa
+          Am:C8PlNo
+          In:C9PuWe..
+          Am:C2SlEa.
+        ],
         'rephrase' => %w[
           In+:indigo
           Te+:teal

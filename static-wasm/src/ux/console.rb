@@ -1,3 +1,6 @@
+require_relative 'console/movetext'
+require_relative 'console/tests'
+
 module Ux
   module Console
     module PlayerHand
