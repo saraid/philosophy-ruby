@@ -80,12 +80,12 @@ def render_player(player)
 end
 
 def render_all_players
-  current_game.players.each_value.uniq { render_player _1 }
+  current_game.player_order.each { render_player(current_game.players.fetch(_1)) }
   update_playable
 end
 
 def update_playable
-  if current_game.players.each_value.uniq.size >= 2
+  if current_game.player_order.size >= 2
     document.querySelectorAll("#player-#{current_game.current_player.color.code}").forEach do |node|
       puts node[:id]
       puts "before: #{node[:classList]}"
