@@ -1,0 +1,54 @@
+#compass-wrapper {
+  pointer-events: none;
+}
+#compass {
+  display: none;
+
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+
+  width: 100px;
+  height: 100px;
+
+  z-index: 3;
+}
+
+#compass-Nw {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+#compass-No {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+#compass-Ne {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+#compass-Ea {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+#compass-Se {
+  grid-column: 3;
+  grid-row: 3;
+}
+
+#compass-So {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+#compass-Sw {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+#compass-We {
+  grid-column: 1;
+  grid-row: 2;
+}

@@ -4,6 +4,8 @@
     <script type="text/ruby" data-eval="async" src="./main.rb"></script>
     <link rel="stylesheet" href="./board.css">
     <link rel="stylesheet" href="./main.css">
+    <link rel="stylesheet" href="./move.css">
+    <link rel="stylesheet" href="./player.css">
     <style type="text/css">
       main {
         display: flex;
@@ -61,16 +63,35 @@
           <div id="space-nw" class="space">NW</div>
         </div>
         <div id="operations"></div>
+
+        <div id="compass-wrapper">
+          <div id="compass">
+            <button id="compass-Nw">NW</button>
+            <button id="compass-No">N</button>
+            <button id="compass-Ne">NE</button>
+            <button id="compass-Ea">E</button>
+            <button id="compass-Se">SE</button>
+            <button id="compass-So">S</button>
+            <button id="compass-Sw">SW</button>
+            <button id="compass-We">W</button>
+          </div>
+        </div>
       </div>
       <div id="meh">
-        <div id="tests"></div>
+        <details id="tests" open="true"><summary>Prebuilt Games: </summary></details>
         <div id="input">
+          Movetext:
           <input type="text" />
           <button>Submit</button>
           <div id="error"></div>
         </div>
-        <pre id="pgn">
-        </pre>
+        <div id="player-add">
+          Add Player:
+          <input type="text" placeholder="Player Name" />
+        </div>
+        <div id="player-hands">
+        </div>
+        <pre id="pgn"></pre>
       </div>
     </main>
   </body>

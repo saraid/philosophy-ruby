@@ -22,9 +22,13 @@ end
 
 require_relative '../lib/philosophy'
 require_relative '../lib/philosophy/shims/svg'
+require_relative 'move'
+require_relative 'player'
 require_relative 'tests'
 
 def document = JS.global[:document]
+
+def update_pgn = JS.global[:document].querySelector('#pgn')[:innerHTML] = current_game.to_pgn
 
 def render_game(game = current_game)
   # clean the state
@@ -38,7 +42,8 @@ def render_game(game = current_game)
   end
 
   # render new state
-  JS.global[:document].querySelector('#pgn')[:innerHTML] = game.to_pgn
+  render_all_players
+  update_pgn
   game.board.each.select(&:occupied?).each do
     JS.global[:document].querySelector("#space-#{_1.name}")[:innerHTML] = _1.tile.notation
   end
@@ -86,14 +91,14 @@ def render_game(game = current_game)
       puts "unknown operation: #{operation.inspect}"
     end
   end
+  nil # return nil to stop a mystery error about JS::Object#call receiving a non-JS::Object on arg 2.
 end
 
 def current_game = @current_game
 @current_game = Philosophy::Game.new
 
-def input = document.querySelector('#input input')
-def handle_input
-  puts 'handle_input called'
+def input  = document.querySelector('#input input')
+def submit_movetext
   begin
     current_game << input[:value].to_s
     render_game
@@ -117,12 +122,13 @@ def handle_input
     JS.global[:document].querySelector('#error')[:innerHTML] = "Not a valid choice."
   end
 end
-document.querySelector('#input button').call(:addEventListener, "click") { |event| handle_input }
+document.querySelector('#input button').call(:addEventListener, "click") { |event| submit_movetext }
 input.addEventListener("keypress") do |event|
-  case event[:key]
+  case event[:key].to_s
   when 'Enter'
-    puts 'Enter pressed'
-    handle_input
+    submit_movetext
+  else
+    #puts event[:key].inspect
   end
 end
 

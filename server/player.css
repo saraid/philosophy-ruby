@@ -1,0 +1,19 @@
+.bgcolor-Am {
+  background-color: #FFBF00;
+}
+.bgcolor-In {
+  background-color: #4B0082;
+  color: white;
+}
+.bgcolor-Sa {
+  background-color: #B2AC88;
+}
+.bgcolor-Te {
+  background-color: #008080;
+  color: white;
+}
+
+.player-hand.cannot-play {
+  pointer-events: none;
+  opacity: 0.5;
+}

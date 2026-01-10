@@ -1,0 +1,21 @@
+#error {
+  color: red;
+}
+
+#pgn {
+  background-color: lightgrey;
+  padding: 3px;
+}
+
+.player-hand {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.player-hand span {
+  align-self: flex-start;
+}
+
+.player-hand button {
+  align-self: flex-end;
+}

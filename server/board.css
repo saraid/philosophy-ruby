@@ -4,7 +4,7 @@
   width: 770px;
   height: 770px;
 }
-#spaces, #operations {
+#spaces, #operations, #compass-wrapper {
   position: absolute;
   top: 0;
   left: 0;
@@ -31,6 +31,10 @@
 }
 .space.playable {
   background-color: #90D5FF;
+}
+.space.clickable {
+  border: solid 2px blue;
+  cursor: pointer;
 }
 
 .space svg {
