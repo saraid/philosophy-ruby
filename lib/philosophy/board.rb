@@ -24,7 +24,6 @@ module Philosophy
     end
 
     DIRECTIONAL_KEYS = %i[ west north east south nw ne se sw ]
-    CARDINAL_DIRECTIONS = %i[ west north east south ]
     UNICODE_SINGLE_ARROWS = <<~UNICODE.split($/).map { _1.split(/\s+/)[1] }.then { DIRECTIONAL_KEYS.zip(_1).to_h }
       2190	 ← 	LEFTWARDS ARROW
       2191	 ↑ 	UPWARDS ARROW
@@ -78,8 +77,6 @@ module Philosophy
 
       def notation = TWO_CHAR_DIRECTIONS[value]
       def to_s = value.to_s
-
-      def cardinal? = CARDINAL_DIRECTIONS.include?(value)
     end
 
     NAMED_COORDINATES = {

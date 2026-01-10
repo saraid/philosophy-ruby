@@ -112,12 +112,8 @@ def activate_compass!
     grid_position,
     'display:grid;',
   ].join
-  valid_directions =
-    case Philosophy::IdeaTile.registry[current_move[:tile]].target
-    when :cardinal then Philosophy::Board::CARDINAL_DIRECTIONS
-    when :diagonal then Philosophy::Board::DIRECTIONAL_KEYS - Philosophy::Board::CARDINAL_DIRECTIONS
-    else raise 'wtf'
-    end
+  puts grid_position
+  valid_directions = Philosophy::IdeaTile::VALID_TARGETS[Philosophy::IdeaTile.registry[current_move[:tile]].target]
   Philosophy::Board::TWO_CHAR_DIRECTIONS.each_value do |direction|
     next unless valid_directions.include? Philosophy::Board::NOTATION_TO_DIRECTION[direction]
     button = document.querySelector("#compass-#{direction}")
