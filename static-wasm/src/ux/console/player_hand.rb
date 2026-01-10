@@ -29,20 +29,22 @@ module Ux
         current_game.player_order.each { render _1 }
       end
 
+      def self.build(player)
+        classes = %W[ player-hand bgcolor-#{player.color.code} ]
+        if current_game.current_player != player
+          || current_game.player_order.size < 2
+          || current_game.concluded?
+          classes << CANNOT_PLAY
+        end
+        hand = Ux.build_element(id: "player-#{player.color.code}", classes:,)
+        wrapper.appendChild hand
+        hand
+      end
+
       def self.render(player_code)
         player = current_game.players.fetch(player_code)
         hand = self.for player.color.code
-        if hand == JS::Null
-          classes = %W[ player-hand bgcolor-#{player.color.code} ]
-          if current_game.current_player != player || current_game.player_order.size < 2 || current_game.concluded?
-            classes << CANNOT_PLAY
-          end
-          hand = Ux.build_element(
-            id: "player-#{player.color.code}",
-            classes:,
-          )
-          wrapper.appendChild hand
-        end
+        hand = build(player) if hand == JS::Null
 
         hand[:innerHTML] = ''
 
