@@ -21,6 +21,11 @@ module Ux
     def self.pgn = document.querySelector('#pgn')
     def self.update_pgn = pgn[:innerHTML] = current_game.to_pgn
 
+    def self.render
+      update_pgn
+      PlayerHand.render_joined
+    end
+
     def self.setup(raw_mode: false)
       console = Ux.build_element element: :div, id: :console
 

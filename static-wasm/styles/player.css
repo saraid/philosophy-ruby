@@ -17,6 +17,9 @@
   pointer-events: none;
   opacity: 0.5;
 }
+.player-hand button.chosen {
+  background-color: tomato;
+}
 
 .player-hand span {
   white-space: nowrap;

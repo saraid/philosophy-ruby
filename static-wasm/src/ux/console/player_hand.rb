@@ -2,10 +2,12 @@ module Ux
   module Console
     module PlayerHand
       CANNOT_PLAY = 'cannot-play'
+      CHOSEN = 'chosen'
 
       def self.wrapper = document.querySelector('#player-hands')
       def self.clear_all = wrapper[:innerHTML] = ''
       def self.for(code) = document.querySelector("#player-#{code}")
+      def self.tiles_for(code) = document.querySelectorAll("#player-#{code} button")
 
       def self.add(player)
         chosen_name = PlayerAdd.chosen_name
@@ -53,16 +55,20 @@ module Ux
 
         player.tiles.each do
           type = Philosophy::IdeaTile.registry[_1]
-          tile = Ux.build_element(element: :button, title: type.to_s, innerHTML: type.notation.to_s)
+          classes = [ "tile-#{type.notation}" ]
+          tile = Ux.build_element(element: :button, classes:, title: type.to_s, innerHTML: type.notation.to_s)
           tile.addEventListener('click') do
             case Ux::State.current
-            when :choose_tile_for_move
+            when Ux::State.choose_tile_for_move, Ux::State.choose_space_for_move
+              Ux::Console::PlayerHand.tiles_for(player.color.code)
+                .forEach { |node| node[:classList].remove CHOSEN }
+              tile[:classList].add CHOSEN
+
               Ux::Move.current.store(:player, player.color.code)
               Ux::Move.current.store(:tile, type.notation)
-              self.for(player.color.code).tap do |new_hand|
-                new_hand[:classList].add CANNOT_PLAY
-                new_hand.removeChild tile
-              end
+              Ux::Move.current.store(:location, nil)
+              Ux::Move.current.store(:direction, nil)
+
               Ux::Board::Space.clickable!
               Ux::State.set_to Ux::State.choose_space_for_move
             else

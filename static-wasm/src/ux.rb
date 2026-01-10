@@ -30,10 +30,23 @@ module Ux
     @main
   end
 
+  def self.debounce(id: caller.first, timeout: 0.3, &)
+    @debouncers ||= {}
+    if @debouncers[id]
+      if Time.now - @debouncers[id] > timeout
+        @debouncers.delete(id)
+        yield
+      end
+    else
+      @debouncers[id] = Time.now
+      yield
+    end
+    nil
+  end
+
   def self.render
-    Console.update_pgn
     Board.render
-    Player.render_joined
+    Console.render
     nil
   end
 

@@ -28,11 +28,8 @@ module Ux
       def self.button_for(direction) = document.querySelector("#compass-#{direction}")
       def self.activate!(location:, options: [])
         puts "Compass.activate! #{location} #{options.inspect} #{grid_position(location)}"
-        wrapper[:style] = 'pointer-events:auto;'
         actual[:style] = [grid_position(location), 'display:grid;'].join
-        options.each do
-          button_for(Philosophy::Board::TWO_CHAR_DIRECTIONS[_1])[:style] = 'display:block;'
-        end
+        options.each { button_for(_1)[:style] = 'display:block;pointer-events:auto;' }
       end
 
       def self.deactivate!

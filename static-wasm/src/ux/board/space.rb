@@ -13,22 +13,36 @@ module Ux
           classes << 'playable' if space.playable?
           Ux.build_element(element: :div, id: "space-#{space.name}", classes:, innerHTML: space.name)
             .tap { _1.addEventListener('click') { select space.name } }
+            .tap { _1.addEventListener('mouseover') { mouseover space.name } }
+            #.tap { _1.addEventListener('mouseout') { mouseout space.name } }
             .then { spaces.appendChild _1 }
         end
         spaces
       end
 
+      def self.mouseover(location)
+        Ux.debounce(id: "mouseover-#{location}", timeout: 0.2) do
+          case Ux::State.current
+          when Ux::State.choose_space_for_move, Ux::State.choose_direction_for_move
+            return unless current_game.board[location].playable?
+            Ux::Move.current.store(:location, location)
+            Ux::Move.current.store(:direction, nil)
+            Ux::State.set_to Ux::State.choose_direction_for_move
+            options = Philosophy::IdeaTile::VALID_TARGETS[Philosophy::IdeaTile.registry[Ux::Move.current[:tile]].target]
+            Compass.activate!(location:, options:)
+          end
+        end
+        nil
+      end
+
       def self.select(location)
-        puts "handling click on #{location}"
         case Ux::State.current
         when Ux::State.choose_space_for_choice
-          puts "chose #{location}"
           Ux::Move.choose! location
           nothing_is_clickable!
-        when Ux::State.choose_space_for_move
-          puts "place at #{location}"
+        when Ux::State.choose_space_for_move, Ux::State.choose_direction_for_move
           Ux::Move.current.store(:location, location)
-          nothing_is_clickable!
+          Ux::Move.current.store(:direction, nil)
           Ux::State.set_to Ux::State.choose_direction_for_move
           options = Philosophy::IdeaTile::VALID_TARGETS[Philosophy::IdeaTile.registry[Ux::Move.current[:tile]].target]
           Compass.activate!(location:, options:)
@@ -39,7 +53,13 @@ module Ux
       end
 
       def self.all = document.querySelectorAll(".space")
-      def self.playable = document.querySelectorAll('.space.playable')
+      def self.playable
+        if current_game.started?
+          document.querySelectorAll('.space.playable')
+        else
+          document.querySelectorAll('.space.playable:not(#space-C5)')
+        end
+      end
       def self.nothing_is_clickable! = all.forEach { _1[:classList].remove CLICKABLE }
       def self.clickable!(spaces: playable) = spaces.forEach { _1[:classList].add CLICKABLE }
       def self.nothing_is_concluded! = all.forEach { _1[:classList].remove CONCLUSION }
