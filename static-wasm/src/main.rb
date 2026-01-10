@@ -22,7 +22,7 @@ end
 
 require_relative '../lib/philosophy'
 require_relative '../lib/philosophy/shims/svg'
-require_relative './src2/ux'
+require_relative './src/ux'
 
 class JS::Object
   def then(&) = yield(self)
@@ -63,5 +63,5 @@ Philosophy::Game.set_current!
 
 Ux.setup
 
-Ux::Player.render_available
+Ux::Console::PlayerAdd.render
 nil

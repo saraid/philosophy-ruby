@@ -37,7 +37,7 @@ module Ux
         button = Ux.build_element element: :button, innerHTML: 'Submit'
         errors = Ux.build_element element: :div, id: :error
 
-        input.addEventListener('keypress' do |event|
+        input.addEventListener('keypress') do |event|
           case event[:key].to_s
           when 'Enter' then submit
           end

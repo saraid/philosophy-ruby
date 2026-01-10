@@ -1,16 +1,10 @@
 require_relative 'console/movetext'
+require_relative 'console/player_add'
+require_relative 'console/player_hand'
 require_relative 'console/tests'
 
 module Ux
   module Console
-    module PlayerHand
-      CANNOT_PLAY = 'cannot-play'
-    end
-
-    def self.player_hands = document.querySelector('#player-hands')
-    def self.clear_player_hands = player_hands[:innerHTML] = ''
-
-    def self.player_hand(code) = document.querySelector("#player-#{code}")
 
     def self.player_add = document.querySelector('#player-add')
     private_class_method def self.build_player_add

@@ -23,7 +23,7 @@ module Ux
         case Ux::State.current
         when Ux::State.choose_space_for_choice
           puts "chose #{location}"
-          #submit_choice(location) TODO
+          Ux::Move.choose! location
           nothing_is_clickable!
         when Ux::State.choose_space_for_move
           puts "place at #{location}"
