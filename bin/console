@@ -17,10 +17,13 @@ def game = @game ||= Philosophy::Game.new
 def log(...) = Philosophy.logger.info(...)
 
 def setup
-  game << 'In+:indigo'
-  game << 'Te+:teal'
-  game << 'In:C4PuNo'
-  game << 'Te:C7PuNo'
+  %w[
+    Am+
+    In+
+    Am:C3PuEa
+    In:C6PuNo
+    Am:C3PeSo
+  ].each.with_object(game) { _2 << _1 }
 end
 
 require "irb"
