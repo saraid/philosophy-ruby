@@ -1,4 +1,6 @@
 module Ux
+  Player = Data.define(:code, :color, :default_name)
+
   class Player
     DEFAULTS = {
       Am: {
@@ -26,10 +28,5 @@ module Ux
         end
       )
     end
-
-    def initialize(code:, color:, default_name:)
-      @code, @color, @default_name = code, color, default_name
-    end
-    attr_reader :code, :color, :default_name
   end
 end
