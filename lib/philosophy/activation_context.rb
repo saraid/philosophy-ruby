@@ -5,7 +5,7 @@ module Philosophy
         def to_tuple = [:place, player.color.code, tile.name, location.name, direction]
       end
       Move = Data.define(:from_location, :impact_direction, :impact_distance) do
-        def to_tuple = [:move, from_location.name, impact_direction, impact_distance]
+        def to_tuple = [:move, from_location.name, impact_direction.value, impact_distance]
       end
       Rotate = Data.define(:target_location, :target_direction) do
         def to_tuple = [:rotate, target_location.name, target_direction.value]
@@ -138,7 +138,7 @@ module Philosophy
       targeting_enemy_activatables = possible_activation_targets.map do |target|
         current_player_spaces.select do |space|
           next if space.tile&.already_activated?
-          space.tile.activation_target(spaces, space.name).name == target
+          space.tile.activation_target(spaces, space.name)&.name == target
         end.map(&:name)
       end.flatten.compact
 
@@ -147,6 +147,7 @@ module Philosophy
         next unless space.occupied?
         next if space.tile.already_activated?
         target_space = space.tile.activation_target(spaces, space.name)
+        next if target_space.nil?
         target_space.occupied? && target_space.tile.owner != current_player
       end
 

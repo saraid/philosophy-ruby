@@ -282,6 +282,27 @@ RSpec.describe Philosophy::ActivationContext do
         expect(context[:C5].notation).to eq 'C5:TePuEa'
         expect(context[:C8].notation).to eq 'C8:InPeNo'
       end
+
+      it 'chains movement properly' do
+        context = initial_context
+          .place(player: teal, tile: :push, location: :C2, direction: :east)
+          .reset_context
+          .place(player: indigo, tile: :push, location: :C8, direction: :north)
+          .reset_context
+          .place(player: teal, tile: :persuade, location: :C5, direction: :south)
+          .activate(:C5)
+
+        expect(context[:C8]).not_to be_occupied
+        expect(context[:C5].notation).to eq 'C5:InPuNo'
+        expect(context[:C2].notation).to eq 'C2:TePeSo'
+        expect(context[:N5].notation).to eq 'N5:TePuEa'
+        expect(context.operations.map(&:to_tuple)).to eq [
+          [:place, :Te, "persuade", "C5", :south],
+          [:move, :C2, :north, 1],
+          [:move, :C5, :north, 1],
+          [:move, :C8, :north, 1],
+        ]
+      end
     end
 
     context 'Decision' do
