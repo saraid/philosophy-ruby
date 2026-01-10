@@ -3,9 +3,6 @@
 
   width: 770px;
   height: 770px;
-
-  flex-basis: 770px;
-  border: solid 1px white;
 }
 #spaces, #operations, #compass-wrapper {
   position: absolute;
