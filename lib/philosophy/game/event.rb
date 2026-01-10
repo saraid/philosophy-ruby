@@ -1,11 +1,13 @@
 module Philosophy
   class Game
     class Event
+      class UnrecognizedNotation < Game::Error; end
+
       def self.from_notation(notation)
         [PlayerChange, Placement, Choice, Respect, RuleChange]
           .find { _1::NOTATION_REGEX.match? notation }
           &.from_notation(notation)
-          &.tap { raise ArgumentError, notation unless _1 }
+          &.tap { raise UnrecognizedNotation, notation unless _1 }
       end
 
       def execute(game) = raise NoMethodError

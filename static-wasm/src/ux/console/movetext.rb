@@ -8,6 +8,8 @@ module Ux
         begin
           current_game << input
           Ux.render
+        rescue Philosophy::Game::Event::Unrecognized
+          error[:innerHTML] = "Syntax incorrect. No idea what you meant."
         rescue Philosophy::Game::Placement::InvalidFirstMove
           error[:innerHTML] = "You may not play C5 first."
         rescue Philosophy::Game::Placement::LocationOutsidePlacementSpace
