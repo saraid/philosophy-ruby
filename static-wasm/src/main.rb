@@ -1,5 +1,4 @@
 require 'js'
-puts "loaded #{__FILE__}"
 
 # Patch require_relative to load from remote
 require 'js/require_remote'
@@ -71,6 +70,9 @@ def clipboard = navigator[:clipboard]
 
 def current_game = Philosophy::Game.current
 Philosophy::Game.set_current!
+current_game.rules.can_join.between_turns!
+current_game.rules.can_leave.anytime!
+current_game.rules.upon_leaving.rollback_placement!
 
 Ux.setup
 Ux::Console::PlayerAdd.render

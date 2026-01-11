@@ -51,8 +51,10 @@ module Ux
 
   def self.can_add_new_players?
     current_game.then do |g|
-      g.player_order.size < Ux::Player::DEFAULTS.size
-      && (g.rules.can_join.only_before_any_placement? && !g.started?)
+      case g.rules.can_join
+      when -> { _1.only_before_any_placement? } then !g.started?
+      when -> { _1.between_turns? } then true
+      end && g.player_order.size < Ux::Player::DEFAULTS.size
     end
   end
 

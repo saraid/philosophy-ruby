@@ -20,18 +20,8 @@ module Ux
       end
 
       DISABLED = 'disabled'
-      def self.disable
-        Ux::Console.player_add[:classList].add(DISABLED)
-        Ux::Console.player_add[:title] = # this doesn't actually work
-          case current_game.rules.can_join
-          when -> { _1.only_before_any_placement? } then 'Can only join before placement.'
-          when -> { _1.between_turns? } then 'Cannot join until turn is complete.'
-          end
-      end
-      def self.enable
-        Ux::Console.player_add[:classList].remove(DISABLED)
-        Ux::Console.player_add[:title] = nil
-      end
+      def self.disable = Ux::Console.player_add[:classList].add(DISABLED)
+      def self.enable = Ux::Console.player_add[:classList].remove(DISABLED)
 
       def self.update
         render

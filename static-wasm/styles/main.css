@@ -36,17 +36,3 @@ main {
 
   display: none;
 }
-
-.player-hand {
-  display: flex;
-  justify-content: space-evenly;
-  padding: 3px;
-}
-
-.player-hand span {
-  align-self: flex-start;
-}
-
-.player-hand button {
-  align-self: flex-end;
-}

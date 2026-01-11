@@ -102,6 +102,7 @@ module Philosophy
       if !started? || @rules.can_join.after_a_full_turn?
         Philosophy.logger.debug("Adding player to the end")
         @players << Player.new(color)
+        @metadata[:"Color#{color.code}"] = color.name
       elsif player_options.any?
         Philosophy.logger.debug("Adding player as next player")
         @players.insert(1, Player.new(color))
@@ -119,10 +120,10 @@ module Philosophy
       raise DisallowedByRule if @rules.can_leave.never?
       raise DisallowedByRule if @rules.can_leave.only_before_any_placement? && started?
       removed_player = @players.delete(players[color_code])
-      if @rules.upon_leaving.remove_their_tiles?
+      if started? && @rules.upon_leaving.remove_their_tiles?
         @board = @current_context.without_tiles_belonging_to(removed_player).to_board
       end
-      if @rules.upon_leaving.rollback_placement?
+      if started? && @rules.upon_leaving.rollback_placement?
         @board = @previous_context.to_board
       end
       if started? && @rules.upon_leaving.ends_game?

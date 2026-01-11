@@ -58,6 +58,10 @@ module Ux
       wrapper
     end
 
+    def self.open_rules
+      document.querySelector('#rules')[:open] = true
+      @rules_closed_once = false
+    end
     def self.close_rules_once
       puts "close_rules_once"
       document.querySelector('#rules').removeAttribute('open') unless @rules_closed_once

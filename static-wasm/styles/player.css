@@ -19,16 +19,29 @@
   color: white;
 }
 
-.player-hand.cannot-play button:not(.player-leave) {
-  pointer-events: none;
-  opacity: 0.5;
+.player-hand {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 3px;
+}
+
+.player-hand span {
+  align-self: flex-start;
+  white-space: nowrap;
+
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.player-hand button {
+  align-self: flex-end;
 }
 .player-hand button.chosen {
   background-color: tomato;
 }
-
-.player-hand span {
-  white-space: nowrap;
+.player-hand.cannot-play button:not(.player-leave) {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 #player-add {
