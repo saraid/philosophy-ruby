@@ -6,7 +6,7 @@ module Philosophy
       class Place
         def to_svg = <<~SVG
         <svg width="100" height="100">
-          <circle cx="52" cy="52" r="48" stroke="red" stroke-width="2" fill="transparent" opacity="0.5" />
+          <circle cx="52" cy="52" r="48" stroke="red" stroke-width="5" fill="transparent" opacity="0.5" />
         </svg>
         SVG
       end

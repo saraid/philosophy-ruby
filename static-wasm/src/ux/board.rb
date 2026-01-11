@@ -20,8 +20,9 @@ module Ux
         space[:innerHTML] = _1.name.to_s
       end
 
-      tiles[:childNodes].forEach { tiles.removeChild _1 }
-      operations[:childNodes].forEach { operations.removeChild _1 }
+      tiles[:innerHTML] = ''
+      operations[:innerHTML] = ''
+      nil
     end
 
     def self.render_occupied_spaces
@@ -29,12 +30,6 @@ module Ux
         space = Space.for _1.name
         space[:classList].add Space::OCCUPIED
         Tile.place _1
-       #space[:innerHTML] = _1.tile.notation
-       #space[:title] = <<~TEXT
-       #  Player: #{_1.tile.owner.color.name}
-       #  Tile: #{_1.tile.class} (#{_1.tile.class.notation})
-       #  Direction: #{_1.tile.target.long} (#{_1.tile.target.notation})
-       #TEXT
       end
     end
 
@@ -48,12 +43,14 @@ module Ux
             .then { |node| operations.appendChild node }
         when Philosophy::ActivationContext::Operation::Rotate
           location = _1.target_location.name
-          Ux.build_element(element: :div, innerHTML: _1.to_svg, style: grid_position(location.to_sym))
+          style = [grid_position(location.to_sym), 'fill:red;opacity:0.5'].join
+          Ux.build_element(element: :div, innerHTML: _1.to_svg, style:)
             .then { |node| operations.appendChild node }
         when Philosophy::ActivationContext::Operation::Move
           render_move_operation _1
         end
       end
+      nil
     end
 
     def self.render_move_operation(operation)
@@ -97,6 +94,7 @@ module Ux
       render_occupied_spaces
       render_operations
       render_conclusions
+      nil
     end
 
     def self.setup
