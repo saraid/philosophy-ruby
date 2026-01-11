@@ -21,25 +21,32 @@
 
 .player-hand {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   padding: 3px;
 }
 
-.player-hand span {
+.player-hand .label {
   align-self: flex-start;
   white-space: nowrap;
 
-  padding-left: 3px;
-  padding-right: 3px;
+  padding-left: 1px;
+  overflow: hidden;
+}
+.player-hand .label button {
+  margin-right: 3px;
 }
 
-.player-hand button {
+.player-hand .tile-list {
   align-self: flex-end;
+
+  display: flex;
+  justify-content: space-evenly;
+  gap: 3px;
 }
 .player-hand button.chosen {
   background-color: tomato;
 }
-.player-hand.cannot-play button:not(.player-leave) {
+.player-hand.cannot-play .tile-list button {
   pointer-events: none;
   opacity: 0.5;
 }

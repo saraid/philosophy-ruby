@@ -7,6 +7,11 @@ main {
 
 #console-dev { display: none; }
 #console-prod { display: block; }
+#console {
+  width: 600px;
+  max-width: 770px;
+  margin: 0 auto;
+}
 
 #error {
   color: red;
@@ -34,5 +39,10 @@ main {
   font-size: 20px;
   cursor: pointer;
 
+  display: none;
+}
+
+aside {
+  align-self: flex-end;
   display: none;
 }

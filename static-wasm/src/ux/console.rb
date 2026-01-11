@@ -63,7 +63,6 @@ module Ux
       @rules_closed_once = false
     end
     def self.close_rules_once
-      puts "close_rules_once"
       document.querySelector('#rules').removeAttribute('open') unless @rules_closed_once
       @rules_closed_once = true
     end
@@ -107,6 +106,100 @@ module Ux
       details
     end
 
+    def self.build_tile_help = Ux.build_element element: :aside, id: :'tile-help'
+
+    HELP_TEXT = {
+      Pu: <<~HTML,
+        <header>Push (Pu)</header>
+        <p>The <i>Push</i> targets
+        an opponent tile
+        1 space away,
+        and pushes it
+        1 space <b>forward</b>.</p>
+      HTML
+      Cp: <<~HTML,
+        <header>Corner Push (Cp)</header>
+        <p>The <i>Corner Push</i>
+        targets an
+        opponent tile 1
+        space away
+        diagonally, and pushes it 1 space
+        <b>forward diagonally</b>.</p>
+      HTML
+      Sl: <<~HTML,
+        <header>Slide Left (Sl)</header>
+        <p>The <i>Slide Left</i>
+        targets an opponent tile 1 space away,
+        and slides it 1 space to the <b>left</b>.</p>
+      HTML
+      Sr: <<~HTML,
+        <header>Slide Right (Sr)</header>
+        <p>The <i>Slide Right</i>
+        targets an opponent tile 1 space away,
+        and slides it 1 space to the <b>right</b>.</p>
+      HTML
+      Pl: <<~HTML,
+        <header>Pull Left (Pl)</header>
+        <p>The <i>Pull Left</i> targets an opponent
+        tile 1 space away, and pulls
+        it 1 space backwards to the <b>left</b>.</p>
+      HTML
+      Pr: <<~HTML,
+        <header>Pull Right (Pr)</header>
+        <p>The <i>Pull Right</i>
+        targets an opponent tile 1 space
+        away, and pulls it 1 space backwards to the <b>right</b>.</p>
+      HTML
+      Ls: <<~HTML,
+        <header>Long Shot (Ls)</header>
+        <p>The <i>Long Shot</i>
+        targets an opponent tile exactly <b>2 spaces</b>
+        away, and pushes it 1 space <b>forward</b>.</p>
+      HTML
+      Cl: <<~HTML,
+        <header>Corner Long Shot (Cl)</header>
+        <p>The <i>Corner Long Shot</i> targets an
+        opponent tile exactly <b>2 spaces</b> away diagonally, and pushes it
+        1 space <b>forward diagonally</b>.</p>
+      HTML
+      De: <<~HTML,
+        <header>Decision (De)</header>
+        <p>The <i>Decision</i> targets an
+        opponent tile 1 space away diagonally, and
+        slides it 1 space to the <b>left or right diagonally</b>.
+        You choose which way it slides.</p>
+      HTML
+      Re: <<~HTML,
+        <header>Rephrase (Re)</header>
+        <p>The <i>Rephrase</i> targets <b>any tile</b>a
+        1 space away diagonally. Pick up the targeted tile,
+        <b>optionally rotate</b> it any way you wish, and
+        place it back down onto the <b>same space</b>.</p>
+      HTML
+      To: <<~HTML,
+        <header>Toss (To)</header>
+        <p>The <i>Toss</i> targets
+        an opponent tile 1 space away, and
+        moves that tile 2 spaces backwards
+        <b>over the top</b> of itself.</p>
+      HTML
+      Pe: <<~HTML,
+        <header>Persuade (Pe)</header>
+        <p>The <i>Persuade</i> targets an opponent
+        tile 1 space away, and pulls it 1 space
+        <b>backwards</b>, moving <b>both</b> the opponent
+        tile and the Persuade together.</p>
+      HTML
+    }
+
+    def self.tile_help = document.querySelector('#tile-help')
+    def self.set_tile_help(tile)
+      HELP_TEXT.fetch(tile, '').then do |text|
+        tile_help[:style] = if text.empty? then 'display:none;' else 'display:block;' end
+        tile_help[:innerHTML] = text
+      end
+    end
+
     def self.render
       update_pgn
       PlayerHand.render_joined
@@ -124,6 +217,8 @@ module Ux
         Ux.build_element(element: :div, id: :'player-hands')
           .then { console.appendChild _1 }
         build_pgn
+          .then { console.appendChild _1 }
+        build_tile_help
           .then { console.appendChild _1 }
       end
 

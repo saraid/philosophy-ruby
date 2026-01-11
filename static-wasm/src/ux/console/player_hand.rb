@@ -62,39 +62,54 @@ module Ux
 
         hand[:innerHTML] = ''
 
+        label = player.color.name.to_s
+          .then { Ux.build_element(element: :div, classes: %w[ label ], innerHTML: _1, title: _1) }
+          .then { hand.appendChild _1}
+
         if !current_game.started? || current_game.rules.can_leave.anytime?
           classes = %w[ player-leave ]
           classes << DISABLED unless allowed_to_leave? player
           Ux.build_element(element: :button, classes:, innerHTML: 'X')
             .tap { _1.addEventListener('click') { remove player_code } }
-            .then { hand.appendChild _1 }
+            .then { label.prepend _1 }
         end
 
-        Ux.build_element(element: :span, innerHTML: player.color.name.to_s)
+        tiles = Ux.build_element(element: :div, classes: %w[ tile-list ])
           .then { hand.appendChild _1}
 
         player.tiles.each do
           type = Philosophy::IdeaTile.registry[_1]
           classes = [ "tile-#{type.notation}" ]
           tile = Ux.build_element(element: :button, classes:, title: type.to_s, innerHTML: type.notation.to_s)
+          tile.addEventListener('mouseover') do
+            Ux::Console.set_tile_help(Ux::Move.current[:tile] || type.notation)
+          end
           tile.addEventListener('click') do
             case Ux::State.current
             when Ux::State.choose_tile_for_move, Ux::State.choose_space_for_move
-              Ux::Console::PlayerHand.tiles_for(player.color.code)
-                .forEach { |node| node[:classList].remove CHOSEN }
-              tile[:classList].add CHOSEN
+              if Ux::Move.current[:tile] == type.notation
+                tile[:classList].remove CHOSEN
+                Ux::Move.current.store(:tile, nil)
+                Ux::Board::Space.nothing_is_clickable!
+                Ux::State.set_to Ux::State.choose_tile_for_move
+              else
+                Ux::Console::PlayerHand.tiles_for(player.color.code)
+                  .forEach { |node| node[:classList].remove CHOSEN }
+                tile[:classList].add CHOSEN
 
-              Ux::Move.current.store(:player, player.color.code)
-              Ux::Move.current.store(:tile, type.notation)
-              Ux::Move.current.store(:location, nil)
-              Ux::Move.current.store(:direction, nil)
+                Ux::Move.current.store(:player, player.color.code)
+                Ux::Move.current.store(:tile, type.notation)
+                Ux::Move.current.store(:location, nil)
+                Ux::Move.current.store(:direction, nil)
 
-              Ux::Board::Space.clickable!
-              Ux::State.set_to Ux::State.choose_space_for_move
+                Ux::Console.set_tile_help(Ux::Move.current[:tile])
+                Ux::Board::Space.clickable!
+                Ux::State.set_to Ux::State.choose_space_for_move
+              end
             else
             end
           end
-          hand.appendChild tile
+          tiles.appendChild tile
         end
 
         nil
