@@ -18,11 +18,7 @@ module Ux
         wrapper
       end
 
-      def self.grid_position(location)
-        current_game.board[location]
-          .coordinate
-          .then { "grid-column:#{_1.col+1};grid-row:#{_1.row+1};" }
-      end
+      def self.grid_position(...) = Ux::Board.grid_position(...)
 
       def self.each_button(&) = document.querySelector("#compass")[:childNodes].forEach(&)
       def self.button_for(direction) = document.querySelector("#compass-#{direction}")

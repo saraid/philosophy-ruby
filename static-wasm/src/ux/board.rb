@@ -5,6 +5,12 @@ module Ux
   module Board
     def self.operations = document.querySelector('#operations')
 
+    def self.grid_position(location)
+      current_game.board[location]
+        .coordinate
+        .then { "grid-column:#{_1.col+1};grid-row:#{_1.row+1};" }
+    end
+
     def self.clean
       current_game.board.each do
         space = Space.for(_1.name)
@@ -23,8 +29,8 @@ module Ux
         space[:innerHTML] = _1.tile.notation
         space[:title] = <<~TEXT
           Player: #{_1.tile.owner.color.name}
-          Tile: #{_1.to_s}
-          Direction: #{_1.tile.target}
+          Tile: #{_1.tile.class} (#{_1.tile.class.notation})
+          Direction: #{_1.tile.target.long} (#{_1.tile.target.notation})
         TEXT
       end
     end
@@ -35,12 +41,12 @@ module Ux
         case _1
         when Philosophy::ActivationContext::Operation::Place
           location = _1.location.name
-          current_html = Space.for(location)[:innerHTML]
-          Space.for(location)[:innerHTML] = "#{current_html}<br/>#{_1.to_svg}"
+          Ux.build_element(element: :div, innerHTML: _1.to_svg, style: grid_position(location.to_sym))
+            .then { |node| operations.appendChild node }
         when Philosophy::ActivationContext::Operation::Rotate
           location = _1.target_location.name
-          current_html = Space.for(location)[:innerHTML]
-          Space.for(location)[:innerHTML] = "#{current_html}<br/>#{_1.to_svg}"
+          Ux.build_element(element: :div, innerHTML: _1.to_svg, style: grid_position(location.to_sym))
+            .then { |node| operations.appendChild node }
         when Philosophy::ActivationContext::Operation::Move
           render_move_operation _1
         end

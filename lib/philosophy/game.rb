@@ -169,7 +169,7 @@ module Philosophy
             else new_context
             end
         end
-      rescue Game::Placement::Error, Game::Choice::Error
+      rescue Game::Error
         @history.pop
         raise
       end

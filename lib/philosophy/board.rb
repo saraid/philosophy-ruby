@@ -48,6 +48,7 @@ module Philosophy
 
     TWO_CHAR_DIRECTIONS = DIRECTIONAL_KEYS.zip(%i[ We No Ea So Nw Ne Se Sw ]).to_h
     ONE_CHAR_DIRECTIONS = DIRECTIONAL_KEYS.zip(%i[ 4 2 6 8 1 3 7 5 ]).to_h
+    DIRECTION_LONG_FORM = DIRECTIONAL_KEYS.zip(%i[ West North East South NorthWest NorthEast SouthEast SouthWest ]).to_h
 
     NOTATION_TO_DIRECTION = TWO_CHAR_DIRECTIONS.invert
 
@@ -76,6 +77,7 @@ module Philosophy
       def pull_left = self.class.new(clock[5])
 
       def notation = TWO_CHAR_DIRECTIONS[value]
+      def long = DIRECTION_LONG_FORM[value]
       def to_s = value.to_s
     end
 
