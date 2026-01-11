@@ -1,3 +1,4 @@
+puts "loaded #{__FILE__}"
 module Ux
   module Console
     module PlayerHand
@@ -47,6 +48,7 @@ module Ux
       def self.allowed_to_leave?(player)
         current_game.then do |g|
           next true unless g.started?
+          next false if g.concluded?
           case g.rules.can_leave
           when -> { _1.never? } then false
           when -> { _1.only_before_any_placement? } then false # started?=true implicit

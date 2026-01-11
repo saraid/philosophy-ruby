@@ -51,6 +51,7 @@ module Ux
 
   def self.can_add_new_players?
     current_game.then do |g|
+      next false if g.concluded?
       case g.rules.can_join
       when -> { _1.only_before_any_placement? } then !g.started?
       when -> { _1.between_turns? } then true
