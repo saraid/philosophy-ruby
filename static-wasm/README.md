@@ -7,6 +7,8 @@ Purpose of this folder is basically playing with WASM and seeing whether or not 
 - [ ] Respect token?
 - [ ] Cannot leave after game ends.
 - [ ] Import PGN.
+- [ ] Show consequences of a placement before commit. Also have a commit.
+- [ ] Also have an undo? Also maybe a navigable history?
 
 # Start
 
