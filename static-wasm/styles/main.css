@@ -12,9 +12,25 @@ main {
   color: red;
 }
 
+#pgn-wrapper {
+  position: relative;
+}
 #pgn {
   background-color: lightgrey;
   padding: 3px;
+}
+#copy-to-clipboard {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  margin-top: 5px;
+  margin-right: 10px;
+
+  font-size: 20px;
+  cursor: pointer;
+
+  display: none;
 }
 
 .player-hand {

@@ -30,7 +30,7 @@ module Ux
     @main
   end
 
-  def self.debounce(id: caller.first, timeout: 0.3, &)
+  def self.debounce(id: caller.first, timeout: 300.milliseconds, &)
     @debouncers ||= {}
     if @debouncers[id]
       if Time.now - @debouncers[id] > timeout
@@ -42,6 +42,10 @@ module Ux
       yield
     end
     nil
+  end
+
+  def self.wait_then(timeout: 3000.milliseconds, &block)
+    JS.global.setTimeout(block, timeout)
   end
 
   def self.render

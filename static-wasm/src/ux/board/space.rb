@@ -22,7 +22,7 @@ module Ux
       end
 
       def self.mouseover(location)
-        Ux.debounce(id: "mouseover-#{location}", timeout: 0.2) do
+        Ux.debounce(id: "mouseover-#{location}", timeout: 200.milliseconds) do
           case Ux::State.current
           when Ux::State.choose_space_for_move, Ux::State.choose_direction_for_move
             return unless current_game.board[location].playable?

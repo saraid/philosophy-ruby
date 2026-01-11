@@ -24,6 +24,12 @@ require_relative '../lib/philosophy'
 require_relative '../lib/philosophy/shims/svg'
 require_relative './src/ux'
 
+class Numeric
+  def seconds = self
+  def milliseconds = self / 1000
+  def as_milliseconds = self / 1000
+end
+
 class JS::Object
   def then(&) = yield(self)
   def tap(&)
@@ -58,6 +64,9 @@ module Ux
 end
 
 def document = JS.global[:document]
+def navigator = JS.global[:navigator]
+def clipboard = navigator[:clipboard]
+
 def current_game = Philosophy::Game.current
 Philosophy::Game.set_current!
 
