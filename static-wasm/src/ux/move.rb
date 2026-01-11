@@ -34,6 +34,7 @@ module Ux
     REPHRASE_OPTIONS = Philosophy::IdeaTile::VALID_TARGETS.values
       .map { |dir| dir.map { Philosophy::Board::TWO_CHAR_DIRECTIONS[_1] }.sort } 
     def self.check_for_parameters!
+      Ux::Board::Space.nothing_is_clickable!
       return complete! if current_game.player_options.empty?
 
       case current_game.player_options
@@ -53,7 +54,6 @@ module Ux
 
     def self.complete!
       @current = nil
-      Ux::Board::Space.nothing_is_clickable!
       Ux::State.set_to Ux::State.choose_tile_for_move
       Ux.render
     end
