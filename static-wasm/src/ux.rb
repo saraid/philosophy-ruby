@@ -1,3 +1,4 @@
+puts "loaded #{__FILE__}"
 require_relative 'ux/board'
 require_relative 'ux/console'
 require_relative 'ux/move'
@@ -10,10 +11,10 @@ module Ux
     classes.each { elem[:classList].add _1 }
     kwargs.each do |property, value|
       case value
-      when Symbol, String
+      when Symbol, String, TrueClass, FalseClass
         elem[property] = value.to_s
       else
-        puts "element creation: unhandled property #{property}=#{value.inspect}"
+        puts "element creation: unhandled property #{property}=#{value.inspect} (#{value.class})"
       end
     end
     elem[:innerHTML] = innerHTML.to_s

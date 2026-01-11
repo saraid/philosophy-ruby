@@ -1,3 +1,4 @@
+puts "loaded #{__FILE__}"
 module Philosophy
   class Game
     class Rules
@@ -18,6 +19,7 @@ module Philosophy
             def initialize(**kwargs)
               #{vars.map { "@#{_1}" }.join(', ')} = kwargs.values_at(#{vars.map { ":#{_1}" }.join(', ')})
             end
+            attr_reader #{vars.map { ":#{_1}" }.join(', ')}
           RUBY
           @variables.each do |variable, definition|
             definition[:options].each do |option|

@@ -1,3 +1,4 @@
+puts "loaded #{__FILE__}"
 module Ux
   module Console
     module PlayerAdd
@@ -32,11 +33,24 @@ module Ux
         Ux::Console.player_add[:title] = nil
       end
 
+      def self.update
+        render
+
+        if !current_game.started?
+          && current_game.player_order.size >= 2
+          && !current_game.concluded?
+          PlayerHand.element_for(current_game.player_order.first)[:classList].remove PlayerHand::CANNOT_PLAY
+        end
+
+        PlayerHand.render_joined
+        Ux::Console.update_pgn
+      end
+
       def self.render
         build if div == JS::Null
         div[:innerHTML] = ''
 
-        Ux::Player.available.each do |player|
+        Ux::Player.available.sort_by(&:code).each do |player|
           Ux.build_element(element: :button, innerHTML: player.code)
             .tap { _1.addEventListener('click') { Ux::Console::PlayerHand.add player } }
             .then { div.appendChild _1 }

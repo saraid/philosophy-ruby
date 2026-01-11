@@ -1,4 +1,5 @@
 require 'js'
+puts "loaded #{__FILE__}"
 
 # Patch require_relative to load from remote
 require 'js/require_remote'
@@ -17,6 +18,7 @@ module Kernel
     original_require_relative(file)
   rescue LoadError
     JS::RequireRemote.instance.load(path)
+    #puts "require_relative #{path}"
   end
 end
 
@@ -71,6 +73,6 @@ def current_game = Philosophy::Game.current
 Philosophy::Game.set_current!
 
 Ux.setup
-
 Ux::Console::PlayerAdd.render
+
 nil

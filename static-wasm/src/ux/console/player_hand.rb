@@ -3,10 +3,11 @@ module Ux
     module PlayerHand
       CANNOT_PLAY = 'cannot-play'
       CHOSEN = 'chosen'
+      DISABLED = 'disabled'
 
       def self.wrapper = document.querySelector('#player-hands')
       def self.clear_all = wrapper[:innerHTML] = ''
-      def self.for(code) = document.querySelector("#player-#{code}")
+      def self.element_for(code) = document.querySelector("#player-#{code}")
       def self.tiles_for(code) = document.querySelectorAll("#player-#{code} button")
 
       def self.add(player)
@@ -16,14 +17,15 @@ module Ux
 
         PlayerAdd.input[:value] = nil
         Player.available.delete player
-        PlayerAdd.render
+        PlayerAdd.update
 
-        if !current_game.started? && current_game.player_order.size >= 2 && !current_game.concluded?
-          self.for(current_game.player_order.first)[:classList].remove CANNOT_PLAY
-        end
+        Ux::Console.close_rules_once
+      end
 
-        render_joined
-        Ux::Console.update_pgn
+      def self.remove(player_code)
+        current_game << Philosophy::Game::PlayerChange.new(code: player_code, type: :left)
+        Ux::Player.add_available player_code
+        PlayerAdd.update
       end
 
       def self.render_joined
@@ -38,17 +40,33 @@ module Ux
           || current_game.concluded?
           classes << CANNOT_PLAY
         end
-        hand = Ux.build_element(id: "player-#{player.color.code}", classes:,)
-        wrapper.appendChild hand
-        hand
+        Ux.build_element(id: "player-#{player.color.code}", classes:,)
+          .tap { wrapper.appendChild _1 }
+      end
+
+      def self.allowed_to_leave?(player)
+        current_game.then do |g|
+          next true unless g.started?
+          case g.rules.can_leave
+          when -> { _1.never? } then false
+          when -> { _1.only_before_any_placement? } then false # started?=true implicit
+          when -> { _1.anytime? } then true
+          end
+        end
       end
 
       def self.render(player_code)
         player = current_game.players.fetch(player_code)
-        hand = self.for player.color.code
+        hand = element_for player.color.code
         hand = build(player) if hand == JS::Null
 
         hand[:innerHTML] = ''
+
+        classes = %w[ player-leave ]
+        classes << DISABLED unless allowed_to_leave? player
+        Ux.build_element(element: :button, classes:, innerHTML: 'X')
+          .tap { _1.addEventListener('click') { remove player_code } }
+          .then { hand.appendChild _1 }
 
         Ux.build_element(element: :span, innerHTML: player.color.name.to_s)
           .then { hand.appendChild _1}

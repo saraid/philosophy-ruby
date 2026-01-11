@@ -125,7 +125,7 @@ module Philosophy
       if @rules.upon_leaving.rollback_placement?
         @board = @previous_context.to_board
       end
-      if @rules.upon_leaving.ends_game?
+      if started? && @rules.upon_leaving.ends_game?
         @force_conclusion = true
       end
       normalize_player_state

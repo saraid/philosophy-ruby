@@ -19,7 +19,7 @@
   color: white;
 }
 
-.player-hand.cannot-play {
+.player-hand.cannot-play button:not(.player-leave) {
   pointer-events: none;
   opacity: 0.5;
 }

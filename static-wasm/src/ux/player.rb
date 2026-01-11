@@ -1,3 +1,4 @@
+puts "loaded #{__FILE__}"
 module Ux
   Player = Data.define(:code, :color, :default_name)
 
@@ -27,6 +28,12 @@ module Ux
           new(code:, **kwargs)
         end
       )
+    end
+
+    def self.add_available(player_code)
+      DEFAULTS.fetch(player_code)
+        .then { new(code: player_code, **_1) }
+        .then { available << _1 }
     end
   end
 end
