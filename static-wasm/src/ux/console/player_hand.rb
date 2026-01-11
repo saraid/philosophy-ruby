@@ -62,11 +62,13 @@ module Ux
 
         hand[:innerHTML] = ''
 
-        classes = %w[ player-leave ]
-        classes << DISABLED unless allowed_to_leave? player
-        Ux.build_element(element: :button, classes:, innerHTML: 'X')
-          .tap { _1.addEventListener('click') { remove player_code } }
-          .then { hand.appendChild _1 }
+        if !current_game.started? || current_game.rules.can_leave.anytime?
+          classes = %w[ player-leave ]
+          classes << DISABLED unless allowed_to_leave? player
+          Ux.build_element(element: :button, classes:, innerHTML: 'X')
+            .tap { _1.addEventListener('click') { remove player_code } }
+            .then { hand.appendChild _1 }
+        end
 
         Ux.build_element(element: :span, innerHTML: player.color.name.to_s)
           .then { hand.appendChild _1}

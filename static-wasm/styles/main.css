@@ -12,6 +12,10 @@ main {
   color: red;
 }
 
+#rules summary {
+  cursor: pointer;
+}
+
 #pgn-wrapper {
   position: relative;
 }
@@ -36,6 +40,7 @@ main {
 .player-hand {
   display: flex;
   justify-content: space-evenly;
+  padding: 3px;
 }
 
 .player-hand span {
