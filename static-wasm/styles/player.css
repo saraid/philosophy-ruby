@@ -34,3 +34,7 @@
 #player-add {
   display: flex;
 }
+#player-add.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}

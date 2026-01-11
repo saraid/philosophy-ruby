@@ -64,7 +64,7 @@ module Philosophy
     end
     attr_reader :current_player, :current_context
     attr_reader :board, :history
-    attr_reader :metadata
+    attr_reader :metadata, :rules
 
     def player_order = @players.map(&:color).map(&:code)
     def board_state = @current_context.to_board.notation(delimiter: '/')

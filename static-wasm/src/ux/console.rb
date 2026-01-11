@@ -5,18 +5,9 @@ require_relative 'console/tests'
 
 module Ux
   module Console
+    def self.wrapper = document.querySelector('#console')
 
     def self.player_add = document.querySelector('#player-add')
-    private_class_method def self.build_player_add
-      wrapper = Ux.build_element element: :div, id: :'player-add'
-
-      Ux.build_element(element: :span, innerHTML: 'Add Player:')
-        .then { wrapper.appendChild _1 }
-      Ux.build_element(element: :input, type: :text, placeholder: 'Player Name')
-        .then { wrapper.appendChild _1 }
-
-      wrapper
-    end
 
     COPY_TO_CLIPBOARD = '📋'
     SUCCESS = '✔'
@@ -76,7 +67,7 @@ module Ux
 
       if raw_mode
       else
-        build_player_add
+        PlayerAdd.build
           .then { console.appendChild _1 }
         Ux.build_element(element: :div, id: :'player-hands')
           .then { console.appendChild _1 }

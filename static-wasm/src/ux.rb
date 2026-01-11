@@ -48,7 +48,16 @@ module Ux
     JS.global.setTimeout(block, timeout)
   end
 
+  def self.can_add_new_players?
+    current_game.then do |g|
+      g.player_order.size < Ux::Player::DEFAULTS.size
+      && (g.rules.can_join.only_before_any_placement? && !g.started?)
+    end
+  end
+
   def self.render
+    Console::PlayerAdd.disable unless can_add_new_players?
+
     Board.render
     Console.render
     nil
