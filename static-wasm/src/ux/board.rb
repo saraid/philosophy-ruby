@@ -1,9 +1,11 @@
 require_relative 'board/compass'
 require_relative 'board/space'
+require_relative 'board/tile'
 
 module Ux
   module Board
     def self.operations = document.querySelector('#operations')
+    def self.tiles = document.querySelector('#tiles')
 
     def self.grid_position(location)
       current_game.board[location]
@@ -17,21 +19,22 @@ module Ux
         space[:classList].remove Space::OCCUPIED
         space[:innerHTML] = _1.name.to_s
       end
-      operations[:childNodes].forEach do |child|
-        operations.removeChild(child)
-      end
+
+      tiles[:childNodes].forEach { tiles.removeChild _1 }
+      operations[:childNodes].forEach { operations.removeChild _1 }
     end
 
     def self.render_occupied_spaces
       current_game.board.each.select(&:occupied?).each do
         space = Space.for _1.name
         space[:classList].add Space::OCCUPIED
-        space[:innerHTML] = _1.tile.notation
-        space[:title] = <<~TEXT
-          Player: #{_1.tile.owner.color.name}
-          Tile: #{_1.tile.class} (#{_1.tile.class.notation})
-          Direction: #{_1.tile.target.long} (#{_1.tile.target.notation})
-        TEXT
+        Tile.place _1
+       #space[:innerHTML] = _1.tile.notation
+       #space[:title] = <<~TEXT
+       #  Player: #{_1.tile.owner.color.name}
+       #  Tile: #{_1.tile.class} (#{_1.tile.class.notation})
+       #  Direction: #{_1.tile.target.long} (#{_1.tile.target.notation})
+       #TEXT
       end
     end
 
@@ -100,6 +103,8 @@ module Ux
       board = Ux.build_element element: :div, id: :board
 
       Space.build_elements
+        .then { board.appendChild _1 }
+      Ux.build_element(element: :div, id: :tiles)
         .then { board.appendChild _1 }
       Ux.build_element(element: :div, id: :operations)
         .then { board.appendChild _1 }

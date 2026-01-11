@@ -1,12 +1,18 @@
 .bgcolor-Am {
   background-color: #FFBF00;
 }
+.tile.bgcolor-In, .tile.bgcolor-In::after {
+  border-color: white;
+}
 .bgcolor-In {
   background-color: #4B0082;
   color: white;
 }
 .bgcolor-Sa {
   background-color: #B2AC88;
+}
+.tile.bgcolor-Te, .tile.bgcolor-Te::after {
+  border-color: white;
 }
 .bgcolor-Te {
   background-color: #008080;
