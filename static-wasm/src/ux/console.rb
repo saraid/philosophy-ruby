@@ -29,9 +29,14 @@ module Ux
       copy_div[:style] = 'display:block;' if clipboard_available?
     end
     def self.copy_pgn
-      current_game.to_pgn.then do
-        clipboard.writeText _1
-        puts "copied to clipboard:#{$/}#{_1}"
+      current_game.to_pgn.then do |pgn_text|
+        puts "copying to clipboard:#{$/}#{pgn_text}"
+        clipboard.writeText pgn_text
+
+        # JS.global[:ClipboardItem].new({
+        #   ['text/plain'] => JS.global[:Blob].new([pgn_text], { 'type' => 'text/plain' }),
+        #   ['text/html'] => pgn[:textContent], #JS.global[:Blob].new(["<pre>#{pgn_text}</pre>"], { 'type' => 'text/html' }),
+        # }).then { clipboard.write [_1] }
       end
       copy_div[:innerHTML] = SUCCESS
       Ux.wait_then(timeout: 150.milliseconds) do
@@ -42,10 +47,16 @@ module Ux
       # No idea how to check that
       nil
     end
+    def self.partial_copy(event)
+      selection = document.getSelection
+      event[:clipboardData].setData('text/plain', selection)
+      event[:clipboardData].setData('text/plain', "<pre>#{selection}</pre>")
+    end
 
     def self.build_pgn
       wrapper = Ux.build_element(element: :pre, id: :'pgn-wrapper')
       Ux.build_element(element: :pre, id: :pgn)
+        .tap { _1.addEventListener('copy') { |event| partial_copy event } }
         .then { wrapper.appendChild _1 }
       Ux.build_element(
         element: :div, id: :'copy-to-clipboard', innerHTML: COPY_TO_CLIPBOARD, title: 'Copy to Clipboard'
