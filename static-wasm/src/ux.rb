@@ -5,6 +5,7 @@ require_relative 'ux/move'
 require_relative 'ux/player'
 
 module Ux
+  def self.build_text(text) = document.createTextNode(text)
   def self.build_element(element: :div, id: nil, classes: [], innerHTML: '', **kwargs)
     elem = document.createElement(element.to_s)
     elem[:id] = id.to_s if id
@@ -59,6 +60,18 @@ module Ux
     end
   end
 
+  def self.build_header
+    header = Ux.build_element element: :Header, id: :header
+    Ux.build_element(element: :div, innerHTML: <<~HTML).then { header.appendChild _1 }
+      <a href="https://github.com/saraid/philosophy-ruby">GitHub</a>
+    HTML
+    Ux.build_element(element: :div, innerHTML: <<~HTML).then { header.appendChild _1 }
+      <a href="https://boardgamegeek.com/boardgame/263236/philosophy">BoardGameGeek</a>
+    HTML
+    Ux.build_text('782e0394c9a261b6c2bab566f07f26daa7f79e83').then { header.appendChild _1 }
+    body.appendChild header
+  end
+
   def self.render
     Console::PlayerAdd.disable unless can_add_new_players?
 
@@ -68,6 +81,7 @@ module Ux
   end
 
   def self.setup
+    build_header
     Board.setup
     Console.setup
     body[:childNodes].forEach { body.removeChild _1 }

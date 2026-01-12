@@ -1,12 +1,19 @@
+header {
+  display: flex;
+  background-color: #ddbddd;
+  justify-content: space-evenly;
+  padding: 3px 0;
+  margin-bottom: 3px;
+}
+
 main {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: center;
 }
 
-#console-dev { display: none; }
-#console-prod { display: block; }
 #console {
   width: 600px;
   max-width: 770px;
