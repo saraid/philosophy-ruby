@@ -11,6 +11,7 @@ Purpose of this folder is basically playing with WASM and seeing whether or not 
 - [ ] Show consequences of a placement before commit. Also have a commit.
 - [ ] Also have an undo? Also maybe a navigable history?
 - [ ] It's not obvious enough when the game ends.
+  - [ ] New Game button?
 - [ ] Display options / customization
   - [ ] Toggle space notations
   - [ ] Change space bgcolor.
