@@ -22,8 +22,8 @@ module Ux
           },
           effect: {
             ends_game: "The game will end upon a player leaving.",
-            rollback_placement: "If a player leaves mid-placement, their tile will be removed.",
-            remove_their_tiles: "All of a player's tiles will be removed from the board upon leaving.",
+            rollback_placement: "If a player leaves mid-placement, their partially-placed tile will be removed.",
+            remove_their_tiles: "All of that player's tiles will be removed from the board upon leaving.",
           },
         },
       }
