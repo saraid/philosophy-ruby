@@ -1,14 +1,61 @@
 module Ux
   module Console
     module Rules
+      def self.element = document.querySelector('#rules')
+
+      RULE_TEXT = {
+        join: {
+          permitted: {
+            only_before_any_placement: "New players can only join before any tile is placed.",
+            between_turns: "New players can only join between turns.",
+          },
+          where: {
+            immediately_next: "New players will join as the next player.",
+            after_a_full_turn: "New players will join after the last player has gone.",
+          },
+        },
+        leave: {
+          permitted: {
+            only_before_any_placement: "Players cannot leave after the game starts.",
+            never: "Players may not leave once joined.",
+            anytime: "Players may leave at any time.",
+          },
+          effect: {
+            ends_game: "The game will end upon a player leaving.",
+            rollback_placement: "If a player leaves mid-placement, their tile will be removed.",
+            remove_their_tiles: "All of a player's tiles will be removed from the board upon leaving.",
+          },
+        },
+      }
+
       def self.open
-        document.querySelector('#rules')[:open] = true
+        element[:open] = true
         @rules_closed_once = false
       end
 
       def self.close_once
-        document.querySelector('#rules').removeAttribute('open') unless @rules_closed_once
+        element.removeAttribute('open') unless @rules_closed_once
         @rules_closed_once = true
+      end
+
+      def self.change(rule_name, variable, value)
+        current_game << Philosophy::Game::RuleChange.new(rule: rule_name, variable:, value:)
+        Ux::Console.update_pgn
+        nil
+      end
+
+      def self.build_select_element(rule_name, variable, selected_value)
+        wrapper = Ux.build_element element: :select, name: "rule-#{rule_name}-#{variable}"
+        RULE_TEXT.dig(rule_name, variable).each do |value, text|
+          option = Ux.build_element element: :option, value:, selected: value == selected_value, innerHTML: text
+          wrapper.appendChild option
+        end
+        wrapper.addEventListener('change') do |event|
+          value = event[:target][:value].to_s.to_sym
+          puts value.inspect
+          change(rule_name, variable, value.to_sym)
+        end
+        wrapper
       end
 
       def self.build
@@ -16,34 +63,13 @@ module Ux
         summary = Ux.build_element element: :summary, innerHTML: 'Player Change Rules'
         list = Ux.build_element element: :ul
         current_game.rules.then do |rules|
-          case rules.can_join.permitted
-          when :only_before_any_placement then "New players can only join before any tile is placed."
-          when :between_turns then  "New players can only join between turns."
-          end
-            .then { Ux.build_element element: :li, innerHTML:  _1 }
+          build_select_element(:join, :permitted, rules.can_join.permitted)
             .then { list.appendChild _1 }
-
-          case rules.can_join.where
-          when :immediately_next then "New playesr will join as the next player."
-          when :after_a_full_turn then "New playesr will join after the last player has gone."
-          end
-            .then { Ux.build_element element: :li, innerHTML:  _1 }
+          build_select_element(:join, :where, rules.can_join.where)
             .then { list.appendChild _1 }
-
-          case rules.can_leave.permitted
-          when :only_before_any_placement then "Players cannot leave after the game starts."
-          when :never then "Players may not leave once joined."
-          when :anytime then "Players may leave at any time."
-          end
-            .then { Ux.build_element element: :li, innerHTML:  _1 }
+          build_select_element(:leave, :permitted, rules.can_leave.permitted)
             .then { list.appendChild _1 }
-
-          case rules.can_leave.effect
-          when :ends_game then "The game will end upon a player leaving."
-          when :rollback_placement then "If a player leaves mid-placement, their tile will be removed."
-          when :remove_their_tiles then "All of a player's tiles will be removed from the board upon leaving."
-          end
-            .then { Ux.build_element element: :li, innerHTML:  _1 }
+          build_select_element(:leave, :effect, rules.can_leave.effect)
             .then { list.appendChild _1 }
         end
         details.appendChild summary

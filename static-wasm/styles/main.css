@@ -27,6 +27,11 @@ main {
 #rules summary {
   cursor: pointer;
 }
+#rules ul {
+  margin: 0;
+  padding-left: 13px;
+  margin-bottom: 1em;
+}
 
 #pgn-wrapper {
   position: relative;
