@@ -71,7 +71,7 @@ module Ux
     Ux.build_element(element: :div, innerHTML: <<~HTML).then { header.appendChild _1 }
       <a href="https://philrulebook.qualitybeast.com/">Rulebook</a>
     HTML
-    Ux.build_text('782e0394c9a261b6c2bab566f07f26daa7f79e83').then { header.appendChild _1 }
+    Ux.build_text('v0.1.0').then { header.appendChild _1 }
     body.appendChild header
   end
 
