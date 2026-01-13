@@ -6,7 +6,7 @@ Purpose of this folder is basically playing with WASM and seeing whether or not 
 - [x] Several console components should be refactored into their own file.
 - [x] Allow rule changes.
 - [ ] Respect token?
-- [ ] Cannot leave after game ends.
+- [x] Cannot leave after game ends.
 - [ ] Import PGN.
 - [ ] Show consequences of a placement before commit. Also have a commit.
 - [ ] Also have an undo? Also maybe a navigable history?
@@ -17,6 +17,7 @@ Purpose of this folder is basically playing with WASM and seeing whether or not 
   - [ ] Toggle space notations
   - [ ] Change space bgcolor.
   - [ ] Offer custom player colors.
+- [ ] Player and Direction should be reduced to unicode characters, and then make the tile name fit on the tile.
 
 # Start
 
