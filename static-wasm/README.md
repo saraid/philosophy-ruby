@@ -18,7 +18,7 @@ Purpose of this folder is basically playing with WASM and seeing whether or not 
   - [ ] Toggle space notations
   - [ ] Change space bgcolor.
   - [ ] Offer custom player colors.
-- [ ] Player and Direction should be reduced to unicode characters, and then make the tile name fit on the tile.
+- [x] Player and Direction should be reduced to unicode characters, and then make the tile name fit on the tile.
 
 # Start
 

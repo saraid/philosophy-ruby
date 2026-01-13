@@ -227,8 +227,6 @@
   margin: 7px;
 
   pointer-events: auto;
-  overflow: hidden;
-  white-space: nowrap;
   border: solid 2px black;
 
   display: flex;
@@ -236,10 +234,18 @@
   align-items: center;
   justify-content: center;
 
-  font-size: 12px;
+  //font-size: 12px;
   text-align: center;
 
   position: relative;
+}
+.tile .tile-name {
+  font-family: monospace;
+  padding: 0 5px;
+}
+.tile .tile-footer {
+  display: flex;
+  justify-content: space-around;
 }
 
 .tile::after {

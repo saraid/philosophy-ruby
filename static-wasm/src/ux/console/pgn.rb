@@ -41,6 +41,10 @@ module Ux
         end
       end
 
+      def self.restore_to_current
+        Ux::Board.render
+      end
+
       def self.build_placement_event(event, parameters: [], options: {})
         text =
           case event
@@ -50,8 +54,9 @@ module Ux
               "on #{event.location} pointing #{Philosophy::Board::Direction[event.direction].long}"
           end
         Ux.build_element(element: :li, innerHTML: event.notation(parameters:, options:), title: text)
-          .tap { _1.addEventListener('mouseover') { show_historical_event event } }
           .tap { _1.addEventListener('click') { show_historical_event event } }
+          .tap { _1.addEventListener('mouseover') { show_historical_event event } }
+          .tap { _1.addEventListener('mouseout') { restore_to_current } }
       end
 
       def self.update
