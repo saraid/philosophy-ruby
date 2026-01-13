@@ -8,6 +8,7 @@ module Philosophy
       end
 
       def <<(event) = @events << event
+      def last = @events.last
       def pop = @events.pop
       def each(...) = @events.each(...)
 

@@ -148,6 +148,7 @@ module Philosophy
     def holding_respect_token = @respect
     attr_writer :respect
 
+    def saving_contexts? = true # Kinda anticipating that this will eat memory, so I want it configurable, but maybe it won't?
     def <<(event)
       case event
       when String then Event.from_notation(event)
@@ -161,6 +162,7 @@ module Philosophy
       begin
         @current_event.execute(self).then do |new_context|
           next if new_context == @current_context
+          @current_event.context = new_context if saving_contexts?
           @last_board_operations = new_context.operations
 
           return_tiles(new_context.removed_tiles)

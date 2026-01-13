@@ -9,7 +9,8 @@ Purpose of this folder is basically playing with WASM and seeing whether or not 
 - [x] Cannot leave after game ends.
 - [ ] Import PGN.
 - [ ] Show consequences of a placement before commit. Also have a commit.
-- [ ] Also have an undo? Also maybe a navigable history?
+- [ ] Also have an undo?
+- [x] Also maybe a navigable history?
   - [ ] The PGN should be a lot nicer. Ideally, it would have hovers showing exactly what each bit means.
 - [ ] It's not obvious enough when the game ends.
   - [ ] New Game button?

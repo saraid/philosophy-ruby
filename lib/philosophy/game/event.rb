@@ -9,9 +9,14 @@ module Philosophy
           &.from_notation(notation)
           &.tap { raise UnrecognizedNotation, notation unless _1 }
       end
+      attr_reader :context, :operations
 
       def execute(game) = raise NoMethodError
       def notation = raise NoMethodError
+      def context=(c)
+        @context = c
+        @operations = c.operations
+      end
     end
   end
 end

@@ -7,7 +7,7 @@ module Ux
       def self.element = document.querySelector('#pgn')
       def self.copy_div = document.querySelector('#copy-to-clipboard')
       def self.clipboard_available? = clipboard.is_a? JS::Object # No idea if this is correct.
-      def self.update
+      def self.update_old
         element[:innerHTML] = current_game.to_pgn
         copy_div[:style] = 'display:block;' if clipboard_available?
       end
@@ -36,10 +36,67 @@ module Ux
         event[:clipboardData].setData('text/plain', "<pre>#{selection}</pre>")
       end
 
+      def self.show_historical_event(event)
+        Ux::Board.render(event.context, event.operations)
+        if event == current_game.history.last
+          puts "Showing current game state."
+        else
+          puts "Showing previous game state."
+        end
+      end
+
+      def self.build_placement_event(event, parameters: [], options: {})
+        Ux.build_element(element: :li, innerHTML: event.notation(parameters:, options:))
+          .tap { _1.addEventListener('mouseover') { show_historical_event event } }
+          .tap { _1.addEventListener('click') { show_historical_event event } }
+      end
+
+      def self.update
+        copy_div[:style] = 'display:block;' if clipboard_available?
+        list = document.querySelector('#history')
+        list[:innerHTML] = ''
+
+        skipped_events = []
+        iter = current_game.history.each
+        loop do
+          event = iter.next
+          break if event.nil?
+          case event
+          when Philosophy::Game::Placement
+            last_choice = nil
+            choices = []
+            begin
+              loop do
+                case iter.peek
+                when Philosophy::Game::Choice
+                  choices << (last_choice = iter.next).choice
+                when Philosophy::Game::Placement
+                  break
+                else
+                  skipped_events << iter.next
+                end
+              end
+            rescue StopIteration
+              # ignore when it's from #peek
+            end
+            build_placement_event(
+              event, parameters: event.parameters + choices,
+              options: (last_choice&.options || event.options).to_h
+            ).then { list.appendChild _1 }
+          else
+            skipped_events.each do
+              list.appendChild(Ux.build_element(element: :li, innerHTML: _1.notation))
+            end
+            Ux.build_element(element: :li, innerHTML: event.notation)
+              .then { list.appendChild _1 }
+          end
+        end
+        list
+      end
+
       def self.build
-        wrapper = Ux.build_element(element: :pre, id: :'pgn-wrapper')
-        Ux.build_element(element: :pre, id: :pgn)
-          .tap { _1.addEventListener('copy') { |event| partial_copy event } }
+        wrapper = Ux.build_element(element: :div, id: :'pgn-wrapper')
+        Ux.build_element(element: :ol, id: :history)
           .then { wrapper.appendChild _1 }
         Ux.build_element(
           element: :div, id: :'copy-to-clipboard', innerHTML: COPY_TO_CLIPBOARD, title: 'Copy to Clipboard'

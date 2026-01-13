@@ -14,7 +14,7 @@ module Ux
     end
 
     def self.clean
-      current_game.board.each do
+      Philosophy::Board::NAMED_COORDINATES.each_key do
         space = Space.for(_1.name)
         space[:classList].remove Space::OCCUPIED
         space[:innerHTML] = _1.name.to_s
@@ -25,17 +25,17 @@ module Ux
       nil
     end
 
-    def self.render_occupied_spaces
-      current_game.board.each.select(&:occupied?).each do
+    def self.render_occupied_spaces(context)
+      context.to_board.each.select(&:occupied?).each do
         space = Space.for _1.name
         space[:classList].add Space::OCCUPIED
         Tile.place _1
       end
     end
 
-    def self.render_operations
-      puts "operations: #{current_game.last_board_operations.map(&:to_tuple)}"
-      current_game.last_board_operations.each do
+    def self.render_operations(ops)
+      puts "operations: #{ops.map(&:to_tuple)}"
+      ops.each do
         case _1
         when Philosophy::ActivationContext::Operation::Place
           location = _1.location.name
@@ -80,20 +80,20 @@ module Ux
       ).then { operations.appendChild _1 }
     end
 
-    def self.render_conclusions
+    def self.render_conclusions(context)
       Space.nothing_is_concluded!
-      current_game.conclusions.each do |conclusion, player|
+      context.to_board.conclusions.each do |conclusion, player|
         conclusion.each do |location|
           Space.for(location)[:classList].add Space::CONCLUSION
         end
       end
     end
 
-    def self.render
+    def self.render(context = current_game.current_context, operations = current_game.last_board_operations)
       clean
-      render_occupied_spaces
-      render_operations
-      render_conclusions
+      render_occupied_spaces(context)
+      render_operations(operations)
+      render_conclusions(context)
       nil
     end
 
