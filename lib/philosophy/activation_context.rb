@@ -63,6 +63,7 @@ module Philosophy
 
     def move(from_location:, impact_direction:, impact_distance: 1)
       Philosophy.logger.debug("#move #{from_location} #{impact_direction} #{impact_distance}")
+      impact_direction = Board::Direction[impact_direction]
       moved_tile = spaces[from_location].tile
       target_space = spaces[spaces[from_location].coordinate.translate(impact_direction, impact_distance)]
       if target_space.nil?
