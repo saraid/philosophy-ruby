@@ -1,0 +1,53 @@
+module Ux
+  module Console
+    module Pgn
+      COPY_TO_CLIPBOARD = '📋'
+      SUCCESS = '✔'
+
+      def self.element = document.querySelector('#pgn')
+      def self.copy_div = document.querySelector('#copy-to-clipboard')
+      def self.clipboard_available? = clipboard.is_a? JS::Object # No idea if this is correct.
+      def self.update
+        element[:innerHTML] = current_game.to_pgn
+        copy_div[:style] = 'display:block;' if clipboard_available?
+      end
+      def self.copy_pgn
+        current_game.to_pgn.then do |pgn_text|
+          puts "copying to clipboard:#{$/}#{pgn_text}"
+          clipboard.writeText pgn_text
+
+          # JS.global[:ClipboardItem].new({
+          #   ['text/plain'] => JS.global[:Blob].new([pgn_text], { 'type' => 'text/plain' }),
+          #   ['text/html'] => element[:textContent], #JS.global[:Blob].new(["<pre>#{pgn_text}</pre>"], { 'type' => 'text/html' }),
+          # }).then { clipboard.write [_1] }
+        end
+        copy_div[:innerHTML] = SUCCESS
+        Ux.wait_then(timeout: 150.milliseconds) do
+          copy_div[:innerHTML] = COPY_TO_CLIPBOARD
+        end
+
+        # TODO rescue somehow if clipboard API not implemented in browser
+        # No idea how to check that
+        nil
+      end
+      def self.partial_copy(event)
+        selection = document.getSelection
+        event[:clipboardData].setData('text/plain', selection)
+        event[:clipboardData].setData('text/plain', "<pre>#{selection}</pre>")
+      end
+
+      def self.build
+        wrapper = Ux.build_element(element: :pre, id: :'pgn-wrapper')
+        Ux.build_element(element: :pre, id: :pgn)
+          .tap { _1.addEventListener('copy') { |event| partial_copy event } }
+          .then { wrapper.appendChild _1 }
+        Ux.build_element(
+          element: :div, id: :'copy-to-clipboard', innerHTML: COPY_TO_CLIPBOARD, title: 'Copy to Clipboard'
+        )
+          .tap { _1.addEventListener('click') { copy_pgn } }
+          .then { wrapper.appendChild _1 }
+        wrapper
+      end
+    end
+  end
+end

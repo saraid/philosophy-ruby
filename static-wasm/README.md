@@ -3,7 +3,7 @@ Purpose of this folder is basically playing with WASM and seeing whether or not 
 - [ ] There should probably be tests or something?
 - [x] The static-wasm code is _incredibly_ bad, but it works. Refactor into sanity someday.
   - [ ] Well, we've had one refactor, but what about second refactor? The organization is *much* better now, but I kinda want real classes instead of lots of namespaced subroutines.
-- [ ] Several console components should be refactored into their own file.
+- [x] Several console components should be refactored into their own file.
 - [ ] Allow rule changes.
 - [ ] Respect token?
 - [ ] Cannot leave after game ends.
