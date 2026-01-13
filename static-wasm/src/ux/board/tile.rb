@@ -22,6 +22,7 @@ module Ux
           .then { footer.appendChild _1 }
 
         div[:style] = Ux::Board.grid_position(occupied_space.name.to_sym)
+        div.addEventListener('mouseover') { Ux::Console::TileHelp.set_tile tile.class.notation }
 
         Ux::Board.tiles.appendChild div
       end
