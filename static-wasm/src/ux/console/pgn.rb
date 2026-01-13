@@ -4,13 +4,9 @@ module Ux
       COPY_TO_CLIPBOARD = '📋'
       SUCCESS = '✔'
 
-      def self.element = document.querySelector('#pgn')
+      def self.element = document.querySelector('#history')
       def self.copy_div = document.querySelector('#copy-to-clipboard')
       def self.clipboard_available? = clipboard.is_a? JS::Object # No idea if this is correct.
-      def self.update_old
-        element[:innerHTML] = current_game.to_pgn
-        copy_div[:style] = 'display:block;' if clipboard_available?
-      end
       def self.copy_pgn
         current_game.to_pgn.then do |pgn_text|
           puts "copying to clipboard:#{$/}#{pgn_text}"
@@ -46,7 +42,14 @@ module Ux
       end
 
       def self.build_placement_event(event, parameters: [], options: {})
-        Ux.build_element(element: :li, innerHTML: event.notation(parameters:, options:))
+        text =
+          case event
+          when Philosophy::Game::Placement
+            "#{current_game.players[event.player].color.name} " \
+              "placed #{Philosophy::IdeaTile.registry[event.tile]} " \
+              "on #{event.location} pointing #{Philosophy::Board::Direction[event.direction].long}"
+          end
+        Ux.build_element(element: :li, innerHTML: event.notation(parameters:, options:), title: text)
           .tap { _1.addEventListener('mouseover') { show_historical_event event } }
           .tap { _1.addEventListener('click') { show_historical_event event } }
       end

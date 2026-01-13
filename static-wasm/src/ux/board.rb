@@ -94,6 +94,9 @@ module Ux
       render_occupied_spaces(context)
       render_operations(operations)
       render_conclusions(context)
+      if current_game.concluded?
+        Ux::Console::Pgn.element[:classList].add "bgcolor-#{current_game.conclusions.first.last.color.code}"
+      end
       nil
     end
 
