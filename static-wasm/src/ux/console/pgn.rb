@@ -1,7 +1,7 @@
 module Ux
   module Console
     module Pgn
-      COPY_TO_CLIPBOARD = '📋'
+      COPY_TO_CLIPBOARD = '📑'
       SUCCESS = '✔'
 
       def self.element = document.querySelector('#history')

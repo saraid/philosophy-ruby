@@ -37,6 +37,7 @@ main {
   position: relative;
 }
 #history {
+  background-color: #ADD8E6;
   border-radius: 10px;
   margin-top: 5px;
   padding-top: 5px;
