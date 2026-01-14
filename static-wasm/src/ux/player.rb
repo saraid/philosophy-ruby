@@ -14,7 +14,7 @@ module Ux
       },
       Sa: {
         color: '#B2AC88',
-        default_name: 'Sarah Connor',
+        default_name: 'Samar Dev',
       },
       Te: {
         color: '#008080',

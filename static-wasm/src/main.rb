@@ -21,6 +21,8 @@ module Kernel
   end
 end
 
+JS.global[:philosophy] = {}
+
 require_relative '../lib/philosophy'
 require_relative '../lib/philosophy/shims/svg'
 require_relative './src/ux'

@@ -37,20 +37,27 @@ module Ux
           In:C4PuNo
           Te:C2ReSw[Ea]
         ],
+        'chain reaction' => %w[
+          In+:Indiana
+          Sa+:Samar
+          In:C9CpNe
+          Sa:C6PuSo
+          In:C5SrEa
+          Sa:C4SlEa
+          In:C8PuEa
+        ]
       }
-      JS.global[:philosophy] = {
-        TESTS:,
-        loadPgn: lambda do |pgn|
-          pgn
-            .to_a
-            .map(&:to_s)
-            .each.with_object(Philosophy::Game.new) { _2 << _1 }
-            .then { Philosophy::Game.set_current! _1 }
-            .then { Ux.render }
-        end
-      }
+      JS.global[:philosophy][:TESTS] = TESTS
+      JS.global[:philosophy][:loadPgn] = -> { load_pgn _1.to_a.map(&:to_s) } # convert from JS to Ruby
 
       def self.div = document.querySelector('#tests')
+
+      def self.load_pgn(moves)
+        moves
+          .each.with_object(Philosophy::Game.new) { _2 << _1 }
+          .then { Philosophy::Game.set_current! _1 }
+        Ux.render
+      end
 
       def self.render
         if [JS::Null, JS::Undefined].include? div
@@ -58,12 +65,7 @@ module Ux
           TESTS.each do |name, moves|
             button = JS.global[:document].createElement("button")
             button[:innerHTML] = name
-            button.addEventListener('click') do |event|
-              moves
-                .each.with_object(Philosophy::Game.new) { _2 << _1 }
-                .then { Philosophy::Game.set_current _1 }
-              Ux.render
-            end
+            button.addEventListener('click') { load_pgn moves }
             div.appendChild(button)
           end
         end
