@@ -6,11 +6,11 @@ module Ux
       ACTIVATED = 'activated'
       SO_ACTIVATED = 'so-activated'
 
-      def self.place(occupied_space, activated: false)
+      def self.place(occupied_space, activated: nil)
         tile = occupied_space.tile
         classes = %W[ tile bgcolor-#{tile.owner.color.code} direction-#{tile.target.notation} ]
         classes << ACTIVATED if activated
-        classes << SO_ACTIVATED if activated
+        classes << SO_ACTIVATED if activated # adding specificity to override .tile.bgcolor
 
         div = Ux.build_element(element: :div, classes:)#, innerHTML: text
         "#{tile.class} (#{tile.class.notation})"

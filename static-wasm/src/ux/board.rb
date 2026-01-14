@@ -29,7 +29,7 @@ module Ux
       context.to_board.each.select(&:occupied?).each do
         space = Space.for _1.name
         space[:classList].add Space::OCCUPIED
-        Tile.place(_1, activated: activated_tiles.include?(_1.tile))
+        Tile.place(_1, activated: activated_tiles.index(_1.tile))
       end
     end
 
