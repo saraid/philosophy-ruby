@@ -1,6 +1,7 @@
 RSpec.describe Philosophy::Board do
   let(:initial_context) do
     Philosophy::ActivationContext.new(indigo).with_spaces(Philosophy::Board.new.spaces)
+      .with_player_tiles(build_duped_tiles(indigo, teal))
   end
   let(:indigo) { Philosophy::Player.new(Philosophy::Player::Color.new(:indigo, :In)) }
   let(:teal) { Philosophy::Player.new(Philosophy::Player::Color.new(:teal, :Te)) }
@@ -52,6 +53,7 @@ RSpec.describe Philosophy::Board do
     end
 
     it 'should not mark a conclusion with unplayable third space' do
+      puts initial_context.player_tiles.transform_keys(&:color).transform_values { _1.keys }
       board = initial_context
         .place(player: indigo, tile: :push, location: :C2, direction: :north)
         .place(player: indigo, tile: :slide_right, location: :C6, direction: :north)

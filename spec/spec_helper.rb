@@ -17,3 +17,5 @@ end
 
 require 'pathname'
 def pgn(name) = Pathname.new(__dir__).join('fixtures').join("#{name}.pgn").read
+
+def build_duped_tiles(*players) = players.map { [_1, _1.dup_tiles] }.to_h

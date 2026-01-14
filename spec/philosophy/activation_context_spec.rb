@@ -5,6 +5,7 @@ end
 RSpec.describe Philosophy::ActivationContext do
   let(:initial_context) do
     Philosophy::ActivationContext.new(indigo).with_spaces(Philosophy::Board.new.spaces)
+      .with_player_tiles(build_duped_tiles(indigo, teal))
   end
   let(:indigo) { Philosophy::Player.new(Philosophy::Player::Color.new(:indigo, :In)) }
   let(:teal) { Philosophy::Player.new(Philosophy::Player::Color.new(:teal, :Te)) }
