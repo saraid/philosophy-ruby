@@ -42,14 +42,17 @@
   background-color: green;
 }
 
-.space svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
+.operation-place {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .operation-move {
-  z-index: 2;
+}
+.operation-rotate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .space-c1 {

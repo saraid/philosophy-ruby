@@ -39,12 +39,14 @@ module Ux
         case _1
         when Philosophy::ActivationContext::Operation::Place
           location = _1.location.name
-          Ux.build_element(element: :div, innerHTML: _1.to_svg, style: grid_position(location.to_sym))
+          classes =  %w[ operation-place ]
+          Ux.build_element(element: :div, classes:, innerHTML: _1.to_svg, style: grid_position(location.to_sym))
             .then { |node| operations.appendChild node }
         when Philosophy::ActivationContext::Operation::Rotate
           location = _1.target_location.name
+          classes =  %w[ operation-rotate ]
           style = [grid_position(location.to_sym), 'fill:red;opacity:0.5'].join
-          Ux.build_element(element: :div, innerHTML: _1.to_svg, style:)
+          Ux.build_element(element: :div, innerHTML: _1.to_svg, style:, classes:)
             .then { |node| operations.appendChild node }
         when Philosophy::ActivationContext::Operation::Move
           render_move_operation _1
@@ -70,8 +72,8 @@ module Ux
         else start_row
         end
       grid_position =
-        [ [start_column, end_column].sort.then { "grid-column-start:#{_1};grid-column-end:span #{_2};" },
-          [start_row, end_row].sort.then { "grid-row-start:#{_1};grid-row-end:span #{_2};" },
+        [ [start_column, end_column].sort.then { "grid-column-start:#{_1};grid-column-end:span #{_2 - _1 + 1};" },
+          [start_row, end_row].sort.then { "grid-row-start:#{_1};grid-row-end:span #{_2 - _1 + 1};" },
         ].join
 
       Ux.build_element(
