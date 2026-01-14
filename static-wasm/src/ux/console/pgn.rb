@@ -1,4 +1,4 @@
-puts "loaded #{__FILE__} #{Time.now.getlocal('-08:00')}"
+puts "loaded #{__FILE__} #{JS.global[:Date].new}"
 module Ux
   module Console
     module Pgn

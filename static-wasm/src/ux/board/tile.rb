@@ -1,7 +1,7 @@
 module Ux
   module Board
     module Tile
-      PERSON = '👤'
+      PERSON = '🧑'
       COMPASS = '🧭'
 
       def self.place(occupied_space)
