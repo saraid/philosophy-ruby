@@ -58,6 +58,7 @@ module Philosophy
         raise Game::InsufficientPlayers if game.players.size < 2
         raise IncorrectPlayer if game.current_player.color.code != player
         game.current_context
+          .with_player_tiles(game.player_tiles)
           .place(player: game.current_player,
                  location: location,
                  tile: tile,

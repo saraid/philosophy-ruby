@@ -1,3 +1,4 @@
+puts "loaded #{__FILE__} #{Time.now}"
 module Philosophy
   class Game
     class Error < ArgumentError; end
@@ -79,9 +80,8 @@ module Philosophy
     def started? = @started ||= !!@history.find { Placement === _1 }
     def first_move?(event) = @history.find { Placement === _1 } == event
 
-    def players
-      @players.each.with_object({}) { _2.merge!(Hash[ _1.color.name => _1, _1.color.code => _1]) }
-    end
+    def players = @players.each.with_object({}) { _2.merge!(Hash[ _1.color.name => _1, _1.color.code => _1]) }
+    def player_tiles = @players.each.with_object({}) { _2[_1] = _1.dup_tiles }
 
     def rule_change(rule:, variable:, value:) 
       @rules.change(rule:, variable:, value:)
@@ -148,7 +148,21 @@ module Philosophy
     def holding_respect_token = @respect
     attr_writer :respect
 
-    def saving_contexts? = true # Kinda anticipating that this will eat memory, so I want it configurable, but maybe it won't?
+    def propose(event)
+      proposed_event =
+        case event
+        when String then Event.from_notation(event)
+        when Event then event
+        else raise ArgumentError, event.inspect
+        end
+
+      case proposed_event
+      when Placement, Choice
+        proposed_event.execute(self)
+      else
+        current_context
+      end
+    end
     def <<(event)
       case event
       when String then Event.from_notation(event)
@@ -162,9 +176,10 @@ module Philosophy
       begin
         @current_event.execute(self).then do |new_context|
           next if new_context == @current_context
-          @current_event.context = new_context if saving_contexts?
+          @current_event.context = new_context
           @last_board_operations = new_context.operations
 
+          @current_player.placed_tile(new_context.placed_tile.class.notation)
           return_tiles(new_context.removed_tiles)
           @current_context =
             if new_context.player_options.empty?

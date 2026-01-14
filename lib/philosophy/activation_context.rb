@@ -14,6 +14,8 @@ module Philosophy
 
     def initialize(current_player)
       @current_player = current_player
+      @player_tiles = {}
+      @placed_tile = nil
       @spaces = {}
       @removed_tiles = []
       @possible_activations = Set.new
@@ -21,9 +23,9 @@ module Philosophy
       @player_options = {}
       @operations = []
     end
-    attr_reader :current_player
+    attr_reader :current_player, :player_tiles
     attr_reader :spaces
-    attr_reader :removed_tiles, :player_options
+    attr_reader :placed_tile, :removed_tiles, :player_options
     attr_reader :possible_activations, :possible_activation_targets
     attr_reader :operations
 
@@ -31,6 +33,8 @@ module Philosophy
 
     def next_context
       new_context = ActivationContext.new(current_player).with_spaces(spaces)
+      player_tiles.then { new_context.with_player_tiles _1 }
+      placed_tile.then { new_context.with_placed_tile _1 }
       removed_tiles.each { new_context.removing_tile _1 }
       possible_activations.each { new_context.can_activate _1 }
       possible_activation_targets.each { new_context.can_be_targeted _1 }
@@ -38,7 +42,7 @@ module Philosophy
       new_context.with_player_options(@player_options)
     end
     def reset_context
-      ActivationContext.new(current_player).with_spaces(spaces)
+      ActivationContext.new(current_player).with_spaces(spaces).with_player_tiles(player_tiles)
     end
 
     PErr = Philosophy::Game::Placement
@@ -50,12 +54,13 @@ module Philosophy
       raise PErr::LocationOutsidePlacementSpace, location unless spaces[location].playable? || ignore_errors
       raise PErr::CannotPlaceAtopExistingTile, location if spaces[location].occupied?
 
-      tile_instance = player.placed_tile(tile)
+      tile_instance = @player_tiles.fetch(player).delete(IdeaTile.registry.fetch(tile))
       raise PErr::UnavailableTile, tile if tile_instance.nil?
       raise PErr::CannotOrientInTargetDirection, direction unless IdeaTile.registry[tile].valid_target?(direction)
       tile_instance.target = Board::Direction[direction]
 
       next_context
+        .with_placed_tile(tile_instance)
         .with_spaces(spaces[location].with(tile: tile_instance))
         .log(Operation::Place.new(player, tile, location, direction))
         .consider_activating(location)
@@ -102,6 +107,8 @@ module Philosophy
     end
 
     chain def log(op) = @operations << op
+    chain def with_player_tiles(new_player_tiles) = @player_tiles = new_player_tiles
+    chain def with_placed_tile(new_placed_tile) = @placed_tile = new_placed_tile
     chain def with_spaces(new_spaces) = spaces.merge!(new_spaces.to_h)
     chain def with_player_options(options) = @player_options = options
     chain def without_player_options = @player_options = {}

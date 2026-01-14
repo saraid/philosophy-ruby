@@ -7,7 +7,7 @@ module Philosophy
         [PlayerChange, Placement, Choice, Respect, RuleChange]
           .find { _1::NOTATION_REGEX.match? notation }
           &.from_notation(notation)
-          &.tap { raise UnrecognizedNotation, notation unless _1 }
+          .tap { raise UnrecognizedNotation, notation unless _1 }
       end
       attr_reader :context, :operations
 

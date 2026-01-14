@@ -9,6 +9,7 @@ module Philosophy
     attr_reader :color
 
     def tiles = @tiles.map(&:class).map(&:key)
+    def dup_tiles = @tiles.map { [_1.class, _1] }.to_h
 
     private def idea(type) = @tiles.find { _1.class == IdeaTile.registry[type] }
     def has_idea?(type) = !!idea(type)
