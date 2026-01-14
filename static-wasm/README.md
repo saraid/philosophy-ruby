@@ -11,7 +11,7 @@ Purpose of this folder is basically playing with WASM and seeing whether or not 
 - [ ] Show consequences of a placement before commit. Also have a commit.
 - [ ] Also have an undo?
 - [x] Also maybe a navigable history?
-  - [ ] The PGN should be a lot nicer. Ideally, it would have hovers showing exactly what each bit means.
+  - [x] The PGN should be a lot nicer. Ideally, it would have hovers showing exactly what each bit means.
 - [x] It's not obvious enough when the game ends.
   - [ ] New Game button?
 - [ ] Display options / customization

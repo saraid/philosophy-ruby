@@ -1,3 +1,4 @@
+puts "loaded #{__FILE__} #{Time.now.getlocal('-08:00')}"
 module Ux
   module Console
     module Pgn
@@ -92,11 +93,29 @@ module Ux
               options: (last_choice&.options || event.options).to_h
             ).then { list.appendChild _1 }
           else
-            skipped_events.each do
-              list.appendChild(Ux.build_element(element: :li, innerHTML: _1.notation))
+            [*skipped_events, event].each do
+              text =
+                case _1
+                when Philosophy::Game::PlayerChange
+                  "#{current_game.players[_1.code].color.name} #{_1.type} as #{_1.code}"
+                when Philosophy::Game::RuleChange
+                  case _1.rule
+                  when :join
+                    case _1.variable
+                    when :permitted then "Change rule for when a new player is allowed to join to: #{_1.value}"
+                    when :where then "Change rule for where in the turn order a player joins to: #{_1.value}"
+                    end
+                  when :leave
+                    case _1.variable
+                    when :permitted then "Change rule for when a new player is allowed to leave to: #{_1.value}"
+                    when :effect then "Change rule for what happens when a player leaves to: #{_1.value}"
+                    end
+                  end
+                when Philosophy::Game::Respect
+                  "Respect given to #{current_game.players[_1.player]}" # TODO Test after Respect token implemented.
+                end
+              list.appendChild(Ux.build_element(element: :li, innerHTML: _1.notation, title: text))
             end
-            Ux.build_element(element: :li, innerHTML: event.notation)
-              .then { list.appendChild _1 }
           end
         end
         list
