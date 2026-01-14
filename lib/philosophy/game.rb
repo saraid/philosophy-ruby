@@ -62,15 +62,16 @@ module Philosophy
       @current_player = @players.first
       @current_context = nil
       @last_board_operations = []
+      @last_activated_tiles = []
     end
     attr_reader :current_player, :current_context
     attr_reader :board, :history
     attr_reader :metadata, :rules
+    attr_reader :last_activated_tiles, :last_board_operations
 
     def player_order = @players.map(&:color).map(&:code)
     def board_state = @current_context.to_board.notation(delimiter: '/')
     def player_options = @current_context.player_options.keys.sort
-    def last_board_operations = @last_board_operations
     def nearing_conclusion? = @current_context.to_board.nearing_conclusion?
     def conclusions = @current_context&.to_board&.conclusions || {}
     def concluded? = @force_conclusion || conclusions.one?
@@ -178,6 +179,7 @@ module Philosophy
           next if new_context == @current_context
           @current_event.context = new_context
           @last_board_operations = new_context.operations
+          @last_activated_tiles = new_context.activated_tiles
 
           @current_player.placed_tile(new_context.placed_tile.class.notation)
           return_tiles(new_context.removed_tiles)

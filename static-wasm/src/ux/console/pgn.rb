@@ -34,7 +34,7 @@ module Ux
       end
 
       def self.show_historical_event(event)
-        Ux::Board.render(event.context, event.operations)
+        Ux::Board.render(event.context, event.operations, event.context.activated_tiles)
         if event == current_game.history.last
           puts "Showing current game state."
         else

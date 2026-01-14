@@ -25,11 +25,11 @@ module Ux
       nil
     end
 
-    def self.render_occupied_spaces(context)
+    def self.render_occupied_spaces(context, activated_tiles)
       context.to_board.each.select(&:occupied?).each do
         space = Space.for _1.name
         space[:classList].add Space::OCCUPIED
-        Tile.place _1
+        Tile.place(_1, activated: activated_tiles.include?(_1.tile))
       end
     end
 
@@ -89,9 +89,12 @@ module Ux
       end
     end
 
-    def self.render(context = current_game.current_context, operations = current_game.last_board_operations)
+    def self.render(context = current_game.current_context,
+                    operations = current_game.last_board_operations,
+                    activated_tiles = current_game.last_activated_tiles
+                   )
       clean
-      render_occupied_spaces(context)
+      render_occupied_spaces(context, activated_tiles)
       render_operations(operations)
       render_conclusions(context)
       if current_game.concluded?

@@ -224,7 +224,8 @@
 .tile {
   width: 90px;
   height: 90px;
-  margin: 7px;
+  margin-top: 7px;
+  margin-left: 7px;
 
   pointer-events: auto;
   border: solid 2px black;
@@ -234,10 +235,15 @@
   align-items: center;
   justify-content: center;
 
-  //font-size: 12px;
   text-align: center;
 
   position: relative;
+}
+.tile.activated.so-activated {
+  margin-top: 4px;
+  margin-left: 4px;
+  border-color: red;
+  border-width: 5px;
 }
 .tile .tile-name {
   font-family: monospace;

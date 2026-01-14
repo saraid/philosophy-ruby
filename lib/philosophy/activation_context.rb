@@ -22,12 +22,13 @@ module Philosophy
       @possible_activation_targets = Set.new
       @player_options = {}
       @operations = []
+      @activated_tiles = []
     end
     attr_reader :current_player, :player_tiles
     attr_reader :spaces
     attr_reader :placed_tile, :removed_tiles, :player_options
     attr_reader :possible_activations, :possible_activation_targets
-    attr_reader :operations
+    attr_reader :operations, :activated_tiles
 
     def [](location) = spaces[location]
 
@@ -38,6 +39,7 @@ module Philosophy
       removed_tiles.each { new_context.removing_tile _1 }
       possible_activations.each { new_context.can_activate _1 }
       possible_activation_targets.each { new_context.can_be_targeted _1 }
+      activated_tiles.then { new_context.remember_activated_tiles _1 }
       operations.each { new_context.log _1 }
       new_context.with_player_options(@player_options)
     end
@@ -112,6 +114,7 @@ module Philosophy
     chain def with_spaces(new_spaces) = spaces.merge!(new_spaces.to_h)
     chain def with_player_options(options) = @player_options = options
     chain def without_player_options = @player_options = {}
+    chain def remember_activated_tiles(tiles) = @activated_tiles = tiles
     chain def removing_tile(tile) = @removed_tiles << tile
     chain def can_activate(location) = @possible_activations << spaces[location].name
     chain def can_be_targeted(location) = @possible_activation_targets << spaces[location].name
@@ -167,6 +170,7 @@ module Philosophy
       spaces[location].tile.already_activated!
       activated_tile = spaces[location].tile
       targeted_space = activated_tile.activation_target(spaces, spaces[location].name)
+      @activated_tiles << activated_tile
 
       case activated_tile
       when Tile::Push, Tile::CornerPush,
