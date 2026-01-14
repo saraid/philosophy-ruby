@@ -84,6 +84,13 @@ module Philosophy
     def players = @players.each.with_object({}) { _2.merge!(Hash[ _1.color.name => _1, _1.color.code => _1]) }
     def player_tiles = @players.each.with_object({}) { _2[_1] = _1.dup_tiles }
 
+    def set_rules(rules)
+      rule_change(rule: :join, variable: :permitted, value: rules.can_join.permitted)
+      rule_change(rule: :join, variable: :where, value: rules.can_join.where)
+      rule_change(rule: :leave, variable: :permitted, value: rules.can_leave.permitted)
+      rule_change(rule: :leave, variable: :effect, value: rules.upon_leaving.effect)
+    end
+
     def rule_change(rule:, variable:, value:) 
       @rules.change(rule:, variable:, value:)
       @metadata[:"#{rule.to_s.capitalize}#{variable.to_s.capitalize}"] =

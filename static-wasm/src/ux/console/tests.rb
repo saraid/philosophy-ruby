@@ -53,8 +53,10 @@ module Ux
       def self.div = document.querySelector('#tests')
 
       def self.load_pgn(moves)
+        new_game = Philosophy::Game.new
+        new_game.set_rules Philosophy::Game.current.rules
         moves
-          .each.with_object(Philosophy::Game.new) { _2 << _1 }
+          .each.with_object(new_game) { _2 << _1 }
           .then { Philosophy::Game.set_current! _1 }
         Ux.render
       end
