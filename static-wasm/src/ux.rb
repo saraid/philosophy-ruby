@@ -63,7 +63,7 @@ module Ux
   def self.build_header
     header = Ux.build_element element: :Header, id: :header
     Ux.build_element(element: :div, innerHTML: <<~HTML).then { header.appendChild _1 }
-      <a href="https://github.com/saraid/philosophy-ruby">GitHub</a>
+      <a href="https://github.com/saraid/philosophy-ruby/tree/static-wasm/static-wasm/">GitHub</a>
     HTML
     Ux.build_element(element: :div, innerHTML: <<~HTML).then { header.appendChild _1 }
       <a href="https://boardgamegeek.com/boardgame/263236/philosophy">BoardGameGeek</a>

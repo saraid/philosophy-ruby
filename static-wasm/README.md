@@ -21,6 +21,10 @@ Purpose of this folder is basically playing with WASM and seeing whether or not 
 - [x] Player and Direction should be reduced to unicode characters, and then make the tile name fit on the tile.
 - [ ] Come up with a better way to display version.
   - [ ] Come up with a deploy pattern overall.
+  - [ ] Package this properly as a WASI interface. Maybe learn WASM for realsies instead of just faking it.
+- [ ] Support connecting to a multiplayer room via WebSocket.
+  - [ ] Room should support unlimited number of chatters, and also let people claim player slots.
+  - [ ] Probably disallow non-players from changing rules? This might be a whole-ass separate mode.
 
 # Start
 
