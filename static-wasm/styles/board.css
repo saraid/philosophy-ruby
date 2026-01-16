@@ -247,6 +247,7 @@
   margin-left: 4px;
   border-color: red;
   border-width: 5px;
+  border-style: dotted;
 }
 .tile .tile-name {
   font-family: monospace;
