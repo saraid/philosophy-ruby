@@ -2877,7 +2877,7 @@ SOFTWARE.
    * The main entry point of `<script type="text/ruby">`-based scripting with WebAssembly Core Module.
    */
   const main$1 = async (pkg, options) => {
-      const response = fetch(`./dist/philosophy.wasm`);
+      const response = fetch(`./dist/philosophy-with-ux.wasm`);
       const module = await compileWebAssemblyModule(response);
       const { vm } = await DefaultRubyVM(module, options);
       await mainWithRubyVM(vm);
