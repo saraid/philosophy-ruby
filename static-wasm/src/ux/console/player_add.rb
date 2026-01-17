@@ -26,8 +26,8 @@ module Ux
       def self.update
         render
 
-        if !current_game.started?
-          && current_game.player_order.size >= 2
+        if !current_game.started? \
+          && current_game.player_order.size >= 2 \
           && !current_game.concluded?
           PlayerHand.element_for(current_game.player_order.first)[:classList].remove PlayerHand::CANNOT_PLAY
         end

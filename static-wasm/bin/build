@@ -1,0 +1,2 @@
+bundle exec rbwasm build -o philosophy.3.4-build.wasm
+bundle exec rbwasm pack philosophy.3.4-build.wasm --dir src/::/src -o dist/philosophy.wasm

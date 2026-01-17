@@ -1,0 +1,24 @@
+PATH
+  remote: ..
+  specs:
+    philosophy (0.1.1)
+
+GEM
+  remote: https://gem.coop/
+  specs:
+    js (2.8.1)
+    logger (1.7.0)
+    ruby_wasm (2.8.1)
+      logger
+
+PLATFORMS
+  ruby
+  x86_64-darwin-21
+
+DEPENDENCIES
+  js (~> 2.8)
+  philosophy (~> 0.1.1)!
+  ruby_wasm (~> 2.8)
+
+BUNDLED WITH
+   2.6.9

@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>Local Play of Philosophy (powered by ruby.wasm)</title>
+    <link rel="stylesheet" href="./styles/board.css">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/move.css">
+    <link rel="stylesheet" href="./styles/player.css">
+    <script src="./dist/browser.script.iife.js"></script>
+    <script type="text/ruby">
+      puts Dir.children('/src').inspect
+      require 'js'
+      require 'philosophy'
+      require 'philosophy/shims/svg'
+      load '/src/main.rb'
+      main
+    </script>
+  </head>
+  <body>
+    Loading...
+  </body>
+</html>

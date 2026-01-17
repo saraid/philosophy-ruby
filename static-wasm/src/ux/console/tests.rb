@@ -47,8 +47,6 @@ module Ux
           In:C8PuEa
         ]
       }
-      JS.global[:philosophy][:TESTS] = TESTS
-      JS.global[:philosophy][:loadPgn] = -> { load_pgn _1.to_a.map(&:to_s) } # convert from JS to Ruby
 
       def self.div = document.querySelector('#tests')
 
@@ -74,6 +72,9 @@ module Ux
       end
 
       def self.build
+        JS.global[:philosophy][:TESTS] = TESTS
+        JS.global[:philosophy][:loadPgn] = -> { load_pgn _1.to_a.map(&:to_s) } # convert from JS to Ruby
+
         details = Ux.build_element element: :details, id: :tests, open: true
         summary = Ux.build_element element: :summary, innerHTML: 'Prebuilt Games: '
         details.appendChild summary

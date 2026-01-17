@@ -36,8 +36,8 @@ module Ux
 
       def self.build(player)
         classes = %W[ player-hand bgcolor-#{player.color.code} ]
-        if current_game.current_player != player
-          || current_game.player_order.size < 2
+        if current_game.current_player != player \
+          || current_game.player_order.size < 2 \
           || current_game.concluded?
           classes << CANNOT_PLAY
         end
